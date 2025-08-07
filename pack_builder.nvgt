@@ -1,0 +1,37 @@
+#include "bgt_compat.nvgt"
+string foldername;
+string[] fol;
+pack sounds;
+
+
+void main()
+{
+foldername="sounds";
+sounds.open("sounds.dat",PACK_OPEN_MODE_CREATE);
+fill();
+for (uint i=0; i<fol.length(); i++)
+{
+sounds.add_file(foldername+"\\"+fol[i],fol[i]);
+refresh_window();
+show_window("Working"+string_to_number(i/fol.length()*100)+"%");
+}
+alert ("success","Extracted "+string_to_number(fol.length())+" files");
+sounds.close();
+}
+
+void fill(string path="")
+{
+string[] dirs=find_directories(foldername+"/"+(path!=""?path+"/":"")+"*");
+string[] files=find_files(foldername+"/"+(path!=""?path+"/":"")+"*");
+if(dirs.length()>0)
+{
+for(uint i=0; i<dirs.length(); i++)
+{
+fill(path+"/"+dirs[i]);
+}
+}
+for(uint i=0; i<files.length(); i++)
+{
+fol.insert_last((path == "" ? files[i] : path+"/"+files[i]));
+}
+}

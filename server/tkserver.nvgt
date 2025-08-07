@@ -1,0 +1,319 @@
+#include "includes\include.nvgt"
+string version = "0.0";
+network n;
+network_event e;
+uint64 port = 10000;
+bool netsetup;
+int filterstuff=1;
+file fl;
+
+void main()
+{
+if(!SCRIPT_COMPILED)
+{
+int q=question("hello","You are running the server from source. Is this just a compilation check?");
+if(q==1)
+{
+alert("okay","it works. Exiting");
+exit();
+}
+else
+{
+alert("okay","proceeding with normal execution");
+}
+}
+show_window("TK server v"+version);
+speak("TK server active");
+netsetup=n.setup_server(port, 200, 500);
+while(true)
+{
+refresh_window ();
+net_loop();
+if(key_pressed(KEY_ESCAPE))
+{
+exit ();
+}
+}
+}
+
+void net_loop ()
+{
+network_event e = n.request();
+string s;
+if(e.type==event_connect)
+{
+return;
+}
+if(e.type==event_receive)
+{
+s = get_event_message(e.message);
+}
+if (s=="")
+{
+return;
+}
+string[] parsed = s.split("|");
+if (parsed.length()<1)
+{
+return;
+}
+if (parsed[0]=="get_map" && parsed.length() ==2)
+{
+file f;
+f.open ("maps\\"+parsed[1],"rb");
+string data = f.read();
+f.close();
+send_unreliable_x(0,"map|"+data,0);
+}
+else if(parsed[0]=="newchar" and parsed.length()>3)
+{
+create_char(parsed[1],parsed[2],parsed[3],e.peer_id,parsed[4]);
+}
+if(parsed[0]=="login" and parsed.length() > 4)
+{
+login(parsed[1],parsed[2],parsed[3],e.peer_id,parsed[4]);
+}
+}
+void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
+{
+mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+uint64[]@ p = n.get_peer_list();
+for (uint i =0; i < p.length(); i++)
+{
+n.send_unreliable(p[i], mess, channel);
+}
+/*
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].x > tx-50 and players[i].x < tx+50 and players[i].y > ty-50 and players[i].y < ty+50 and players[i].z > tz-50 and players[i].z < tz+50 and players[i].map==tmap)
+{
+n.send_unreliable(players[i].peer_id, mess, channel);
+}
+}
+*/
+}
+void send_reliable_x(uint peer, string mess, uint channel, int tx, int ty, int tz,string tmap,int range=50)
+{
+mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+/*
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].x > tx-range and players[i].x < tx+range and players[i].y > ty-range and players[i].y < ty+range and players[i].z > tz-range and players[i].z < tz+range and players[i].map==tmap)
+{
+n.send_reliable(players[i].peer_id, mess, channel);
+}
+}
+*/
+}
+void send_reliable(uint peer, string mess, uint channel, int index=-1)
+{
+mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+if(index>-1)
+{
+/*
+int x=players[index].x;
+int y=players[index].y;
+int z=players[index].z;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].x > x-50 and players[i].x < x+50 and players[i].y > y-50 and players[i].y < y+50 and players[i].z > z-50 and players[i].z < z+50 and players[i].map==players[index].map and i!=index)
+{
+n.send_reliable(players[i].peer_id, mess, channel);
+}
+}
+*/
+}
+else
+{
+n.send_reliable(peer, mess, channel);
+}
+}
+void send_unreliable(uint peer, string mess, uint channel, int index=-1)
+{
+mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+if(index>-1)
+{
+/*
+int x=players[index].x;
+int y=players[index].y;
+int z=players[index].z;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].x > x-50 and players[i].x < x+50 and players[i].y > y-50 and players[i].y < y+50 and players[i].z > z-50 and players[i].z < z+50 and players[i].map==players[index].map and i!=index)
+{
+n.send_unreliable(players[i].peer_id, mess, channel);
+}
+}
+*/
+}
+else
+{
+n.send_unreliable(peer, mess, channel);
+}
+}
+string get_event_message(string r)
+{
+if(r=="")
+{
+return "";
+}
+r=string_decrypt(r, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+return r;
+}
+
+void login(string u, string p, string yv, uint id, string compid)
+{
+bool can_login=true;
+string ip=n.get_peer_address(id);
+/*
+if(yver<minver)
+{
+send_reliable(id,"block your client is out of date. Your version: "+yv+". Minimum required version is "+minverstring,0);
+can_login=false;
+}
+*/
+if(can_login==true)
+{
+if(!compid_handlercheck(compid))
+{
+add_compid(compid,u);
+}
+string charfolder="chars/"+u;
+file f, chardata;
+if(directory_exists("chars/"+u)==false)
+{
+send_reliable(id,"nochar",0);
+}
+else
+{
+file charfile;
+charfile.open("chars/"+u+"/password.usr","rb");
+string charpass=charfile.read();
+charfile.close();
+if(charpass!=string_hash(p,2,false))
+{
+send_reliable(id,"wrongpass",0);
+}
+else
+{
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==u)
+{
+ if(players[i].hidden==0) send_reliable(0,u+" has been overwritten",2);
+remove_player(u);
+}
+}
+if(get_file_contents(charfolder+"/map.usr")=="")
+{
+//put_file_contents(charfolder+"/map.usr","main",FILE_WRITE);
+}
+f.open(charfolder+"/map.usr","rb");
+string m=f.read();
+f.close();
+send_reliable(id,"mapname "+m,0);
+//if(get_file_contents(charfolder+"/facing.usr")=="") file_put_contents(charfolder+"/facing.usr","0",FILE_WRITE);
+//if(get_file_contents(charfolder+"/x.usr")=="") file_put_contents(charfolder+"/x.usr",""+random(0,500),FILE_WRITE);
+//if(get_file_contents(charfolder+"/y.usr")=="") file_put_contents(charfolder+"/y.usr",""+random(0,500),FILE_WRITE);
+//if(get_file_contents(charfolder+"/z.usr")=="") put_file_contents(charfolder+"/z.usr","0",FILE_WRITE);
+f.open(charfolder+"/facing.usr","rb");
+send_reliable(id,"facing "+f.read(),0);
+f.close();
+f.open(charfolder+"/x.usr","rb");
+send_reliable(id,"x "+f.read(),0);
+f.close();
+f.open(charfolder+"/y.usr","rb");
+send_reliable(id,"y "+f.read(),0);
+f.close();
+f.open(charfolder+"/z.usr","rb");
+send_reliable(id,"z "+f.read(),0);
+f.close();
+send_reliable(id, "motd "+motd(), 0);
+//log("connections",u+" logged in.",true,true);
+send_reliable(id, "loggedin", 0);
+}
+}
+}
+}
+
+void create_char(string username, string password, string email,uint id, string compid)
+{
+string ip=n.get_peer_address(id);
+string charfolder="chars/"+username;
+if(!directory_exists("chars"))
+directory_create("chars");
+if(directory_exists(charfolder)==false)
+{
+directory_create(charfolder);
+file c;
+c.open(charfolder+"/health.usr","wb");
+c.write("10000");
+c.close();
+c.open(charfolder+"/newb.usr","wb");
+c.close();
+c.open(charfolder+"/password.usr","wb");
+c.write(string_hash(password,2,false));
+c.close();
+c.open(charfolder+"/facing.usr","wb");
+c.write("0");
+c.close();
+c.open(charfolder+"/x.usr","wb");
+c.write(random(0,500));
+c.close();
+c.open(charfolder+"/y.usr","wb");
+c.write(random(0,500));
+c.close();
+c.open(charfolder+"/z.usr","wb");
+c.write("0");
+c.close();
+c.open(charfolder+"/eml.usr","wb");
+c.write(email);
+c.close();
+add_compid(compid,username);
+send_reliable(id,"createdchar",0);
+}
+else
+send_reliable(id,"alreadyexists",0);
+}
+string random_string_from_array(string[] arraystring)
+{
+string retval=arraystring[random(0,arraystring.length()-1)];
+return retval;
+}
+string randomstring(uint length=10,int mode=1)
+{
+string lets="abcdefghijklmnopqrstuvwxyz";
+string nums="1234567890";
+string temp;
+if(mode==1)
+temp=lets+nums;
+else if(mode==2)
+temp=nums;
+else if(mode==3)
+temp=lets;
+string ret;
+for(uint i=0; i<length; i++)
+{
+ret=ret+temp[random(0,(temp.length()-1))];
+}
+return ret;
+}
+string motd()
+{
+ return "welcome to the killer";
+}
+ 
+ void write_to(string name, string fn, string c)
+{
+fl.open("chars/"+name+"/"+fn, "wb");
+fl.write(c);
+fl.close();
+}
+
+void write_to(string name, string fn, double c)
+{
+file f;
+f.open("chars/"+name+"/"+fn, "wb");
+f.write(c);
+f.close();
+}

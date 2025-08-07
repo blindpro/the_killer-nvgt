@@ -1,0 +1,9 @@
+mapname:jail
+maxx:50
+maxy:50
+maxz:50
+tile:0:50:0:50:0:0:concrete2
+src:0:50:0:50:0:50:hum.ogg:-1
+tile:0:50:0:50:0:0:metal5
+tile:5:7:0:50:0:0:walldebris1
+zone:0:50:0:50:0:15:Jail cell

@@ -1,0 +1,28 @@
+int stn (string number)
+{
+	return string_to_number (number);
+}
+void get_menu_sounds_list()
+{
+	string[] filelist = sound_default_pack.list_files ();
+	for(uint i=0; i<filelist.length(); i++)
+	{
+		if(string_left(filelist[i],7)=="menumus")
+		menutracks.insert_last(filelist[i]);
+	}
+}
+void get_audio_devices_list()
+{
+	string[]@ output_devices= get_sound_output_devices();
+	output_devices.remove_at(0); 
+	for(uint i=0; i<output_devices.length(); i++)
+	{
+		opd.insert_last(output_devices[i]);
+	}
+	string[]@ input_devices= get_sound_input_devices();
+	input_devices.remove_at(0); 
+	for(uint i=0; i<input_devices.length(); i++)
+	{
+		ipd.insert_last(input_devices[i]);
+	}
+}

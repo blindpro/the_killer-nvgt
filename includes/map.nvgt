@@ -1,0 +1,345 @@
+void add_tile (float minx,float maxx,float miny,float maxy,float minz,float maxz,string text,int priority=0)
+{
+tm.add_area(minx, maxx, miny, maxy, minz, maxz, 0.0, "tile", text, "", "", priority);
+}
+
+void add_zone (float minx,float maxx,float miny,float maxy,float minz,float maxz,string text,int priority=0)
+{
+zm.add_area(minx, maxx, miny, maxy, minz, maxz, 0.0, "tile", text, "", "", priority);
+}
+
+string get_tile(float x,float y,float z,int priority=-1)
+{
+string t;
+try
+{
+coordinate_map_area@ cma = tm.get_area(x, y, z, priority, 0.0, null,0 , 0);
+t = cma.data1;
+}
+catch
+{
+
+}
+return t;
+}
+
+string get_tile_at (float x,float y,float z,int priority=-1)
+{
+return get_tile (x,y,z,priority);
+}
+
+string get_zone(float x,float y,float z,int priority=-1)
+{
+string t;
+try
+{
+coordinate_map_area@ cma = zm.get_area(x, y, z, priority, 0.0, null,0 , 0);
+t = cma.data1;
+}
+catch
+{
+
+}
+return t;
+}
+
+void load_map(string data)
+{
+zm.reset();
+tm.reset();
+string[]@ map_data = data.split("\r\n");
+for (uint i=0; i<map_data.length(); i++)
+{
+string[]@ parts = map_data[i].split(":");
+if(parts[0] == "tile")
+{
+add_tile (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7]);
+}
+else if(parts[0] == "zone")
+{
+add_zone (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7]);
+}
+else if(parts[0]=="src" and parts.length()>7)
+{
+int lx=string_to_number(parts[1]);
+int rx=string_to_number(parts[2]);
+int miny=string_to_number(parts[3]);
+int maxy=string_to_number(parts[4]);
+int minz=string_to_number(parts[5]);
+int maxz=string_to_number(parts[6]);
+int id=-1;
+spawn_source(lx, rx, miny, maxy, minz, maxz, parts[7], false, id);
+}
+else if(parts[0]=="amb" and parts.length()>7)
+{
+create_amb(stn(parts[1]),stn(parts[2]),stn(parts[3]),stn(parts[4]),stn(parts[5]),stn(parts[6]),parts[7]);
+}
+else if(parts[0]=="maxx")
+{
+max.x=string_to_number(parts[1]);
+}
+else if(parts[0]=="maxy")
+{
+max.y=string_to_number(parts[1]);
+}
+else if(parts[0]=="maxz")
+{
+max.z=string_to_number(parts[1]);
+}
+}
+}
+
+void zone_speak (float x,float y,float z)
+{
+string t = get_zone( x , y , z );
+if (t!=last_zone)
+{
+speak ( t );
+last_zone = t;
+}
+}
+void playstep()
+{
+int x=me.x, y=me.y, z=me.z;
+onwall=false;
+p.play_stationary(get_tile_at(mr.x,mr.y,me.z)+"step"+random(1,5)+".ogg",false);
+}
+
+void move(string dir)
+{
+if(dir==Up)
+{
+if(get_tile_at(mr.x, mr.y, me.z+1)!="")
+{
+me.z++;
+checkup();
+}
+}
+if(dir==Down)
+{
+if(get_tile_at(mr.x, mr.y, me.z-1)!="" and string_left(get_tile_at(mr.x,mr.y,me.z-1),4)!="wall")
+{
+me.z--;
+checkdown();
+}
+}
+if(dir==Forward)
+{
+double ox=me.x;
+double oy=me.y;
+me=move(me.x, me.y, me.z, facing, north);
+if(round(me.x, 0)<0 or round(me.x, 0)>max.x or round(me.y, 0)<0 or round(me.y, 0)>max.y)
+{
+me.x=ox;
+me.y=oy;
+return;
+}
+checkaround(ox, oy);
+}
+if(dir==Backward)
+{
+double ox=me.x;
+double oy=me.y;
+me=move(me.x, me.y, me.z, facing, south);
+if(round(me.x, 0)<0 or round(me.x, 0)>max.x or round(me.y, 0)<0 or round(me.y, 0)>max.y)
+{
+me.x=ox;
+me.y=oy;
+return;
+}
+checkaround(ox, oy);
+}
+if(dir==Left)
+{
+double ox=me.x;
+double oy=me.y;
+me=move(me.x, me.y, me.z, facing, west);
+if(round(me.x, 0)<0 or round(me.x, 0)>max.x or round(me.y, 0)<0 or round(me.y, 0)>max.y)
+{
+me.x=ox;
+me.y=oy;
+return;
+}
+checkaround(ox, oy);
+}
+if(dir==Right)
+{
+double ox=me.x;
+double oy=me.y;
+me=move(me.x, me.y, me.z, facing, east);
+if(round(me.x, 0)<0 or round(me.x, 0)>max.x or round(me.y, 0)<0 or round(me.y, 0)>max.y)
+{
+me.x=ox;
+me.y=oy;
+return;
+}
+checkaround(ox, oy);
+}
+}
+
+void checkaround(double ox, double oy)
+{
+mr.x=round(me.x, 0);
+mr.y=round(me.y, 0);
+if(string_contains(get_tile_at(mr.x, mr.y, me.z), "wall", 1)>-1)
+{
+if(onwall==false)
+{
+onwall=true;
+p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
+//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+}
+me.x=ox;
+me.y=oy;
+mr.x=round(ox,3);
+mr.y=round(oy,3);
+//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+}
+else
+{
+playstep();
+//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+}
+}
+void checkup()
+{
+if(string_contains(get_tile_at(mr.x, mr.y, me.z), "wall", 1)>-1)
+{
+if(onwall==false)
+{
+onwall=true;
+p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
+//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+}
+bounceback(Up);
+}
+else
+{
+playstep();
+//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+}
+}
+void checkdown()
+{
+if(string_contains(get_tile_at(mr.x, mr.y, me.z), "wall", 1)>-1 and onwall==false)
+{
+if(onwall==false)
+{
+onwall=true;
+p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
+//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+}
+bounceback(Down);
+}
+else
+{
+playstep();
+//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+}
+}
+void bounceback(string d)
+{
+if(d==Up)
+{
+me.z--;
+}
+else if(d==Down)
+{
+me.z++;
+}
+}
+string gct()
+{
+return get_tile_at(round(camera.x,0), round(camera.y,0), camera.z);
+}
+void cameramove(string dir)
+{
+if(dir==Up)
+{
+camera.z++;
+playcamera();
+}
+if(dir==Down)
+{
+camera.z--;
+playcamera();
+}
+if(dir==Forward)
+{
+double ox=camera.x;
+double oy=camera.y;
+camera=move(camera.x, camera.y, camera.z, facing, north);
+if(round(camera.x, 0)<0 or round(camera.x, 0)>max.x or round(camera.y, 0)<0 or round(camera.y, 0)>max.y)
+{
+camera.x=ox;
+camera.y=oy;
+return;
+}
+playcamera();
+}
+if(dir==Backward)
+{
+double ox=camera.x;
+double oy=camera.y;
+camera=move(camera.x, camera.y, camera.z, facing, south);
+if(round(camera.x, 0)<0 or round(camera.x, 0)>max.x or round(camera.y, 0)<0 or round(camera.y, 0)>max.y)
+{
+camera.x=ox;
+camera.y=oy;
+return;
+}
+playcamera();
+}
+if(dir==Left)
+{
+double ox=camera.x;
+double oy=camera.y;
+camera=move(camera.x, camera.y, camera.z, facing, west);
+if(round(camera.x, 0)<0 or round(camera.x, 0)>max.x or round(camera.y, 0)<0 or round(camera.y, 0)>max.y)
+{
+camera.x=ox;
+camera.y=oy;
+return;
+}
+playcamera();
+}
+if(dir==Right)
+{
+double ox=camera.x;
+double oy=camera.y;
+camera=move(camera.x, camera.y, camera.z, facing, east);
+if(round(camera.x, 0)<0 or round(camera.x, 0)>max.x or round(camera.y, 0)<0 or round(camera.y, 0)>max.y)
+{
+camera.x=ox;
+camera.y=oy;
+return;
+}
+playcamera();
+}
+}
+void playcamera()
+{
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].x==camera.x and players[i].y==camera.y and players[i].z==camera.z)
+{
+p.play_extended_3d("beacon.ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+}
+}
+if (gct()=="")
+{
+p.play_3d("cameraair.ogg",me.x,me.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+}
+else if (gct()=="hazard")
+{
+p.play_3d("camerahazard.ogg",me.x,me.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+}
+else if (string_contains(gct(),"wall",1)>-1)
+{
+p.play_extended_3d(gct()+".ogg", me.x, me.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
+}
+else
+{
+p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", me.x, me.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+}
+}

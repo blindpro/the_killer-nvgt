@@ -1,0 +1,27 @@
+pack rp;
+#include "includes/include.nvgt"
+void main()
+{
+sound_global_hrtf = true;
+if(is_windows)
+{
+set_sound_storage("sounds.dat");
+}
+data_read();
+get_menu_sounds_list();
+get_audio_devices_list();
+if (musictrack=="")
+{
+musictrack="menumus1.ogg";
+}
+if (currently_input_device >= 1)
+{
+set_sound_input_device (currently_input_device);
+}
+if (currently_output_device >= 1)
+{
+set_sound_output_device (currently_output_device);
+}
+show_window ("the killer");
+mainmenu();
+}

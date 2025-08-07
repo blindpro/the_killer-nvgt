@@ -1,0 +1,106 @@
+dynamic_menu_pro m;
+void mainmenu()
+{
+setupmenu(true,true);
+m.add_item_tts("into","into");
+m.add_item_tts("Connection menu","connectionmenu");
+m.add_item_tts("game settings","game settings");
+m.add_item_tts("test speaker","speaker test");
+m.add_item_tts("exit","exit");
+int r=m.run("Main menu",true);
+if (m.get_item_name(r)=="connectionmenu")
+{
+m.fade_music(0);
+connectionmenu();
+}
+else if (m.get_item_name(r)=="into")
+{
+m.fade_music(0);
+game();
+mainmenu();
+}
+else if (m.get_item_name(r)=="game settings")
+{
+m.fade_music(10);
+game_settings();
+}
+else if (m.get_item_name(r)=="speaker test")
+{
+m.fade_music(10);
+speak("Test speaker");
+dlg_audio (_get_sounds_("speaker_test.ogg"));
+mainmenu();
+}
+else
+{
+m.fade_music(5);
+data_save();
+exit();
+}
+}
+void connectionmenu()
+{
+setupmenu(false,true);
+if (name!="" and pass!="")
+{
+m.add_item_tts("sign in ","play");
+}
+m.add_item_tts("sign in  as","sign in  as");
+m.add_item_tts("new account","create a new account");
+m.add_item_tts("go back","go back");
+int r=m.run("Connection menu",true);
+if (m.get_item_name(r)=="create a new account")
+{
+m.fade_music(10);
+registering_account();
+}
+else if(m.get_item_name(r)=="sign in  as")
+{
+setup_account();
+}
+else if (m.get_item_name(r)=="go back")
+{
+wait(150);
+mainmenu();
+}
+else if(m.get_item_name(r)=="play")
+{
+login();
+}
+else
+{
+wait(150);
+mainmenu();
+}
+}
+void setupmenu(bool main=false, bool audo=false)
+{
+m.reset(true);
+if (main==true)
+m.add_music(_get_sounds_(musictrack));
+m.open_sound=_get_sounds_("menuopen.ogg");
+m.enter_sound=_get_sounds_("menuenter.ogg");
+m.click_sound=_get_sounds_("menumove.ogg");
+m.wrap_sound=_get_sounds_("menuwrap.ogg");
+if(audo==true)
+m.letters_autoactivate=false;
+m.edge_sound=_get_sounds_("menuedge.ogg");
+if(sidescrolling==1)
+{
+m.enable_side_scrolling=true;
+}
+m.enable_first_letter_navigation=true;
+if(sidescrolling==1)
+m.enable_left_and_right=true;
+else
+{
+m.enable_up_and_down=true;
+m.enable_side_scrolling=false;
+}
+m.wrap=true;
+m.enable_home_and_end=true;
+/*
+if(!main)
+m.set_callback(netclb,"");
+*/
+} 

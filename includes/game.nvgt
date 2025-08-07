@@ -1,0 +1,151 @@
+void game()
+{
+testc();
+walktimer.restart();
+bool loop = true;
+//string contents = get_file_contents("main.map");
+//load_map(contents);
+enable_input();
+while (loop)
+{
+net_loop ();
+sourcecheckloop();
+sourcepool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+zone_speak(me.x , me.y , me.z);
+if (key_pressed (KEY_ESCAPE))
+{
+loop =false;
+disable_input();
+exitgame();
+break;
+}
+else if(key_pressed(KEY_Q))
+{
+facing=snapleft(facing, getdir(facing));
+speak("You are facing "+dir_to_string(getdir(facing)));
+p.play_stationary("turn.ogg",false);
+pos();
+//send_reliable(0, "turn "+facing, 0);
+}
+else if(key_pressed(KEY_E) )
+{
+facing=snapright(facing, getdir(facing));
+speak("You are facing "+dir_to_string(getdir(facing)));
+p.play_stationary("turn.ogg",false);
+pos();
+//send_reliable(0, "turn "+facing, 0);
+}
+else if (key_down(KEY_G))
+{
+ if (key_pressed(KEY_T))
+{
+playcamera();
+string gt=gct();
+speak((gt==""||gt=="blank" ? "air" : gt)+" at "+round(camera.x,0)+", "+round(camera.y,0)+", "+camera.z);
+}
+if (kpgdn.pressing() and camera.z>-30)
+{
+camera.z-=1;
+playcamera();
+}
+if (kpgup.pressing() and camera.z<max.z-1)
+{
+camera.z+=1;
+playcamera();
+}
+if (kleft.pressing() and camera.x>0)
+{
+cameramove(Left);
+}
+if (kright.pressing())
+{
+cameramove(Right);
+}
+if (kdown.pressing() and camera.y>0)
+{
+cameramove(Backward);
+}
+if (kup.pressing())
+{
+cameramove(Forward);
+}
+}
+else if (walktimer.elapsed>movetime)
+{
+ if(key_down(KEY_PRIOR) and jumping==false)
+{
+walktimer.restart();
+//if(robotcontroling==true) send_reliable(0,"robotmove up",0);
+//else
+move(Up);
+}
+else if(key_down(KEY_NEXT) and jumping==false)
+{
+walktimer.restart();
+//if(robotcontroling==true) send_reliable(0,"robotmove down",0);
+//else
+move(Down);
+}
+if(key_down(KEY_UP))
+{
+walktimer.restart();
+move(Forward);
+}
+else if(key_down(KEY_DOWN))
+{
+walktimer.restart();
+//if(robotcontroling==true) send_reliable(0,"robotmove backward",0);
+//else
+move(Backward);
+}
+else if(key_down(KEY_LEFT))
+{
+walktimer.restart();
+move(Left);
+}
+else if(key_down(KEY_RIGHT))
+{
+walktimer.restart();
+move(Right);
+}
+}
+//连续判断加前面
+if (key_up(KEY_G))
+{
+camera.x=me.x;
+camera.y=me.y;
+camera.z=me.z;
+}
+//refresh_window();
+wait (1);
+}
+}
+
+void exitgame(bool return_to_menu=true)
+{
+//falling=false;
+me.x=0;me.z=0;
+//vesound.stop();
+//velfsound.stop();
+//music.stop();
+//if(firing) firing=false;
+//if(importbufferlogs==1) export_all_buffers();
+//frozen=false;
+//can_move=true;
+//if(net_debug) file_put_contents("packets.log",packetlog,255);
+//fade_all(p,distpool,shdistpool,mpool,sourcepool);
+//destroy_all_msounds();
+//destroy_all_sirens();
+p.destroy_all();
+distpool.destroy_all();
+destroy_all_sources();
+//x=false;
+//in_map=false;
+//clear_map();
+//focuseditem="";
+//reset_network();
+//if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
+if(return_to_menu==true)
+mainmenu();
+players.resize(0);
+}

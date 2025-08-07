@@ -1,0 +1,143 @@
+//Includes setting up accounts and registering accounts
+void registering_account()
+{
+audio_form f;
+f.create_window("Create New Account",false);
+int iname=f.create_input_box("Enter a username");
+int ipass=f.create_input_box("Please type in your new password. note: it must be at least 8 characters, and must contain a capitle letter, and a number.","","*");
+int imail=f.create_input_box("Enter your EMail, for password retrieval, etc.");
+int iok = f.create_button("ok",true);
+int icancel = f.create_button("cancel",false,true);
+f.focus(iname);
+while (true)
+{
+wait (5);
+f.monitor();
+if (f.is_pressed(icancel))
+{
+connectionmenu();
+}
+else if (f.is_pressed(iok))
+{
+name = f.get_text(iname);
+pass = f.get_text(ipass);
+mail = f.get_text (imail);
+if (name=="")
+{
+f.focus(iname);
+}
+else if (pass == "")
+{
+f.focus(ipass);
+}
+else if (mail == "")
+{
+f.focus(imail);
+}
+else
+{
+n.setup_client(500, 500);
+n.connect(netaddress, netport);
+if(connected==true)
+{
+send_reliable(0, "newchar|"+name+"|"+pass+"|"+mail+"|"+compid, 0);
+}
+timeouttimer.restart();
+while(true)
+{
+wait(5);
+e=n.request();
+if (key_pressed(KEY_ESCAPE))
+{
+reset_network();
+connectionmenu();
+}
+if(e.type==event_disconnect or timeouttimer.elapsed>=timeouttime)
+{
+p.play_stationary("progress.ogg",false);
+dlg("server is offline");
+reset_network();
+connectionmenu();
+}
+if(e.type==event_connect and connected==false)
+{
+peer_id=e.peer_id;
+speak("creating");
+send_reliable(0, "newchar|"+name+"|"+pass+"|"+mail+"|"+compid, 0);
+connected=true;
+}
+else if(e.type==event_receive and get_event_message(e.message)=="createdchar")
+{
+p.play_stationary("progress.ogg",false);
+dlg("success! Account created! Press enter to login.");
+name=name;
+pass=pass;
+data_save();
+login();
+}
+else if(e.type==event_receive and get_event_message(e.message)=="alreadyaccount")
+{
+p.play_stationary("progress.ogg",false);
+dlg("Error: This computer is already associated with another account");
+reset_network();
+connectionmenu();
+}
+else if(e.type==event_receive and get_event_message(e.message)=="alreadyexists")
+{
+p.play_stationary("progress.ogg",false);
+dlg("This account already exists");
+reset_network();
+connectionmenu();
+}
+else if(e.type==event_receive and string_contains(get_event_message(e.message),"Error",1)>-1)
+{
+p.play_stationary("progress.ogg",false);
+dlg(get_event_message(e.message));
+reset_network();
+connectionmenu();
+}
+}
+reset_network();
+connectionmenu();
+}
+}
+}
+}
+void setup_account()
+{
+audio_form f;
+f.create_window("Set up account",false);
+int iname=f.create_input_box("Enter a username");
+int ipass=f.create_input_box("Enter a password","","*");
+int iok = f.create_button("ok",true);
+int icancel = f.create_button("cancel",false,true);
+f.focus(iname);
+while (true)
+{
+wait (5);
+f.monitor();
+if (f.is_pressed(icancel))
+{
+connectionmenu();
+}
+else if (f.is_pressed(iok))
+{
+name = f.get_text(iname);
+pass = f.get_text(ipass);
+if (name=="")
+{
+f.focus(iname);
+}
+else if (pass == "")
+{
+f.focus(ipass);
+}
+else
+{
+p.play_stationary("progress.ogg",false);
+dlg ("Success!");
+connectionmenu();
+}
+}
+}
+}

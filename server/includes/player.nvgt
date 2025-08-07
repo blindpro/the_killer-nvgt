@@ -1,0 +1,241 @@
+string[] dontlose={"coin","tank","aircraft","police_car","ammo_shotgun","ammo_glock","ammo_sniper","ammo_ML7TinyMG","ammo_FRNTAssaultRifle","ammo_crossbow","ammo_FlameThrower","tk_dollar","tk_ultra_health_potion","tk_donation_pack","tk_warp_box_pack","tk_mini_warp_box_pack","tk_ultra_warp_box_pack","tk_dollar_pack","tk_ultra_health_potion_set","tk_shelter_pack"};
+string[] drunkmsglist={"awwwwwwwwwww","ewwwwwwwww","eeeeeeeeeee","fuck","I feel so fucked up right now","asdfasdfasdfadsfasdfasdf","zzz","lmao","roflflflflflflflflflflflflflflflflflflflflflflflflflf", "i need to puke!"};
+string[] randsounds={"beacon","move","timebombexplodedist","ibombdist","menuenter","codeclick","canisterdrop"};
+player@[] players(0);
+class player
+{
+double x,y,z;
+string version;
+string map;
+int missilex;
+int missiley;
+int missilez;
+int remgunid=-1;
+double air;
+int unstuntrys;
+int storestage=0;
+int stunagaintime=0;
+timer stunagaintimer;
+int persisttime=60000;
+timer persisttimer;
+timer falltimer;
+timer unstuntrytimer;timer storetimer;
+timer spamtimer;
+int spammedmsgs;
+int stuntime;
+int pmreceiving=1;
+int workingammo;
+int food;
+int bikehelmet=0;
+int mask=0;
+bool itemtesting=false;
+bool disconnected=false;
+bool reloading;
+bool falling=false;
+bool vomited=false;
+bool drunk=false;
+bool hungry=false;
+bool underwater=false;
+bool dmoving=false;
+bool lowhealth=false;
+bool antibioticed=false;
+bool unstunplay=false;
+bool active=false;
+bool bleeding=false;
+bool firing=false;
+int paid=1;
+int sitting=0;
+int adminflag=0;
+int gnplaying=0;
+int guessnum=0;
+int deathfreecards=0;
+int reloadtime;
+int firetime;
+int drunkacttime=random(15000, 25000);
+int beerswigs=0;
+int drunkstage=0;
+timer reloadtimer;
+timer biketimer;
+timer lockerplacetimer;
+bool lockerplacing=false;
+timer eattimer;
+timer foodtimer;
+timer activitytimer;
+timer drunkacttimer;
+timer drunktimer;
+timer drinktimer;
+timer airwarntimer;
+timer airlifetimer;
+timer airtimer;
+timer firetimer;
+timer cheatertimer;
+timer nicktimer;
+timer newbtimer;
+timer bleedtimer;
+string biketile;
+string langchan="English";
+string shitem;
+string e_id;
+string cmitem="";
+int cmmode=-1;
+string features;
+string bleedsound;
+string[] ds;
+timer invinsibilitytimer;
+timer strtimer;
+bool ultrabombplacing=false;
+timer ultrabombtimer;
+timer statchangetimer;
+timer antibiotictimer, awarnouttimer;
+timer interceptortimer,usetimer;
+int hidden=0;
+int cheater=0;
+int newb=0;
+int maxshields=200;
+timer playtimer;
+bool takeammo=false;
+bool shielded=false;
+int shieldshots;
+bool inshelter=false;
+int invseconds=6;
+int playtime;
+bool using=false;
+bool intercepting=false;
+timer stunthrowtimer;
+timer maptraveltimer;
+timer chattimer;
+string ammostuff;
+string muted;
+//achievements a;
+//playerweapon w(this);
+string zone;
+string ip;
+string vtype;
+timer timeouttimer;
+int timeouttime=30000;
+int rbomblimit=200;
+int rbombs=0;
+int registered=0;
+int voted=0;
+bool shelter_building=false;
+timer buildtimer;
+string sheltername;
+timer healtimer;
+timer mbombtimer;
+bool sbombplacing=false;
+timer sbombtimer;
+string title="";
+string nickname;
+string ctext,location;
+timer hurttimer;
+timer rmtimer, missiletimer,rbombtimer, bsheltertimer;
+string teamname;
+bool hurt=false;
+int hurtlevel=0;
+string replyname;
+bool can_fire_rem=true;
+bool missilespawning=false;
+bool remconnecting=false;
+bool placing_rbomb=false;
+bool poisoned=false;
+timer poisontimer;
+int kills,deaths;
+bool invinsible=false, invinsibility_starting=false,is_admin=false, is_builder=false, invisible=false, insz=false, is_dead=false;
+int facing=0;
+int health=10000,oldhealth;
+double chats;
+int beacon=1;
+timer beacontimer;
+int beacontime=600;
+string name;
+int peer_id;
+string compid;
+string hitby="no one";
+timer invisibilitytimer;
+bool master=false;
+bool dev=false;
+bool stunned=false;
+timer stuntimer;
+timer invusetimer;
+timer grenadetimer;
+int aircraftfuel=100,aircrafthealth=25000,tankfuel=100,tankhealth=50000,pchealth=40000,pcfuel=100;
+string sellitem;
+bool should_subtract=false;
+string warning="";
+uint8 warnlevel=0;
+timer warptimer;
+bool warping=false;
+uint warpstage=0;
+string weapon="",following="",follower="";
+bool following_on=false,cremguns=false;
+player(int px, int py, int pz, string pmap, string pname, int ppeer_id, string cid, string pver, string pip, string compt,int phid)
+{
+x=px;y=py;z=pz;map=pmap;
+name=pname;
+peer_id=ppeer_id;
+compid=cid;
+version=pver;
+ip=pip;
+ctext=compt;
+if(file_exists("chars/"+name+"/playtime.usr"))
+//playtimer.force(stn(read_from(name,"playtimer.usr")));
+hidden=phid;
+if(hidden>0) is_dead=true;
+}
+}
+void remove_player(string name,bool got_kicked=false, bool lost=false)
+{
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==name)
+{
+/*
+int e=is_part_of_event(name);
+if(e>-1)
+{
+events[e].leave(players[i],true,true);
+}
+int teamindex=is_in_team(name);
+if(teamindex>-1)
+teams[teamindex].remove_member(name,false,false);
+*/
+uint oldid=(players[i].disconnected ? 4294967294 : players[i].peer_id);
+/*
+if(got_kicked==true)
+{
+send_reliable(0,players[i].name+" was kicked from the server",2);
+log("eventstream",players[i].name+" was kicked from the server");
+}
+if(cheatercheck(i,lost) and !got_kicked)
+{
+write_to(players[i].name,"cheater.usr",players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit");
+send_reliable(0,players[i].name+" is a cheater!",2);
+}
+if(players[i].following!="")
+{
+int ind=get_player_index_from(players[i].following);
+if(ind>-1) players[ind].following="";
+}
+disconnections++;
+for(uint j=0; j<guns.length(); j++)
+{
+int a=players[i].get_ammo_count_from(guns[j]);
+if(a>0)
+{
+players[i].give("ammo_"+guns[j],a);
+}
+}
+*/
+if(players[i].hidden==0) send_reliable(0, "offline "+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].name+" "+players[i].map, 0);
+else
+{
+if(!players[i].disconnected)
+send_reliable(players[i].peer_id, "offline "+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].name+" "+players[i].map, 0);
+}
+@players[i]=null;
+players.remove_at(i);
+if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
+continue;
+}
+}
+}
