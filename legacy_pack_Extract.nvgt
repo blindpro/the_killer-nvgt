@@ -1,0 +1,36 @@
+#include "bgt_compat.nvgt"
+string pack_file , fol;
+string[] file_list;
+pack sp;
+
+void main()
+{
+show_window("Working");
+pack_file ="sounds.dat";
+Extract();
+}
+
+void Extract()
+{
+if(sp.open (pack_file,PACK_OPEN_MODE_READ)==false)
+{
+alert ("error","Failed to open file");
+exit();
+}
+file_list= sp.list_files();
+uint i;
+if (directory_exists("se")==false)
+{
+directory_create("se");
+}
+for (i=0; i<file_list.length(); i++)
+{
+string file_contents = sp.read_file(file_list[i], 0, sp.get_file_size(file_list[i]));
+file f;
+f.open ("se\\"+file_list[i],"wb");
+f.write (file_contents);
+f.close();
+show_window("Working"+string_to_number(i/file_list.length()*100)+"%");
+}
+alert ("success","Extracted "+string_to_number(i)+" files");
+}

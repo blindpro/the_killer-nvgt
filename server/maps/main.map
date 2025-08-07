@@ -245,7 +245,7 @@ zone:247:248:480:480:0:21:ladder to tunnel roof
 src:249:261:480:500:0:20:rumble2.ogg
 tile:31:31:99:99:0:20:bleacher
 zone:31:31:99:99:0:19:Emergency staircase to the roof
-zone:30:50:78:100:20:40:the roof§
+zone:30:50:78:100:20:40:the roof?
 
 tile:60:63:134:138:0:0:dirt
 zone:60:63:134:138:0:6:A dirt path:trackme
