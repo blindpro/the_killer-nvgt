@@ -24,5 +24,6 @@ create_buffer("chats");
 create_buffer("misc");
 create_buffer("kills");
 show_window ("the killer version "+netver);
+speak_length_start();
 mainmenu();
 }

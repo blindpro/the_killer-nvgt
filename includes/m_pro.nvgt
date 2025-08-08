@@ -318,7 +318,7 @@ return -1;
 }
 else if (force_sapi==false)
 {
-if(speak(intro)==false)
+if(say (intro)==false)
 {
 return -1;
 }
@@ -459,7 +459,7 @@ else if (force_sapi==false)
 {
 if (speak_position_information==true)
 {
-if(speak(item_list[menu_position-1].option+secondary+". "+menu_position+" of "+get_item_count())==false)
+if(say (item_list[menu_position-1].option+secondary+". "+menu_position+" of "+get_item_count())==false)
 {
 running=false;
 return -1;
@@ -467,7 +467,7 @@ return -1;
 }
 else
 {
-if(speak(item_list[menu_position-1].option+secondary)==false)
+if(say (item_list[menu_position-1].option+secondary)==false)
 {
 running=false;
 return -1;
@@ -529,7 +529,7 @@ else
 {
 if(speech_output>0 and speech_output<5)
 {
-if(screen_reader_speak(speech_output, item_list[menu_position-1].option)==false)
+if(screen_reader_speak (speech_output, item_list[menu_position-1].option)==false)
 {
 running=false;
 return -1;
@@ -731,7 +731,7 @@ screen_reader_speak_interrupt(speech_output, "music volume: "+music.volume);
 }
 else if (force_sapi==false)
 {
-speak("music volume: "+music.volume);
+say ("music volume: "+music.volume);
 }
 else
 {

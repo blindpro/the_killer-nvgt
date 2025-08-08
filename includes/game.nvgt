@@ -18,7 +18,7 @@ if (key_pressed (KEY_ESCAPE))
 /*
 if(controling_remgun)
 {
-speak("You disconnect the controler and put it away");
+say ("You disconnect the controler and put it away");
 send_reliable(0,"remdisconnect",0);
 controling_remgun=false;
 }
@@ -48,19 +48,19 @@ exitgame();
 }
 if(key_pressed(KEY_Z))
 {
-speak("Current location: "+last_zone+" of "+mapname);
+say ("Current location: "+last_zone+" of "+mapname);
 }
 if(key_pressed(KEY_Q) and can_move and !inve)
 {
 facing=snapleft(facing, getdir(facing));
-speak("You are facing "+dir_to_string(getdir(facing)));
+say ("You are facing "+dir_to_string(getdir(facing)));
 p.play_stationary("turn.ogg",false);
 send_reliable(0, "turn|"+facing, 0);
 }
 if(key_pressed(KEY_E) and can_move and !inve)
 {
 facing=snapright(facing, getdir(facing));
-speak("You are facing "+dir_to_string(getdir(facing)));
+say ("You are facing "+dir_to_string(getdir(facing)));
 p.play_stationary("turn.ogg",false);
 send_reliable(0, "turn|"+facing, 0);
 }
@@ -83,13 +83,13 @@ if(key_pressed(KEY_N))
 {
 if(trackx==-1 or tracky==-1 or trackz==-1 or tracking=="")
 {
-speak("Nothing to track");
+say ("Nothing to track");
 }
 else tell_where(trackx,tracky,trackz,"loctrack");
 }
 if(key_pressed(KEY_F))
 {
-speak("You are facing "+dir_to_string(getdir(facing)));
+say ("You are facing "+dir_to_string(getdir(facing)));
 }
 if(khome.pressing() and get_sound_master_volume()<0)
 {
@@ -139,7 +139,7 @@ if (focuseditem!="" and can_move==true)
 send_reliable(0, "use|"+focuseditem, 0);
 }
 else
-speak("Error: could not activate item!");
+say ("Error: could not activate item!");
 }
 }
 if(key_pressed(KEY_COMMA))
@@ -212,19 +212,19 @@ if(key_pressed(KEY_C) and !frozen)
 string g;
 if(gmt()=="") g="you're in the air";
 else g="You're on "+gmt();
-speak((mr.x==-0 ? 0 : mr.x)+", "+(mr.y==-0 ? 0 : mr.y)+", "+me.z+". "+g+" on "+mapname);
+say ((mr.x==-0 ? 0 : mr.x)+", "+(mr.y==-0 ? 0 : mr.y)+", "+me.z+". "+g+" on "+mapname);
 }
 if(key_pressed(KEY_F2))
 {
 if(speakonlinemsgs==0)
 {
-speak("Online and offline messages enabled");
+say ("Online and offline messages enabled");
 speakonlinemsgs=1;
 p.play_stationary("toggleon.ogg",false);
 }
 else
 {
-speak("online and offline messages disabled");
+say ("online and offline messages disabled");
 speakonlinemsgs=0;
 p.play_stationary("toggleoff.ogg",false);
 }
@@ -233,7 +233,7 @@ data_save();
 if(key_pressed(KEY_F3) and pinging==false)
 {
 pinging=true;
-speak("pinging");
+say ("pinging");
 p.play_stationary("pingstart.ogg",false);
 send_reliable(0,"ping",0);
 pingpongtimer.restart();
@@ -242,19 +242,19 @@ if(pinging==true and pingpongtimer.elapsed>=30000)
 {
 pinging=false;
 p.play_stationary("pingstop.ogg",false);
-speak("ping lost");
+say ("ping lost");
 }
 if(key_pressed(KEY_F4))
 {
 if(readmessages==0)
 {
-speak("Messages will be read");
+say ("Messages will be read");
 p.play_stationary("toggleon.ogg",false);
 readmessages=1;
 }
 else if(readmessages==1)
 {
-speak("Messages will no longer be read");
+say ("Messages will no longer be read");
 p.play_stationary("toggleoff.ogg",false);
 readmessages=0;
 }
@@ -266,7 +266,7 @@ if (key_down(KEY_G))
 {
 playcamera();
 string gt=gct();
-speak((gt==""||gt=="blank" ? "air" : gt)+" at "+round(camera.x,0)+", "+round(camera.y,0)+", "+camera.z);
+say ((gt==""||gt=="blank" ? "air" : gt)+" at "+round(camera.x,0)+", "+round(camera.y,0)+", "+camera.z);
 }
 if (kpgdn.pressing() and camera.z>-30)
 {
@@ -379,7 +379,7 @@ players.resize(0);
 void tk_loop()
 {
 pos();
-zone_speak(mr.x , mr.y , me.z);
+zone_speak (mr.x , mr.y , me.z);
 net_loop ();
 sourcecheckloop();
 playerloop();

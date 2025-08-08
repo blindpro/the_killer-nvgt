@@ -45,7 +45,7 @@ return t;
 
 void load_map(string data)
 {
-//speak("loading map...");
+//say ("loading map...");
 maploadtimer.restart();
 sound loading;
 in_map=false;
@@ -115,7 +115,7 @@ if(t!="")
 {
 if (t!=last_zone)
 {
-speak ( t );
+say ( t );
 last_zone = t;
 }
 }
@@ -124,7 +124,7 @@ else
 t="uncharted area";
 if(last_zone!=t)
 {
-speak(t);
+say (t);
 last_zone = t;
 }
 }
@@ -367,7 +367,7 @@ net_loop();
 if(objs[i].x==camera.x&&objs[i].y==camera.y&&objs[i].z==camera.z&&objs[i].map==mapname)
 {
 p.play_extended_3d("obj.ogg", mr.x, mr.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
-speak(objs[i].amount+objs[i].name);
+say (objs[i].amount+objs[i].name);
 }
 }
 }

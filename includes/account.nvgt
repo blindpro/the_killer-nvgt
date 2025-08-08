@@ -62,7 +62,7 @@ connectionmenu();
 if(e.type==event_connect and connected==false)
 {
 peer_id=e.peer_id;
-speak("creating");
+say ("creating");
 send_reliable(0, "newchar|"+name+"|"+pass+"|"+mail+"|"+compid, 0);
 connected=true;
 }

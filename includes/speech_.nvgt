@@ -1,0 +1,4 @@
+bool say (string text , bool bool1 = false)
+{
+return (speak (speak_length(text) , bool1));
+}

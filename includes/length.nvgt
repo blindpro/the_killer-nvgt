@@ -3,7 +3,7 @@ void speak_length_start()
 {
 string s;
 file f;
-f.open("×Öµä.txt","rb");
+f.open("dictionary.txt","rb");
 s=f.read();
 f.close();
 sl=string_split(s,"\r\n",true);
