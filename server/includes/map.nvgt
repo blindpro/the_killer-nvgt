@@ -1,0 +1,346 @@
+mapdata@[] maps(0);
+class mapdata
+{
+string name;
+maptile@[] maptiles;
+int fighting=1;
+mapispawn@[] mapispawns;
+string rawdata;
+vector max;
+mapdata(string loadname)
+{
+internal_load(loadname);
+}
+bool tile_exists(double x, double y, double z)
+{
+for(uint i=0; i<maptiles.length(); i++)
+{
+if(maptiles[i].is_on_tile(x, y, z))
+return true;
+}
+return false;
+}
+string return_tile(double x, double y, double z)
+{
+string outval;
+/*
+int t=is_on_tree(x,y,z,name);
+if(t>-1)
+return "tree";
+*/
+for(uint i=0; i<maptiles.length(); i++)
+{
+if(maptiles[i].is_on_tile(x, y, z))
+{
+outval=maptiles[i].type;
+}
+}
+return outval;
+}
+bool is_staircase(double x, double y, double z)
+{
+if(!tile_exists(x,y,z)) return false;
+for(uint i=0; i<maptiles.length(); i++)
+{
+if(maptiles[i].is_on_tile(x, y, z)&&maptiles[i].maxz!=maptiles[i].minz)
+return true;
+}
+return false;
+}
+void internal_load(string loadname,bool is_file=true)
+{
+if(is_file==true)
+{
+file f;
+f.open("maps/"+loadname+".map", "rb");
+rawdata=f.read();
+f.close();
+//clear_vending_machines_on_map(loadname);
+}
+else
+rawdata=loadname;
+string[] map=delinear(rawdata);
+for(uint i=0; i<map.length(); i++)
+{
+string[] parsed=string_split(map[i], ":", false);
+if(parsed[0]=="mapname")
+{
+name=parsed[1];
+}
+else if(parsed[0]=="maxx") max.x=stn(parsed[1]);
+else if(parsed[0]=="maxy") max.y=stn(parsed[1]);
+else if(parsed[0]=="maxz") max.z=stn(parsed[1]);
+else if(parsed[0]=="fightingstate" and parsed.length()>1)
+{
+int n=stn(parsed[1]);
+fighting=n;
+}
+else if(parsed[0]=="tile" and parsed.length()>7)
+{
+int minx=string_to_number(parsed[1]);
+int maxx=string_to_number(parsed[2]);
+int miny=string_to_number(parsed[3]);
+int maxy=string_to_number(parsed[4]);
+int minz=string_to_number(parsed[5]);
+int maxz=string_to_number(parsed[6]);
+string type=parsed[7];
+maptile temp;
+temp.minx=minx;
+temp.maxx=maxx;
+temp.miny=miny;
+temp.maxy=maxy;
+temp.minz=minz;
+temp.maxz=maxz;
+temp.type=type;
+maptiles.insert_last(temp);
+}
+/*
+else if(parsed[0]=="vending_machine" and parsed.length()>3)
+{
+int vx=stn(parsed[1]);
+int vy=stn(parsed[2]);
+int vz=stn(parsed[3]);
+spawn_vending_machine(vx,vy,vz,name);
+}
+*/
+else if(parsed[0]=="ispawn" and parsed.length()>=9)
+{
+int minx=string_to_number(parsed[1]);
+int maxx=string_to_number(parsed[2]);
+int miny=string_to_number(parsed[3]);
+int maxy=string_to_number(parsed[4]);
+int minz=string_to_number(parsed[5]);
+int maxz=string_to_number(parsed[6]);
+int mapispawntime=string_to_number(parsed[7]);
+int maxobjs=string_to_number(parsed[8]);
+mapispawn temp;
+temp.minx=minx;
+temp.maxx=maxx;
+temp.miny=miny;
+temp.maxy=maxy;
+temp.minz=minz;
+temp.maxz=maxz;
+temp.mapispawntime=mapispawntime;
+temp.maxobjs=maxobjs;
+if(parsed.length()>9)
+{
+for(uint x=9; x<parsed.length(); x++)
+{
+temp.mapobjs.insert_last(parsed[x]);
+}
+}
+else
+{
+temp.mapobjs=string_split(itemlist,":",false);
+}
+temp.imap=name;
+mapispawns.insert_last(temp);
+}
+}
+}
+void loop()
+{
+for(uint i=0; i<mapispawns.length(); i++)
+{
+mapispawns[i].loop();
+}
+}
+}
+class maptile
+{
+int minx;
+int maxx;
+int miny;
+int maxy;
+int minz;
+int maxz;
+string type;
+bool is_on_tile(double x, double y, double z)
+{
+if(minx>x)
+{
+return false;
+}
+if(minx<=x and maxx>=x and miny<=y and maxy>=y and minz<=z and maxz>=z)
+{
+return true;
+}
+return false;
+}
+}
+class mapispawn
+{
+int minx;
+int maxx;
+int miny;
+int maxy;
+int minz;
+int maxz;
+string[] mapobjs;
+timer mapispawntimer;
+int mapispawntime;
+int maxobjs;
+string imap;
+bool is_in_area(double x, double y, double z, string map)
+{
+if(minx<=x and maxx>=x and miny<=y and maxy>=y and minz<=z and maxz>=z)
+{
+if(map==imap)
+{
+return true;
+}
+}
+return false;
+}
+obj@[] get_objs_in_area()
+{
+obj@[] tempobjs;
+for(uint i=0; i<objs.length(); i++)
+{
+if(is_in_area(objs[i].x, objs[i].y, objs[i].z, objs[i].map))
+{
+tempobjs.insert_last(objs[i]);
+}
+}
+return tempobjs;
+}
+int get_objs_in_area_length()
+{
+obj@[] o=get_objs_in_area();
+return o.length();
+/*
+int tempobjs=0;
+for(uint i=0; i<objs.length(); i++)
+{
+if(is_in_area(objs[i].x, objs[i].y, objs[i].z, objs[i].map))
+{
+tempobjs++;
+}
+}
+return tempobjs;
+*/
+}
+void loop()
+{
+if(mapispawntimer.elapsed>mapispawntime)
+{
+mapispawntimer.restart();
+int tempobjs=get_objs_in_area_length();
+if(tempobjs>=maxobjs)
+{
+return;
+}
+else
+{
+spawn_rand_obj(minx, maxx,miny, maxy,minz, maxz, imap, mapobjs);
+}
+}
+}
+}
+string get_tile_at(int x, int y, int z, string mapname, bool includeglobal=true)
+{
+string outval;
+if(includeglobal==true)
+{
+int index=get_map_index(mapname);
+if(index<0)
+{
+/*
+int s=get_shelter_index(mapname);
+if(s>-1)
+{
+string map=shelters[s].generate_map();
+string[] p1=string_split(map, "\r\n", false);
+for(int i=0; i<p1.length(); i++)
+{
+string[] p2=string_split(p1[i], ":", false);
+if(p2[0]=="tile" and p2.length()>7)
+{
+int minx=stn(p2[1]);
+int maxx=stn(p2[2]);
+int miny=stn(p2[3]);
+int maxy=stn(p2[4]);
+int minz=stn(p2[5]);
+int maxz=stn(p2[6]);
+if(x>=minx and x<=maxx and y>=miny and y<=maxy and z>=minz and z<=maxz) return p2[7];
+}
+}
+}
+*/
+return "";
+}
+else
+{
+outval=maps[index].return_tile(x, y, z);
+}
+}
+return outval;
+}
+string[] delinear(string a)
+{
+return string_split(a, "\r\n", false);
+}
+int get_map_index(string name)
+{
+for(uint i=0; i<maps.length(); i++)
+{
+if(maps[i].name==name)
+{
+return i;
+}
+}
+return -1;
+}
+void init_mapsystem()
+{
+maps.resize(0);
+string[] mapfiles=find_files("maps/*.map");
+for(uint i=0; i<mapfiles.length(); i++)
+{
+string workingname=string_replace(mapfiles[i], ".map", "", true);
+mapdata temp(workingname);
+maps.insert_last(temp);
+}
+}
+void maploop()
+{
+for(uint i=0; i<maps.length(); i++)
+{
+maps[i].loop();
+}
+}
+bool can_spawn_item_at(int x, int y, int z, string mapname,string item)
+{
+//if(shelter_exists(mapname)) return true;
+string[] tempi;
+bool ret=true;
+int ind=get_map_index(mapname);
+if(ind<0)
+{
+return false;
+}
+string d=maps[ind].rawdata;
+string[] text=string_split(d,"\r\n",false);
+for(uint i=0; i<text.length(); i++)
+{
+string[] parsed=string_split(text[i],":",false);
+if(parsed[0]=="noitems" and parsed.length()>7)
+{
+int minx=string_to_number(parsed[1]);
+int maxx=string_to_number(parsed[2]);
+int miny=string_to_number(parsed[3]);
+int maxy=string_to_number(parsed[4]);
+int minz=stn(parsed[5]);
+int maxz=stn(parsed[6]);
+for(uint x=7; x<parsed.length(); x++)
+{
+tempi.insert_last(parsed[x]);
+}
+if(minx<=x and maxx>=x and miny<=y and maxy>=y and minz<=z and maxz>=z and tempi.find(item)>-1)
+{
+ret=false;
+}
+}
+}
+return ret;
+}

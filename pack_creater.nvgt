@@ -1,0 +1,61 @@
+#include "speech.nvgt"
+string key;
+string foldername;
+string[] file_list;
+pack_file sounds;
+void main()
+{
+foldername = input_box("包创建器","输入文件夹名称");
+if(foldername.is_empty())
+{
+alert("包创建器","文件夹名称不能为空");
+exit();
+}
+key = input_box("包创建器","输入加密密钥");
+if(key.is_empty())
+{
+alert("包创建器","加密密钥不能为空");
+exit();
+}
+get_in_total();
+alert("包创建器",file_list.length()+"个项目将被打包，按确定继续");
+creater();
+}
+void get_in_total(string path="")
+{
+string[] directories = find_directories(foldername+"/"+(path!=""?path+"/":"")+"*");
+string[] files = find_files(foldername+"/"+(path!=""?path+"/":"")+"*");
+if(directories.length()>0)
+{
+for(uint i = 0; i < directories.length(); i++)
+{
+get_in_total(path+"/"+directories[i]);
+}
+}
+for(uint i =0; i < files.length(); i++)
+{
+file_list.insert_last((path == ""?files[i]:path+"/"+files[i]));
+}
+}
+void creater()
+{
+sounds.create(foldername+".dat",key);
+show_window("working");
+for(uint i = 0; i < file_list.length(); i++)
+{
+wait(5);
+sounds.add_file(foldername+"/"+file_list[i],file_list[i]);
+}
+sounds.close();
+destroy_window();
+alert("包创建器","成功，"+file_list.length()+"个项目已打包到"+foldername+".dat");
+write_key();
+exit();
+}
+void write_key()
+{
+file f;
+f.open("packc.pdata","w");
+f.write(foldername+".dat;"+key);
+f.close();
+}

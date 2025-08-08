@@ -1,0 +1,17 @@
+/*Until now, nvgt has not been able to adapt pack_file well, so I am worried about the way to handle sound files in the future, I constructed this function in advance to prevent too big changes in the future.
+function string _get_sounds_(string sound_name)
+by tom.
+*/
+string _get_sounds_(string sound_name)
+{
+return sound_name;
+//return "sounds/"+sound_name;
+}
+void pos()
+{
+p.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+sourcepool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+mpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+distpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+objpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+}

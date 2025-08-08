@@ -1,0 +1,58 @@
+void dlg(string message)
+{
+speak(message);
+while(true)
+{
+if(connected) tk_loop();
+if (key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
+{
+speak(message);
+}
+if (key_pressed(KEY_RETURN) or key_pressed(KEY_ESCAPE))
+{
+break;
+}
+wait(5);
+}
+}
+
+void dlg_wait(string message, int waittime)
+{
+speak(message);
+timer d;
+while(true)
+{
+if(connected) tk_loop();
+if (key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
+{
+speak(message);
+}
+if(d.elapsed>=waittime)
+{
+break;
+}
+wait(5);
+}
+}
+
+void dlg_audio (string file_name , string message = "")
+{
+sound p;
+p.load (file_name);
+p.play();
+if(message!="") speak(message);
+while(p.playing)
+{
+if(connected) tk_loop();
+if (message!="" and key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
+{
+speak(message);
+}
+if (key_pressed(KEY_RETURN) or key_pressed(KEY_ESCAPE))
+{
+fade(p);
+break;
+}
+wait(5);
+}
+}

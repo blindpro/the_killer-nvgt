@@ -1,0 +1,28 @@
+#include "includes/include.nvgt"
+void main()
+{
+p.behind_pitch_decrease = 5;
+distpool.behind_pitch_decrease = -5;
+distpool.pan_step = 0.2;
+mpool.behind_pitch_decrease = 5;
+objpool.behind_pitch_decrease = 5;
+set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+data_read();
+set_sound_global_hrtf(global_hrtf);
+/*
+if (currently_input_device != 1)
+{
+set_sound_input_device (currently_input_device);
+}
+*/
+if (currently_output_device != 1)
+{
+set_sound_output_device (currently_output_device);
+}
+create_buffer("all");
+create_buffer("chats");
+create_buffer("misc");
+create_buffer("kills");
+show_window ("the killer version "+netver);
+mainmenu();
+}

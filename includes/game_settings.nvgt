@@ -1,0 +1,198 @@
+class settings_category
+{
+string form_name;
+	audio_form@ f;
+	settings_category(string n, audio_form@ f) 
+{
+		this.form_name = n;
+		@this.f = @f;
+}
+}
+void game_settings()
+{
+int input_device_temp = currently_input_device;
+int output_device_temp = currently_output_device;
+sound menu_sound;
+int ms;
+int HRTF;
+int sl =0;
+audio_form f_UI;
+f_UI.create_window();
+if (sidescrolling==0)
+{
+ms= f_UI.create_checkbox("&menu side scrolling",false);
+}
+else
+{
+ms= f_UI.create_checkbox("&menu side scrolling",true);
+}
+int sml = f_UI.create_list("Select a music &track to be played in the main menu");
+string[] filelist = cast<pack_file@>(sound_default_pack).list_files();
+for(uint i=0; i<filelist.length(); i++)
+{
+if(string_left(filelist[i],7)=="menumus")
+menutracks.insert_last(filelist[i]);
+}
+for(uint i=0; i<menutracks.length(); i++)
+{
+f_UI.add_list_item(sml,i+1);
+}
+string msc= musictrack;
+msc.erase(0,7);
+msc.replace_this(".ogg","");
+f_UI.set_list_position (sml,string_to_number (msc)-1);
+audio_form f_audio;
+f_audio.create_window();
+if (get_sound_global_hrtf()==false)
+{
+HRTF= f_audio.create_checkbox("&3d audio system",false);
+}
+else
+{
+HRTF= f_audio.create_checkbox("&3d audio system",true);
+}
+int sd = f_audio.create_button("Select &device");
+audio_form f_updates;
+f_updates.create_window();
+int cu = f_updates.create_button("Check for &updates");
+int cus= f_updates.create_checkbox("&Check for updates at startup",false);
+audio_form f;
+f.create_window("game settings",false);
+	int f_category_list = f.create_list("&Category"); // The user will select categories from here. Note: you can also use create_list.
+	int f_category_display = f.create_subform("user interface settings", @f_UI); // Now by default, the main form embeds the general category form right there.
+settings_category@[] categories = {
+settings_category("user interface", @f_UI),
+settings_category("audio", @f_audio),
+settings_category("updates", @f_updates)
+};
+	for (uint i = 0; i < categories.length(); i++) {
+		f.add_list_item(f_category_list, categories[i].form_name);
+}
+	f.set_list_position(f_category_list, 0);
+	f.focus(0);
+	settings_category@ last_category = @categories[0]; // A handle to the currently selected category so we can detect changes to the selection.
+int iok = f.create_button("&ok");
+int icancel = f.create_button("cancel",false,true);
+while (true)
+{
+wait (5);
+f.monitor();
+if (f.is_pressed(iok))
+{
+if (f_UI.is_checked(ms)==true)
+{
+sidescrolling=1;
+}
+else
+{
+sidescrolling=0;
+}
+if (f_audio.is_checked(HRTF)==true)
+{
+global_hrtf = true;
+set_sound_global_hrtf(global_hrtf);
+}
+else
+{
+global_hrtf = false;
+set_sound_global_hrtf(global_hrtf);
+}
+musictrack="menumus"+string_to_number (sl + 1)+".ogg";
+menu_sound.pause ();
+currently_input_device = input_device_temp;
+//set_sound_input_device (currently_input_device);
+currently_output_device = output_device_temp;
+set_sound_output_device (currently_output_device);
+menutracks.resize(0);
+data_save();
+mainmenu();
+}
+else if (f.is_pressed(icancel))
+{
+menu_sound.pause ();
+menutracks.resize(0);
+mainmenu();
+}
+else if(f_UI.get_list_position (sml)!=sl)
+{
+sl=f_UI.get_list_position (sml);
+menu_sound.load ("menumus"+string_to_number (sl + 1)+".ogg");
+menu_sound.play ();
+}
+else if (f_UI.get_current_focus () != sml and menu_sound.playing == true)
+{
+menu_sound.pause ();
+}
+else if (f_audio.is_pressed(sd))
+{
+string[] output_devices= get_sound_output_devices();
+//output_devices.remove_at(0); 
+string[] input_devices= get_sound_input_devices();
+//input_devices.remove_at(0); 
+audio_form f_d;
+f_d.create_window("Select device",false);
+int output = f_d.create_list("Select &output device");
+for(uint i=0; i<output_devices.length(); i++)
+{
+f_d.add_list_item(output,output_devices[i]);
+}
+int input = f_d.create_list("Select &input device");
+for(uint i=0; i<input_devices.length(); i++)
+{
+f_d.add_list_item(input,input_devices[i]);
+}
+	f_d.set_list_position (output,currently_output_device-1);
+	f_d.set_list_position (input,currently_input_device-1);
+	f_d.focus(output);
+int iok = f_d.create_button("ok");
+int icancel = f_d.create_button("cancel",false,true);
+while (true)
+{
+wait (5);
+f_d.monitor();
+if (f_d.is_pressed(iok))
+{
+input_device_temp = f_d.get_list_position(input);
+output_device_temp = f_d.get_list_position(output);
+output_devices.resize(0);
+input_devices.resize(0);
+speak("set");
+speak("Select device Button Alt+d",false);
+break;
+}
+else if (f_d.is_pressed(icancel))
+{
+output_devices.resize(0);
+input_devices.resize(0);
+speak("canceled");
+speak("Select device Button Alt+d",false);
+break;
+}
+}
+}
+		int pos = f.get_list_position(f_category_list);
+		settings_category@ selected_category = null;
+		if (pos > -1 and pos < categories.length())
+			@selected_category = @categories[pos];
+		if (@last_category != @selected_category) 
+{
+			last_category.f.subform_control_index = -1; // Later improvements to audio form will make this line be handled internally.
+			last_category.f.focus_silently(0); // Make sure that if the category is reselected, it is focused on the first control.
+			@last_category = @selected_category;
+			f.set_subform(f_category_display, @selected_category.f);
+			f.set_caption(f_category_display, selected_category.form_name + " settings");
+		}
+		if (f.get_current_focus() == f_category_list and key_down(KEY_LALT) or key_down(KEY_RALT)) {
+			for (uint i = 0; i < categories.length(); i++) {
+				if (categories[i].f.check_shortcuts(true)) {
+					f.set_list_position(f_category_list, i);
+					@last_category = @categories[i];
+					f.set_subform(f_category_display, @last_category.f);
+					f.set_caption(f_category_display, last_category.form_name + " settings");
+					f.focus(f_category_display);
+					break;
+}
+}
+}
+}
+}

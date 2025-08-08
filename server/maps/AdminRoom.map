@@ -1,0 +1,39 @@
+mapname:AdminRoom
+maxx:50
+maxy:50
+maxz:500
+tile:0:50:0:50:0:0:balls
+tile:0:50:0:50:0:0:carpet2
+src:0:50:0:50:0:50:fridge.ogg:-1
+zone:0:50:0:50:0:50:the admin room
+tile:0:0:0:0:0:0:wallscreen
+src:0:0:0:0:0:0:clock.ogg:-1
+tile:0:0:0:0:0:0:wallbigmetal2
+zone:0:1:0:1:0:0:old clock
+tile:0:15:15:15:0:0:carpet
+zone:0:15:15:15:0:0:the admin bed
+tile:0:0:50:50:0:100:metal4
+zone:0:0:50:50:0:0:ladder to admin tower
+tile:0:50:0:50:100:100:plywood
+zone:0:0:50:50:1:99:climbing a ladder
+zone:0:50:0:50:100:150:the admin tower
+src:0:50:0:50:60:150:fridge2.ogg:-1
+tile:50:50:0:0:100:300:metal6
+zone:50:50:0:0:100:100:ladder to second flor
+tile:50:50:50:50:100:100:metal
+zone:50:50:50:50:100:100:ladder to second flor
+zone:50:50:50:50:101:299:climbing a ladder
+tile:50:50:50:50:100:300:metal
+tile:0:50:0:50:300:300:plank
+src:0:50:0:50:160:350:hum.ogg:-1
+tile:50:50:0:0:300:750:metal4
+tile:50:50:0:0:300:750:metal6
+tile:50:50:0:0:300:750:stairs
+zone:50:50:0:0:300:300:ladder to final flor
+zone:50:50:0:0:301:749:climbing a ladder
+zone:0:50:0:50:300:350:second flor
+zone:50:50:0:0:300:300:ladder to final flor
+zone:50:50:0:0:301:749:climbing a ladder
+src:0:50:0:50:360:800:office.ogg:-1
+zone:0:50:0:50:750:800:the final flor!
+tile:0:50:0:50:750:750:shelter
