@@ -2,7 +2,6 @@ dynamic_menu_pro m;
 void mainmenu()
 {
 setupmenu(true,true);
-m.add_item_tts("into","into");
 m.add_item_tts("Connection menu","connectionmenu");
 m.add_item_tts("game settings","game settings");
 m.add_item_tts("test speaker","speaker test");
@@ -12,12 +11,6 @@ if (m.get_item_name(r)=="connectionmenu")
 {
 m.fade_music(0);
 connectionmenu();
-}
-else if (m.get_item_name(r)=="into")
-{
-m.fade_music(0);
-game();
-mainmenu();
 }
 else if (m.get_item_name(r)=="game settings")
 {
@@ -48,7 +41,7 @@ m.add_item_tts("sign in ","play");
 m.add_item_tts("sign in  as","sign in  as");
 m.add_item_tts("new account","create a new account");
 m.add_item_tts("go back","go back");
-int r=m.run("Connection menu",true);
+int r=m.run("Select an option",true);
 if (m.get_item_name(r)=="create a new account")
 {
 m.fade_music(10);
@@ -71,6 +64,54 @@ else
 {
 wait(150);
 mainmenu();
+}
+}
+int yesno(string question)
+{
+setupmenu(false,true);
+m.add_item_tts("Yes","yes");
+m.add_item_tts("no","no");
+int mres=m.run(question,true);
+if (m.get_item_name(mres)=="yes")
+return 1;
+else
+return 2;
+}
+void checkarroundmenu()
+{
+setupmenu();
+m.add_item_tts("Stop tracking","stoptrack");
+for(uint i=0; i<zones.length(); i++)
+{
+string[] parsed=string_split(zones[i],":",false);
+if(parsed.length()>7)
+{
+m.add_item_tts(parsed[6]+" at "+parsed[0]+", "+parsed[2]+", "+parsed[4],parsed[6]);
+}
+}
+int mres=m.run("Find what?",true);
+if(m.get_item_name(mres)=="" or m.get_item_name(mres)=="stoptrack" or mres==0)
+{
+speak("Stopped tracking");
+trackx=-1; tracky=-1; trackz=-1; tracking="";
+return;
+}
+else
+{
+int z=get_zone_index(m.get_item_name(mres));
+if(z>-1)
+{
+string[] ps=string_split(zones[z],":",true);
+trackx=stn(ps[0]);
+tracky=stn(ps[2]);
+trackz=stn(ps[4]);
+tracking=ps[6];
+tell_where(trackx,tracky,trackz,"loctrack");
+}
+else
+{
+if(SCRIPT_COMPILED==false) speak("That zone could not be found");
+}
 }
 }
 void setupmenu(bool main=false, bool audo=false)
@@ -99,8 +140,68 @@ m.enable_side_scrolling=false;
 }
 m.wrap=true;
 m.enable_home_and_end=true;
-/*
 if(!main)
 m.set_callback(netclb,"");
-*/
 } 
+string inventorymenu(string item_array)
+{
+string ret;
+string[]inventory_items=string_split(item_array,"\r\n",false);
+uint itemcount=0;
+m.reset(true);
+m.open_sound="invopen.ogg";
+m.click_sound="invmove.ogg";
+m.enter_sound="";
+m.wrap_sound="";
+m.enable_first_letter_navigation=true;
+m.enable_up_and_down=true;
+m.enable_side_scrolling=true;
+m.enable_left_and_right=true;
+m.enable_home_and_end=true;
+m.set_callback(invclb,"");
+for(uint i=0; i<inventory_items.length(); i++)
+{
+string[] i2=string_split(inventory_items[i],"=",false);
+itemcount+=1;
+m.add_item_tts(i2[0]+", you have "+i2[1],i2[0]);
+}
+int r=m.run("inventory menu with "+itemcount+" items",true);
+send_reliable(0, "invclose", 0);
+if(m.get_item_name(r)=="" or r==0) return "";
+return m.get_item_name(r);
+}
+int invclb(dynamic_menu_pro@ im, string data)
+{
+tk_loop();
+if(key_pressed(KEY_SPACE))
+{
+if(key_down(KEY_LSHIFT) and key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
+{
+send_reliable(0,"giveitem "+im.get_item_name(im.get_position()),0);
+return m.get_position();
+}
+if(key_down(KEY_LSHIFT) and key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
+{
+send_reliable(0,"auctionitem "+im.get_item_name(im.get_position()),0);
+return m.get_position();
+}
+}
+return 0;
+}
+string invmenu()
+{
+timer resetcharstimer;
+send_reliable(0,"invopen",0);
+string content=inv;
+if(content=="") {
+speak("no items");
+return"";
+}
+string item1=inventorymenu(content);
+return item1;
+}
+int netclb(dynamic_menu_pro@ m, string data)
+{
+if(n.connected_peers>0&&connected) tk_loop();
+return 0;
+}

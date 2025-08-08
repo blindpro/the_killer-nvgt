@@ -21,7 +21,7 @@ maxy= source_maxy;
 minz=source_minz;
 maxz=source_maxz;
 soundfile=file;
-source_sound=sourcepool.play_3d(soundfile, me.x, me.y, me.z, lx, miny, minz, facing, true);
+source_sound=sourcepool.play_3d(soundfile, mr.x, mr.y, me.z, lx, miny, minz, facing, true);
 id=source_id;
 sourcepool.update_sound_3d(source_sound, lx, miny, minz);
 paused=source_paused;
@@ -151,20 +151,3 @@ void change_source_volume(int v)
 fade_pool(sourcepool,0.25,v);
 }
 
-void fade_pool(sound_pool@ handle, double time=0.25, double minvol=-40)
-{
-for(double current=0;current>minvol;current-=time)
-{
-for(uint x=0;x<handle.items.length();x++)
-{
-//e=n.request();
-if(@handle.items[x].handle==null)
-continue;
-if(handle.items[x].handle.playing==false)
-continue;
-handle.items[x].handle.volume=handle.items[x].handle.volume-time;
-}
-wait(5);
-}
-handle.destroy_all();
-}

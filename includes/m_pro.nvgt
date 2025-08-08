@@ -348,12 +348,9 @@ if (enable_first_letter_navigation==true)
 get_characters();
 string char;
 string test;
-touch_gesture_manager touch;
-touch_keyboard_interface touchgame(touch,{{"swipe_left1f",KEY_LEFT}, {"swipe_right1f",KEY_RIGHT}, {"swipe_up1f",KEY_UP}, {"swipe_down1f",KEY_DOWN}, {"double_tap1f",KEY_RETURN}});
-touch.add_touch_interface(touchgame);
 while(true)
 {
-touch.monitor();
+
 // Invoke the user callback.
 if (enable_first_letter_navigation==true)
 {
@@ -724,6 +721,8 @@ running=false;
 return 0;
 }
 }
+if (music.playing)
+{
 if (key_pressed(volkeycheck) and music_added==true)
 {
 if(speech_output>0 and speech_output<5)
@@ -750,6 +749,7 @@ if (key_down(volkeyup) and voltimer.elapsed>=voltime)
 music.volume=music.volume+2;
 menumusvol=music.volume;
 voltimer.restart();
+}
 }
 if(enable_up_and_down==true and key_pressed(KEY_UP)==false and up.pressing() or enable_left_and_right==true and key_pressed(KEY_LEFT)==false and left.pressing())
 {

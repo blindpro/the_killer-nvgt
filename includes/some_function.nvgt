@@ -2,27 +2,93 @@ int stn (string number)
 {
 	return string_to_number (number);
 }
-void get_menu_sounds_list()
+string get_script_path()
 {
-	string[] filelist = sound_default_pack.list_files ();
-	for(uint i=0; i<filelist.length(); i++)
-	{
-		if(string_left(filelist[i],7)=="menumus")
-		menutracks.insert_last(filelist[i]);
-	}
+string scriptpath;
+if(SCRIPT_COMPILED==false)
+{
+scriptpath=SCRIPT_CURRENT_FILE;
 }
-void get_audio_devices_list()
+else
 {
-	string[]@ output_devices= get_sound_output_devices();
-	output_devices.remove_at(0); 
-	for(uint i=0; i<output_devices.length(); i++)
-	{
-		opd.insert_last(output_devices[i]);
-	}
-	string[]@ input_devices= get_sound_input_devices();
-	input_devices.remove_at(0); 
-	for(uint i=0; i<input_devices.length(); i++)
-	{
-		ipd.insert_last(input_devices[i]);
-	}
+scriptpath=SCRIPT_EXECUTABLE;
+}
+return scriptpath;
+}
+bool is_sound_number(string t)
+{
+t=string_replace(t, ".", "", true);
+t=string_replace(t, "-", "", true);
+if(string_is_digits(t))
+return true;
+return false;
+}
+bool is_sound_exists(string s)
+{
+string[] filelist=cast<pack_file@>(sound_default_pack).list_files();
+for(uint i = 0; i < filelist.length(); i++)
+{
+if(s==filelist[i])
+{
+return true;
+}
+}
+return false;
+}
+bool get_total_distance(double sx,double sy,double sz,double tx,double ty,double tz,int mindist=20)
+{
+return (sx<tx+mindist and sx>tx-mindist and sy<ty+mindist and sy>ty-mindist and sz<tz+mindist and sz>tz-mindist);
+}
+string input_box(string title)
+{
+disable_input();
+audio_form f;
+f.create_window("",false,false);
+int box_text = f.create_input_box(title,"","",0,false,true,false);
+int ok = f.create_button("ok",true);
+int cancel = f.create_button("cancel",false,true);
+f.focus(box_text);
+while (true)
+{
+wait (5);
+f.monitor();
+tk_loop();
+if(f.is_pressed(ok))
+{
+string text = f.get_text(box_text);
+if(text=="")
+{
+f.focus(box_text);
+}
+else
+{
+enable_input();
+return text;
+}
+}
+if(f.is_pressed(cancel))
+{
+enable_input();
+speak("canceled");
+return "";
+}
+}
+return "";
+}
+void tell_where(int x, int y, int z, string soundname, bool include_locations=false)
+{
+if(z>me.z)
+go="above, ";
+else if(z<me.z)
+go="below, ";
+go4=calculate_x_y_string(calculate_x_y_angle(mr.x,mr.y,x,y,facing));
+string boing="";
+if(include_locations==true)
+{
+boing=" in "+get_zone(x,y,z)+" ";
+}
+int dist=get_3d_distance(mr.x,mr.y,me.z,x,y,z);
+speak(go+go4+" ("+dist+" tiles away) "+boing+"at "+x+", "+y+", "+z);
+p.play_3d(soundname+".ogg",mr.x,mr.y,me.z,trackx,tracky,trackz,calculate_theta(facing),false);
+go="";
 }

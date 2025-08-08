@@ -45,19 +45,30 @@ return t;
 
 void load_map(string data)
 {
+//speak("loading map...");
+maploadtimer.restart();
+sound loading;
+in_map=false;
+loading.load("maploading.ogg");
+loading.play_looped();
+p.destroy_all();
+destroy_all_sources();
 zm.reset();
 tm.reset();
+zones.resize(0);
 string[]@ map_data = data.split("\r\n");
 for (uint i=0; i<map_data.length(); i++)
 {
+net_loop();
 string[]@ parts = map_data[i].split(":");
 if(parts[0] == "tile")
 {
-add_tile (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7]);
+add_tile (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7],i);
 }
 else if(parts[0] == "zone")
 {
-add_zone (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7]);
+add_zone (string_to_number(parts[1]), string_to_number ( parts[2] ) , string_to_number (parts[3]) , string_to_number (parts[4]) , string_to_number (parts[5]) , string_to_number (parts[6]) , parts[7],i);
+if(parts.length()>7) zones.insert_last(string_replace(map_data[i], "zone:", "", true));
 }
 else if(parts[0]=="src" and parts.length()>7)
 {
@@ -74,6 +85,11 @@ else if(parts[0]=="amb" and parts.length()>7)
 {
 create_amb(stn(parts[1]),stn(parts[2]),stn(parts[3]),stn(parts[4]),stn(parts[5]),stn(parts[6]),parts[7]);
 }
+else if(parts[0]=="mapname")
+{
+mapname = parts[1];
+msound_map_update();
+}
 else if(parts[0]=="maxx")
 {
 max.x=string_to_number(parts[1]);
@@ -87,15 +103,30 @@ else if(parts[0]=="maxz")
 max.z=string_to_number(parts[1]);
 }
 }
+loading.stop();
+maploadtimer.pause();
+in_map=true;
 }
 
 void zone_speak (float x,float y,float z)
 {
 string t = get_zone( x , y , z );
+if(t!="")
+{
 if (t!=last_zone)
 {
 speak ( t );
 last_zone = t;
+}
+}
+else
+{
+t="uncharted area";
+if(last_zone!=t)
+{
+speak(t);
+last_zone = t;
+}
 }
 }
 void playstep()
@@ -187,18 +218,18 @@ if(onwall==false)
 {
 onwall=true;
 p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
-//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
 }
 me.x=ox;
 me.y=oy;
-mr.x=round(ox,3);
-mr.y=round(oy,3);
-//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+mr.x=round(ox,0);
+mr.y=round(oy,0);
+send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
 }
 else
 {
 playstep();
-//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
 }
 }
 void checkup()
@@ -209,14 +240,14 @@ if(onwall==false)
 {
 onwall=true;
 p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
-//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
 }
 bounceback(Up);
 }
 else
 {
 playstep();
-//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
 }
 }
 void checkdown()
@@ -227,14 +258,14 @@ if(onwall==false)
 {
 onwall=true;
 p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
-//send_reliable(0, "xplay "+get_tile_at(mr.x,mr.y,me.z), 0);
+send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
 }
 bounceback(Down);
 }
 else
 {
 playstep();
-//send_reliable(0, "move_to "+me.x+" "+me.y+" "+me.z, 0);
+send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
 }
 }
 void bounceback(string d)
@@ -247,6 +278,10 @@ else if(d==Down)
 {
 me.z++;
 }
+}
+string gmt()
+{
+return get_tile_at(me.x,me.y,me.z);
 }
 string gct()
 {
@@ -321,25 +356,51 @@ void playcamera()
 {
 for(uint i=0; i<players.length(); i++)
 {
+net_loop();
 if(players[i].x==camera.x and players[i].y==camera.y and players[i].z==camera.z)
 {
 p.play_extended_3d("beacon.ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
 }
+for(uint i = 0; i < objs.length(); i++)
+{
+net_loop();
+if(objs[i].x==camera.x&&objs[i].y==camera.y&&objs[i].z==camera.z&&objs[i].map==mapname)
+{
+p.play_extended_3d("obj.ogg", mr.x, mr.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+speak(objs[i].amount+objs[i].name);
+}
+}
 }
 if (gct()=="")
 {
-p.play_3d("cameraair.ogg",me.x,me.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+p.play_3d("cameraair.ogg",mr.x,mr.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
 }
 else if (gct()=="hazard")
 {
-p.play_3d("camerahazard.ogg",me.x,me.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+p.play_3d("camerahazard.ogg",mr.x,mr.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
 }
 else if (string_contains(gct(),"wall",1)>-1)
 {
-p.play_extended_3d(gct()+".ogg", me.x, me.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
+p.play_extended_3d(gct()+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
 }
 else
 {
-p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", me.x, me.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
 }
+}
+int get_zone_index(string z)
+{
+int r=-1;
+for(uint i=0; i<zones.length(); i++)
+{
+string[] parsed=string_split(zones[i],":",true);
+if(parsed.length()>5)
+{
+if(parsed[6]==z)
+{
+r=i;
+}
+}
+}
+return r;
 }

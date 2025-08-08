@@ -1,0 +1,70 @@
+void fade_pool(sound_pool@ handle, double time=0.25, double minvol=-40)
+{
+for(double current=0;current>minvol;current-=time)
+{
+for(uint x=0;x<handle.items.length();x++)
+{
+//e=n.request();
+if(@handle.items[x].handle==null)
+continue;
+if(handle.items[x].handle.playing==false)
+continue;
+handle.items[x].handle.volume=handle.items[x].handle.volume-time;
+}
+wait(5);
+}
+handle.destroy_all();
+}
+void fade_all(sound_pool@ handle, sound_pool@ handle2, sound_pool@ handle3, sound_pool@ handle4, sound_pool@handle5,double time=0.25, double minvol=-40)
+{
+for(double current=0;current>minvol;current-=time)
+{
+for(uint x=0;x<handle.items.length();x++)
+{
+if(@handle.items[x].handle==null)
+continue;
+if(handle.items[x].handle.playing==false)
+continue;
+handle.items[x].handle.volume=handle.items[x].handle.volume-time;
+}
+for(uint y=0;y<handle2.items.length();y++)
+{
+if(@handle2.items[y].handle==null)
+continue;
+if(handle2.items[y].handle.playing==false)
+continue;
+handle2.items[y].handle.volume=handle2.items[y].handle.volume-time;
+}
+for(uint z=0;z<handle3.items.length();z++)
+{
+if(@handle3.items[z].handle==null)
+continue;
+if(handle3.items[z].handle.playing==false)
+continue;
+handle3.items[z].handle.volume=handle3.items[z].handle.volume-time;
+}
+for(uint w=0;w<handle4.items.length();w++)
+{
+if(@handle4.items[w].handle==null)
+continue;
+if(handle4.items[w].handle.playing==false)
+continue;
+handle4.items[w].handle.volume=handle4.items[w].handle.volume-time;
+}
+for(uint sourcesounds=0;sourcesounds<handle5.items.length();sourcesounds++)
+{
+if(@handle5.items[sourcesounds].handle==null)
+continue;
+if(handle5.items[sourcesounds].handle.playing==false)
+continue;
+handle5.items[sourcesounds].handle.volume=handle5.items[sourcesounds].handle.volume-time;
+}
+
+wait(5);
+}
+handle.destroy_all();
+handle2.destroy_all();
+handle3.destroy_all();
+handle4.destroy_all();
+handle5.destroy_all();
+}

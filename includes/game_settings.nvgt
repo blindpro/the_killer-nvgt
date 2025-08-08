@@ -10,6 +10,8 @@ string form_name;
 }
 void game_settings()
 {
+int input_device_temp = currently_input_device;
+int output_device_temp = currently_output_device;
 sound menu_sound;
 int ms;
 int HRTF;
@@ -25,17 +27,23 @@ else
 ms= f_UI.create_checkbox("&menu side scrolling",true);
 }
 int sml = f_UI.create_list("Select a music &track to be played in the main menu");
+string[] filelist = cast<pack_file@>(sound_default_pack).list_files();
+for(uint i=0; i<filelist.length(); i++)
+{
+if(string_left(filelist[i],7)=="menumus")
+menutracks.insert_last(filelist[i]);
+}
 for(uint i=0; i<menutracks.length(); i++)
 {
-f_UI.add_list_item(sml,"");
+f_UI.add_list_item(sml,i+1);
 }
 string msc= musictrack;
 msc.erase(0,7);
-msc.erase(1);
+msc.replace_this(".ogg","");
 f_UI.set_list_position (sml,string_to_number (msc)-1);
 audio_form f_audio;
 f_audio.create_window();
-if (sound_global_hrtf==false)
+if (get_sound_global_hrtf()==false)
 {
 HRTF= f_audio.create_checkbox("&3d audio system",false);
 }
@@ -81,23 +89,28 @@ sidescrolling=0;
 }
 if (f_audio.is_checked(HRTF)==true)
 {
-sound_global_hrtf = true;
+global_hrtf = true;
+set_sound_global_hrtf(global_hrtf);
 }
 else
 {
-sound_global_hrtf = false;
+global_hrtf = false;
+set_sound_global_hrtf(global_hrtf);
 }
 musictrack="menumus"+string_to_number (sl + 1)+".ogg";
 menu_sound.pause ();
 currently_input_device = input_device_temp;
+//set_sound_input_device (currently_input_device);
 currently_output_device = output_device_temp;
-set_sound_input_device (currently_input_device);
 set_sound_output_device (currently_output_device);
+menutracks.resize(0);
+data_save();
 mainmenu();
 }
 else if (f.is_pressed(icancel))
 {
 menu_sound.pause ();
+menutracks.resize(0);
 mainmenu();
 }
 else if(f_UI.get_list_position (sml)!=sl)
@@ -112,7 +125,50 @@ menu_sound.pause ();
 }
 else if (f_audio.is_pressed(sd))
 {
-devices_dialog();
+string[] output_devices= get_sound_output_devices();
+output_devices.remove_at(0); 
+string[] input_devices= get_sound_input_devices();
+input_devices.remove_at(0); 
+audio_form f_d;
+f_d.create_window("Select device",false);
+int output = f_d.create_list("Select &output device");
+for(uint i=0; i<output_devices.length(); i++)
+{
+f_d.add_list_item(output,output_devices[i]);
+}
+int input = f_d.create_list("Select &input device");
+for(uint i=0; i<input_devices.length(); i++)
+{
+f_d.add_list_item(input,input_devices[i]);
+}
+	f_d.set_list_position (output,currently_output_device-1);
+	f_d.set_list_position (input,currently_input_device-1);
+	f_d.focus(output);
+int iok = f_d.create_button("ok");
+int icancel = f_d.create_button("cancel",false,true);
+while (true)
+{
+wait (5);
+f_d.monitor();
+if (f_d.is_pressed(iok))
+{
+input_device_temp = f_d.get_list_position(input)+1;
+output_device_temp = f_d.get_list_position(output)+1;
+output_devices.resize(0);
+input_devices.resize(0);
+speak("set");
+speak("Select device Button Alt+d",false);
+break;
+}
+else if (f_d.is_pressed(icancel))
+{
+output_devices.resize(0);
+input_devices.resize(0);
+speak("canceled");
+speak("Select device Button Alt+d",false);
+break;
+}
+}
 }
 		int pos = f.get_list_position(f_category_list);
 		settings_category@ selected_category = null;
@@ -140,41 +196,3 @@ devices_dialog();
 }
 }
 }
-void devices_dialog()
-{
-audio_form f;
-f.create_window("Select device",false);
-int output = f.create_list("Select &output device");
-for(uint i=0; i<opd.length(); i++)
-{
-f.add_list_item(output,opd[i]);
-}
-int input = f.create_list("Select &input device");
-	f.set_list_position (output,currently_output_device-1);
-for(uint i=0; i<ipd.length(); i++)
-{
-f.add_list_item(input,ipd[i]);
-}
-	f.set_list_position (input,currently_input_device-1);
-	f.focus(output);
-int iok = f.create_button("ok");
-int icancel = f.create_button("cancel",false,true);
-while (true)
-{
-wait (5);
-f.monitor();
-if (f.is_pressed(iok))
-{
-input_device_temp = f.get_list_position(input)+1;
-output_device_temp = f.get_list_position(output)+1;
-speak("set");
-break;
-}
-else if (f.is_pressed(icancel))
-{
-speak("canceled");
-break;
-}
-}
-}
-

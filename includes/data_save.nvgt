@@ -4,12 +4,13 @@ json_object js;
 js.set ("menumusvol",menumusvol);
 js.set ("menu_sidescrolling",sidescrolling);
 js.set ("menu_musictrack",musictrack);
-js.set ("3d_audio_system",sound_global_hrtf);
+js.set ("3d_audio_system",global_hrtf);
 js.set ("user_name",name);
 js.set ("user_password",pass);
 js.set ("user_mail",mail);
 js.set ("currently_input_device",currently_input_device);
 js.set ("currently_output_device",currently_output_device);
+js.set ("speakonlinemsgs",speakonlinemsgs);
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -17,14 +18,14 @@ directory_create(DIRECTORY_APPDATA+"TheKiller");
 }
 file f;
 f.open (DIRECTORY_APPDATA+"TheKiller\\config.dat","wb");
-f.write (string_base64_encode(js.stringify(),STRING_BASE64_DEFAULT));
+f.write (string_aes_encrypt(js.stringify(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(!["));
 f.close ();
 }
 void data_read ()
 {
 file f;
 f.open (DIRECTORY_APPDATA+"TheKiller\\config.dat","rb");
-string data = string_base64_decode(f.read(),STRING_BASE64_PADLESS);
+string data = string_aes_decrypt(f.read(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(![");
 f.close ();
 if (data=="")
 {
@@ -38,12 +39,13 @@ try
 menumusvol = js["menumusvol"];
 sidescrolling=js["menu_sidescrolling"];
 musictrack = js["menu_musictrack"];
-sound_global_hrtf = js["3d_audio_system"];
+global_hrtf = js["3d_audio_system"];
 name = js["user_name"];
 pass = js["user_password"];
 mail = js["user_mail"];
 currently_input_device = js["currently_input_device"];
 currently_output_device = js["currently_output_device"];
+speakonlinemsgs = js["speakonlinemsgs"];
 }
 catch 
 {
