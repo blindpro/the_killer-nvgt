@@ -141,8 +141,8 @@ for(uint i=0; i<input_devices.length(); i++)
 {
 f_d.add_list_item(input,input_devices[i]);
 }
-	f_d.set_list_position (output,currently_output_device-1);
-	f_d.set_list_position (input,currently_input_device-1);
+	f_d.set_list_position (output,currently_output_device);
+	f_d.set_list_position (input,currently_input_device);
 	f_d.focus(output);
 int iok = f_d.create_button("ok");
 int icancel = f_d.create_button("cancel",false,true);
