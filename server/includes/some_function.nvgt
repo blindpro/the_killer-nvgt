@@ -1,4 +1,0 @@
-int stn (string number)
-{
-	return string_to_number (number);
-}
