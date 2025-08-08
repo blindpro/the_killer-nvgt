@@ -2,23 +2,30 @@
 string key;
 string foldername;
 string[] file_list;
+string filename;
 pack_file sounds;
+sound@ progress_sound;
+tone_synth progress_synth;
+timer t;
 void main()
 {
-foldername = input_box("包创建器","输入文件夹名称");
+foldername = input_box("pack_creater","Enter folder name");
 if(foldername.is_empty())
 {
-alert("包创建器","文件夹名称不能为空");
 exit();
 }
-key = input_box("包创建器","输入加密密钥");
+filename = input_box("pack_creater","Enter file name");
+if(filename.is_empty())
+{
+exit();
+}
+key = input_box("pack_creater","Enter encryption key");
 if(key.is_empty())
 {
-alert("包创建器","加密密钥不能为空");
 exit();
 }
 get_in_total();
-alert("包创建器",file_list.length()+"个项目将被打包，按确定继续");
+alert("pack_creater",file_list.length()+" files will be packaged, press enter to continue.");
 creater();
 }
 void get_in_total(string path="")
@@ -39,16 +46,26 @@ file_list.insert_last((path == ""?files[i]:path+"/"+files[i]));
 }
 void creater()
 {
-sounds.create(foldername+".dat",key);
+int percent = -1;
+sounds.create(filename,key);
 show_window("working");
+t.restart();
 for(uint i = 0; i < file_list.length(); i++)
 {
 wait(5);
+double l=file_list.length(), ind = i;
+int perc = ind/l*100.0;
+if(percent!=perc)
+{
+percent = perc;
+beep_progress(percent);
+}
 sounds.add_file(foldername+"/"+file_list[i],file_list[i]);
 }
 sounds.close();
 destroy_window();
-alert("包创建器","成功，"+file_list.length()+"个项目已打包到"+foldername+".dat");
+t.pause();
+alert("pack_creater","success!"+file_list.length()+" files have been packaged into "+filename+",time:"+t.elapsed+"MS.");
 write_key();
 exit();
 }
@@ -56,6 +73,21 @@ void write_key()
 {
 file f;
 f.open("packc.pdata","w");
-f.write(foldername+".dat;"+key);
+f.write(filename+";"+key);
 f.close();
+}
+void beep_progress(double value)
+{
+value = round(value,0);
+int sound_pan = value-50;
+if(value<0) value = 0;
+if(value>100) value = 100;
+int freq = 110*2**(value/25);
+progress_synth.waveform_type=4;
+progress_synth.freq_ms(freq,40);
+progress_synth.set_edge_fades(1,1);
+@progress_sound = progress_synth.write_wave_sound();
+progress_synth.reset();
+progress_sound.pan = sound_pan;
+progress_sound.play();
 }
