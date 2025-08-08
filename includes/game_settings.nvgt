@@ -152,8 +152,8 @@ wait (5);
 f_d.monitor();
 if (f_d.is_pressed(iok))
 {
-input_device_temp = f_d.get_list_position(input)+1;
-output_device_temp = f_d.get_list_position(output)+1;
+input_device_temp = f_d.get_list_position(input);
+output_device_temp = f_d.get_list_position(output);
 output_devices.resize(0);
 input_devices.resize(0);
 speak("set");
