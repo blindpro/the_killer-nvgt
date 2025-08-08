@@ -126,9 +126,9 @@ menu_sound.pause ();
 else if (f_audio.is_pressed(sd))
 {
 string[] output_devices= get_sound_output_devices();
-output_devices.remove_at(0); 
+//output_devices.remove_at(0); 
 string[] input_devices= get_sound_input_devices();
-input_devices.remove_at(0); 
+//input_devices.remove_at(0); 
 audio_form f_d;
 f_d.create_window("Select device",false);
 int output = f_d.create_list("Select &output device");

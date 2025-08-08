@@ -36,7 +36,7 @@ void connectionmenu()
 setupmenu(false,true);
 if (name!="" and pass!="")
 {
-m.add_item_tts("sign in ","play");
+m.add_item_tts("sign in "+name,"play");
 }
 m.add_item_tts("sign in  as","sign in  as");
 m.add_item_tts("new account","create a new account");
@@ -69,6 +69,7 @@ mainmenu();
 int yesno(string question)
 {
 setupmenu(false,true);
+m.add_item_tts(question,"question",false);
 m.add_item_tts("Yes","yes");
 m.add_item_tts("no","no");
 int mres=m.run(question,true);
