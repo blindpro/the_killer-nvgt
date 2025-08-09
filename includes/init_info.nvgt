@@ -86,3 +86,4 @@ bool invchanged=false;
 timer posetimer;
 timer objtimer;
 bool global_hrtf = true;
+bool in_game = false;

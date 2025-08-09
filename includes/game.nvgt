@@ -8,10 +8,11 @@ walktimer.restart();
 bool loop = true;
 //string contents = get_file_contents("main.map");
 //load_map(contents);
+in_game = true;
 enable_input();
+async<int> call (tk_loop);
 while (loop)
 {
-tk_loop();
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
 if (key_pressed (KEY_ESCAPE))
 {
@@ -38,6 +39,7 @@ if(e==1)
 {
 send_reliable(0, "close", 0);
 xtimer.restart();
+in_game = false;
 x=true;
 }
 }
@@ -341,8 +343,8 @@ camera.x=me.x;
 camera.y=me.y;
 camera.z=me.z;
 }
-//refresh_window();
-wait (1);
+refresh_window();
+//wait ();
 }
 }
 
@@ -376,8 +378,11 @@ mainmenu();
 objs.resize(0);
 players.resize(0);
 }
-void tk_loop()
+int tk_loop()
 {
+while (in_game)
+{
+refresh_window();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 net_loop ();
@@ -412,6 +417,8 @@ fallloop();
 fallcheck();
 fallingloop();
 }
+}
+return (0);
 }
 void fallloop()
 {
