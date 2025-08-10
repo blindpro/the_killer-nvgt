@@ -87,3 +87,4 @@ timer posetimer;
 timer objtimer;
 bool global_hrtf = true;
 bool in_game = false;
+bool in_game1=false;

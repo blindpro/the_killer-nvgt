@@ -9,10 +9,16 @@ bool loop = true;
 //string contents = get_file_contents("main.map");
 //load_map(contents);
 in_game = true;
+in_game1 = true;
 enable_input();
-async<int> call (tk_loop);
+async<int> call (net_loop);
 while (loop)
 {
+tk_loop();
+if(in_game1==false)
+{
+exitgame();
+}
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
 if (key_pressed (KEY_ESCAPE))
 {
@@ -39,7 +45,6 @@ if(e==1)
 {
 send_reliable(0, "close", 0);
 xtimer.restart();
-in_game = false;
 x=true;
 }
 }
@@ -344,7 +349,7 @@ camera.y=me.y;
 camera.z=me.z;
 }
 refresh_window();
-//wait ();
+wait (5);
 }
 }
 
@@ -366,26 +371,27 @@ destroy_all_msounds();
 p.destroy_all();
 distpool.destroy_all();
 destroy_all_sources();
-x=false;
 in_map=false;
+x=false;
 tm.reset();
 zm.reset();
 focuseditem="";
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
-if(return_to_menu==true)
-mainmenu();
 objs.resize(0);
 players.resize(0);
-}
-int tk_loop()
+in_game =false;
+if(return_to_menu==true)
 {
-while (in_game)
+mainmenu();
+}
+}
+void tk_loop()
 {
 refresh_window();
 pos();
 zone_speak (mr.x , mr.y , me.z);
-net_loop ();
+//net_loop ();
 sourcecheckloop();
 playerloop();
 msoundcheckloop();
@@ -417,8 +423,6 @@ fallloop();
 fallcheck();
 fallingloop();
 }
-}
-return (0);
 }
 void fallloop()
 {

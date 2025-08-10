@@ -25,7 +25,7 @@ void objloop()
 {
 for(uint i = 0; i < objs.length(); i++)
 {
-net_loop();
+//net_loop();
 if(objs[i].beeptimer.elapsed>=750&&objs[i].map==mapname)
 {
 objs[i].beeptimer.restart();
@@ -50,7 +50,7 @@ if(data=="") return;
 string[]@ obj_data = data.split("\r\n");
 for(uint i = 0; i < obj_data.length(); i++)
 {
-net_loop();
+//net_loop();
 string[]@ parsed = obj_data[i].split("|");
 spawn_obj(stn(parsed[0]), stn(parsed[1]), stn(parsed[2]), parsed[3], parsed[4], stn(parsed[6]), stn(parsed[5]));
 }
@@ -59,7 +59,7 @@ int get_obj_index(int id)
 {
 for(uint i = 0; i < objs.length(); i++)
 {
-net_loop();
+//net_loop();
 if(objs[i].id==id)
 {
 return i;
