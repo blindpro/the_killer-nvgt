@@ -56,7 +56,7 @@ async<void> call (loops);
 while(true)
 {
 refresh_window ();
-loops();
+//loops();
 if(key_pressed(KEY_ESCAPE))
 {
 exit ();
@@ -836,6 +836,8 @@ send_reliable(0, sound+"|"+x+"|"+y+"|"+z+"|"+map, channel);
 }
 void loops()
 {
+while (true)
+{
 net_loop();
 playerloop();
 bodyfallloop();
@@ -850,6 +852,7 @@ saveloop();
 if(players.length()==0) {
 objs.resize(0);
 //remguns.resize(0);
+}
 }
 }
 void saveloop()

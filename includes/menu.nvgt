@@ -20,7 +20,7 @@ game_settings();
 else if (m.get_item_name(r)=="speaker test")
 {
 m.fade_music(10);
-say ("Test speaker");
+speak ("Test speaker");
 dlg_audio (_get_sounds_("speaker_test.ogg"));
 mainmenu();
 }
@@ -93,7 +93,7 @@ m.add_item_tts(parsed[6]+" at "+parsed[0]+", "+parsed[2]+", "+parsed[4],parsed[6
 int mres=m.run("Find what?",true);
 if(m.get_item_name(mres)=="" or m.get_item_name(mres)=="stoptrack" or mres==0)
 {
-say ("Stopped tracking");
+speak ("Stopped tracking");
 trackx=-1; tracky=-1; trackz=-1; tracking="";
 return;
 }
@@ -111,7 +111,7 @@ tell_where(trackx,tracky,trackz,"loctrack");
 }
 else
 {
-if(SCRIPT_COMPILED==false) say ("That zone could not be found");
+if(SCRIPT_COMPILED==false) speak ("That zone could not be found");
 }
 }
 }
@@ -195,7 +195,7 @@ timer resetcharstimer;
 send_reliable(0,"invopen",0);
 string content=inv;
 if(content=="") {
-say ("no items");
+speak ("no items");
 return"";
 }
 string item1=inventorymenu(content);
