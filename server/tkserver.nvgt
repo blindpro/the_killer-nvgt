@@ -52,6 +52,7 @@ load_compids();
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");
+async<void> call (loops);
 while(true)
 {
 refresh_window ();

@@ -59,7 +59,6 @@ zones.resize(0);
 string[]@ map_data = data.split("\r\n");
 for (uint i=0; i<map_data.length(); i++)
 {
-//net_loop();
 string[]@ parts = map_data[i].split(":");
 if(parts[0] == "tile")
 {
@@ -356,14 +355,12 @@ void playcamera()
 {
 for(uint i=0; i<players.length(); i++)
 {
-//net_loop();
 if(players[i].x==camera.x and players[i].y==camera.y and players[i].z==camera.z)
 {
 p.play_extended_3d("beacon.ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
 }
 for(uint i = 0; i < objs.length(); i++)
 {
-//net_loop();
 if(objs[i].x==camera.x&&objs[i].y==camera.y&&objs[i].z==camera.z&&objs[i].map==mapname)
 {
 p.play_extended_3d("obj.ogg", mr.x, mr.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);

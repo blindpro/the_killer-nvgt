@@ -23,13 +23,14 @@ id=oid;
 }
 void objloop()
 {
-for(uint i = 0; i < objs.length(); i++)
+obj@[] objs1(objs.length());
+objs1 = objs;
+for(uint i = 0; i < objs1.length(); i++)
 {
-//net_loop();
-if(objs[i].beeptimer.elapsed>=750&&objs[i].map==mapname)
+if(objs1[i].beeptimer.elapsed>=750&&objs1[i].map==mapname)
 {
-objs[i].beeptimer.restart();
-objpool.play_3d("obj.ogg", mr.x, mr.y, me.z, objs[i].x, objs[i].y, objs[i].z, calculate_theta(facing), false);
+objs1[i].beeptimer.restart();
+objpool.play_3d("obj.ogg", mr.x, mr.y, me.z, objs1[i].x, objs1[i].y, objs1[i].z, calculate_theta(facing), false);
 }
 }
 }
@@ -50,7 +51,6 @@ if(data=="") return;
 string[]@ obj_data = data.split("\r\n");
 for(uint i = 0; i < obj_data.length(); i++)
 {
-//net_loop();
 string[]@ parsed = obj_data[i].split("|");
 spawn_obj(stn(parsed[0]), stn(parsed[1]), stn(parsed[2]), parsed[3], parsed[4], stn(parsed[6]), stn(parsed[5]));
 }
@@ -59,7 +59,6 @@ int get_obj_index(int id)
 {
 for(uint i = 0; i < objs.length(); i++)
 {
-//net_loop();
 if(objs[i].id==id)
 {
 return i;

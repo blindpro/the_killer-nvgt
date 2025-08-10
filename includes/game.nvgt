@@ -391,7 +391,7 @@ void tk_loop()
 refresh_window();
 pos();
 zone_speak (mr.x , mr.y , me.z);
-//net_loop ();
+
 sourcecheckloop();
 playerloop();
 msoundcheckloop();

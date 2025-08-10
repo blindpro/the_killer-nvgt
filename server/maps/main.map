@@ -3,7 +3,7 @@ maxx:500
 maxy:500
 maxz:230
 tile:0:500:0:500:0:0:grass
-ispawn:0:500:0:500:0:50:500:250:ammo:ammo:pack_of_5_antibiotic:coin_pack:coin_pack:metal_pack:pack_of_3_wirebomb:motion_bomb:pack_of_5_motion_bomb:remote_timebomb_controller:mine:pack_of_10_stun_dart:stun_dart:health_dart:remote_timebomb:pack_of_10_remote_timebomb:health_pack:wood_pack:wood_pack:security_bomb:remote_gun:timebomb:pack_of_20_fire_extinguisher:fire_extinguisher:invisibility_shield:missile_interceptor:pack_of_30_missile_interceptor:grenade_pack:shield:pack_of_5_shield:impact_bomb:warp_box:gas_mask:antibiotic_canister:air_canister:remote_gun_controller:ultrabomb_locator:ultrabomb
+ispawn:0:500:0:500:0:0:50:50:ammo:ammo:pack_of_5_antibiotic:coin_pack:coin_pack:metal_pack:pack_of_3_wirebomb:motion_bomb:pack_of_5_motion_bomb:remote_timebomb_controller:mine:pack_of_10_stun_dart:stun_dart:health_dart:remote_timebomb:pack_of_10_remote_timebomb:health_pack:wood_pack:wood_pack:security_bomb:remote_gun:timebomb:pack_of_20_fire_extinguisher:fire_extinguisher:invisibility_shield:missile_interceptor:pack_of_30_missile_interceptor:grenade_pack:shield:pack_of_5_shield:impact_bomb:warp_box:gas_mask:antibiotic_canister:air_canister:remote_gun_controller:ultrabomb_locator:ultrabomb
 src:0:500:0:250:0:19:birds22.ogg
 src:0:500:250:500:0:19:rain1.ogg
 src:0:500:250:500:0:19:birds4.ogg
@@ -476,4 +476,4 @@ zone:299:402:358:358:0:10:South Of The Super Dome
 zone:402:402:359:500:0:10:East Of The Super Dome
 zone:298:298:384:500:0:10:West of The Super Dome
 vending_machine:5:95:30
-noitems:0:0:100:100:0:0:security_bomb:mine:wirebomb:motion_bomb:ultrabomb:remote_gun
+;noitems:0:0:100:100:0:0:security_bomb:mine:wirebomb:motion_bomb:ultrabomb:remote_gun

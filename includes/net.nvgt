@@ -213,7 +213,18 @@ n.destroy();
 prior_connected=false;
 connected=false;
 }
-
+/*
+void send_reliable(uint peer, string mess, uint channel)
+{
+async<void> call (send_reliablexc,peer,mess,channel);
+sent_packets+=1;
+}
+void send_unreliable(uint peer, string mess, uint channel)
+{
+async<void> call (send_unreliablexc,peer,mess,channel);
+sent_packets+=1;
+}
+*/
 void send_reliable(uint peer, string mess, uint channel)
 {
 if(net_debug) packetlog+=">"+mess+"\r\n";
