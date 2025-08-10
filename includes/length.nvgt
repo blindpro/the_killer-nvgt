@@ -18,4 +18,7 @@ text=string_replace(text,parsed[0],parsed[1],true);
 }
 return text;
 }
-
+string translation_callback(const string&in text)
+{
+return speak_length(text);
+}

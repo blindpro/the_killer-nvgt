@@ -31,10 +31,10 @@ if(connected==false or prior_connected==false)
 {
 if(SCRIPT_COMPILED==false||beta==true)
 {
-say ("connecting to "+netaddress+"...");
+speak ("connecting to "+netaddress+"...");
 }
 else
-say ("Attempting to connect...");
+speak ("Attempting to connect...");
 if(n.active)
 {
 reset_network();
@@ -64,7 +64,7 @@ mainmenu();
 if(e.type==event_connect and connected==false)
 {
 peer_id=e.peer_id;
-say ("logging in...");
+speak ("logging in...");
 send_reliable(0, "login|"+name+"|"+pass+"|"+netver+"|"+compid, 0);
 connected=true;
 }
@@ -79,7 +79,7 @@ game();
 }
 else if(e.type==event_receive and get_event_message(e.message)=="admin")
 {
-say ("You are an admin");
+speak ("You are an admin");
 admin=true;
 }
 else if(e.type==event_receive and get_event_message(e.message)=="mapname")
@@ -366,7 +366,7 @@ else if(parsed[0]=="speak")
 {
 string temp = s;
 temp.replace_this("speak|","");
-say (temp);
+speak (temp);
 }
 else if(parsed[0]=="notify")
 {
@@ -391,7 +391,7 @@ if(ms<1000) //1second.
 spk+=ms+" ms";
 else
 spk+=ms+" ms, "+ms_to_readable_time(ms);
-say (spk);
+speak (spk);
 }
 else if(parsed[0]=="hardland")
 {
@@ -436,7 +436,7 @@ add_buffer_item("misc",parsed[4]+" is online");
 }
 else
 {
-say (s);
+speak (s);
 }
 }
 if (e.channel==1 and readmessages==1)

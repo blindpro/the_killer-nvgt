@@ -156,16 +156,16 @@ input_device_temp = f_d.get_list_position(input);
 output_device_temp = f_d.get_list_position(output);
 output_devices.resize(0);
 input_devices.resize(0);
-say ("set");
-say ("Select device Button Alt+d",false);
+speak ("set");
+speak ("Select device Button Alt+d",false);
 break;
 }
 else if (f_d.is_pressed(icancel))
 {
 output_devices.resize(0);
 input_devices.resize(0);
-say ("canceled");
-say ("Select device Button Alt+d",false);
+speak ("canceled");
+speak ("Select device Button Alt+d",false);
 break;
 }
 }

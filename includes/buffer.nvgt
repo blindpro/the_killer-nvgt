@@ -61,7 +61,7 @@ void nextbufferitem()
 if (buffers[bufferpos].pos<(buffers[bufferpos].items.length()-1))
 {
 buffers[bufferpos].pos+=1;
-say (buffers[bufferpos].items[buffers[bufferpos].pos]);
+speak (buffers[bufferpos].items[buffers[bufferpos].pos]);
 }
 }
 void prevbufferitem()
@@ -69,7 +69,7 @@ void prevbufferitem()
 if (buffers[bufferpos].pos>0)
 {
 buffers[bufferpos].pos-=1;
-say (buffers[bufferpos].items[buffers[bufferpos].pos]);
+speak (buffers[bufferpos].items[buffers[bufferpos].pos]);
 }
 }
 void topbufferitem()
@@ -77,7 +77,7 @@ void topbufferitem()
 if (buffers[bufferpos].items.length()>0)
 {
 buffers[bufferpos].pos=0;
-say (buffers[bufferpos].items[buffers[bufferpos].pos]);
+speak (buffers[bufferpos].items[buffers[bufferpos].pos]);
 }
 }
 void bottombufferitem()
@@ -85,7 +85,7 @@ void bottombufferitem()
 if (buffers[bufferpos].items.length()>0)
 {
 buffers[bufferpos].pos=(buffers[bufferpos].items.length()-1);
-say (buffers[bufferpos].items[buffers[bufferpos].pos]);
+speak (buffers[bufferpos].items[buffers[bufferpos].pos]);
 }
 }
 void add_buffer_item(string buffername, string item,bool tr=true,bool silent=false)
@@ -99,11 +99,11 @@ if (buffers[i].name!="all")
 if(silent==false)
 {
 if(tr==true)
-//say (item,buffers[i].interrupt,false,true);
-say (item,false);
+//speak (item,buffers[i].interrupt,false,true);
+speak (item,false);
 else
-//say (item,buffers[i].interrupt,false,false);
-say (item,false);
+//speak (item,buffers[i].interrupt,false,false);
+speak (item,false);
 }
 }
 buffers[i].items.insert_last(item);
@@ -144,12 +144,12 @@ void activate_buffer()
 if (buffers[bufferpos].active==1)
 {
 buffers[bufferpos].active=0;
-say (buffers[bufferpos].name+" deactivated.");
+speak (buffers[bufferpos].name+" deactivated.");
 }
 else if (buffers[bufferpos].active==0)
 {
 buffers[bufferpos].active=1;
-say (buffers[bufferpos].name+" activated.");
+speak (buffers[bufferpos].name+" activated.");
 }
 }
 void interrupt_buffer()
@@ -157,12 +157,12 @@ void interrupt_buffer()
 if (buffers[bufferpos].interrupt==1)
 {
 buffers[bufferpos].interrupt=0;
-say (buffers[bufferpos].name+" not interrupting.");
+speak (buffers[bufferpos].name+" not interrupting.");
 }
 else if (buffers[bufferpos].interrupt==0)
 {
 buffers[bufferpos].interrupt=1;
-say (buffers[bufferpos].name+" interrupting.");
+speak (buffers[bufferpos].name+" interrupting.");
 }
 }
 int buffer_active(string buffername)
@@ -184,9 +184,9 @@ clipboard_copy_text(buffers[bufferpos].items[buffers[bufferpos].pos]);
 void speakfocusedbuffer()
 {
 if (buffers[bufferpos].items.length()>0)
-say (buffers[bufferpos].name+". "+(buffers[bufferpos].pos+1)+" of "+buffers[bufferpos].items.length()+" items. Buffer "+(bufferpos+1)+" of "+buffers.length());
+speak (buffers[bufferpos].name+". "+(buffers[bufferpos].pos+1)+" of "+buffers[bufferpos].items.length()+" items. Buffer "+(bufferpos+1)+" of "+buffers.length());
 else
-say (buffers[bufferpos].name+". Empty. Buffer "+(bufferpos+1)+" of "+buffers.length());
+speak (buffers[bufferpos].name+". Empty. Buffer "+(bufferpos+1)+" of "+buffers.length());
 }
 bool buffer_hidden(uint bufferindex)
 {
