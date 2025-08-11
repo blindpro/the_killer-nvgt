@@ -55,6 +55,11 @@ log("svr","The Killer server started.");
 async<void> call (loops);
 while(true)
 {
+if(savetimer.elapsed>=10000&&writeprefs==1)
+{
+savetimer.restart();
+saveloop();
+}
 refresh_window ();
 //loops();
 if(key_pressed(KEY_ESCAPE))
@@ -844,11 +849,6 @@ bodyfallloop();
 timepacketloop();
 maploop();
 objloop();
-if(savetimer.elapsed>=45000&&writeprefs==1)
-{
-savetimer.restart();
-saveloop();
-}
 if(players.length()==0) {
 objs.resize(0);
 //remguns.resize(0);
