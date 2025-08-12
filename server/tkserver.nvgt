@@ -146,7 +146,7 @@ if (players[index].inventory.get_keys().length()>0 and players[index].get_item_c
 {
 string wname=parsed[1];
 players[index].add_log_entry("use","used a "+wname);
-bool takeobj=true;
+bool takeobj=false;
 players[index].using1=true;
 if(players[index].get_item_count(wname)<0)
 {
@@ -155,6 +155,7 @@ players[index].give(wname,(0-players[index].get_item_count(wname)));
 }
 if(string_right(wname,9)=="ammo_pack")
 {
+takeobj=true;
 string[] p=string_split(wname,"_",false);
 int h;
 if(players[index].is_paid())
@@ -168,6 +169,7 @@ players[index].give("empty_pack", 1);
 if(string_left(wname,5)=="ammo_") return;
 if(string_contains(wname,"\"",1)>-1)
 {
+takeobj=true;
 players[index].hitby="Very bad admin abuse";
 players[index].health=-1;
 }
@@ -189,16 +191,19 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
-if(string_left(wname,8)=="pack_of_")
+else if(string_left(wname,8)=="pack_of_")
 {
+takeobj=true;
 string s=string_trim_left(wname,8); //remove this, we dont' need it.
 string[] p=string_split(s,"_",false);
 players[index].give(string_replace(s,p[0]+"_","",false),stn(p[0]));
 players[index].give("empty_pack", 1);
-//players[index].give(wname, 1);
 players[index].playsound("packopen");
 }
+if(takeobj)
+{
 players[index].give(wname, -1);
+}
 }
 players[index].using1=false;
 }

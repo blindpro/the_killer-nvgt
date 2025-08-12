@@ -322,10 +322,6 @@ spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], 
 else if(parsed[0]=="load_obj" and parsed.length()>=1)
 {
 string data = string_replace(s,"load_obj|","",false);
-file f;
-f.open("obj.txt","wb");
-f.write(data);
-f.close();
 load_obj(data);
 }
 else if(parsed[0]=="invstring")

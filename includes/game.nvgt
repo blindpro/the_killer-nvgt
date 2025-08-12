@@ -6,15 +6,13 @@ send_reliable(0,"objrequest",0);
 playing=true;
 walktimer.restart();
 bool loop = true;
-//string contents = get_file_contents("main.map");
-//load_map(contents);
 in_game = true;
 in_game1 = true;
-enable_input();
 async<int> call (net_loop);
 while (loop)
 {
 tk_loop();
+enable_input();
 if(in_game1==false)
 {
 exitgame();
@@ -355,13 +353,14 @@ wait (5);
 
 void exitgame(bool return_to_menu=true)
 {
+in_game =false;
 falling=false;
 me.x=0;me.y=0;me.z=0;
 //vesound.stop();
 //velfsound.stop();
 //music.stop();
 //if(firing) firing=false;
-//if(importbufferlogs==1) export_all_buffers();
+if(importbufferlogs==1) export_all_buffers();
 frozen=false;
 can_move=true;
 //if(net_debug) file_put_contents("packets.log",packetlog,255);
@@ -375,12 +374,12 @@ in_map=false;
 x=false;
 tm.reset();
 zm.reset();
+trm.reset();
+objs.resize(0);
+players.resize(0);
 focuseditem="";
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
-objs.resize(0);
-players.resize(0);
-in_game =false;
 if(return_to_menu==true)
 {
 mainmenu();

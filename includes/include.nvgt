@@ -30,4 +30,3 @@
 #include "Moving_sound.nvgt"
 #include "object.nvgt"
 #include "progress_bar.nvgt"
-#include "speech_.nvgt"

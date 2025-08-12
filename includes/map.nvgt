@@ -45,7 +45,7 @@ return t;
 
 void load_map(string data)
 {
-//say ("loading map...");
+speak ("loading map...");
 maploadtimer.restart();
 sound loading;
 in_map=false;
@@ -55,7 +55,9 @@ p.destroy_all();
 destroy_all_sources();
 zm.reset();
 tm.reset();
+trm.reset();
 zones.resize(0);
+travel_point.resize(0);
 string[]@ map_data = data.split("\r\n");
 for (uint i=0; i<map_data.length(); i++)
 {
@@ -114,7 +116,7 @@ if(t!="")
 {
 if (t!=last_zone)
 {
-say ( t );
+speak ( t );
 last_zone = t;
 }
 }
@@ -123,7 +125,7 @@ else
 t="uncharted area";
 if(last_zone!=t)
 {
-say (t);
+speak (t);
 last_zone = t;
 }
 }
@@ -364,7 +366,7 @@ for(uint i = 0; i < objs.length(); i++)
 if(objs[i].x==camera.x&&objs[i].y==camera.y&&objs[i].z==camera.z&&objs[i].map==mapname)
 {
 p.play_extended_3d("obj.ogg", mr.x, mr.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
-say (objs[i].amount+objs[i].name);
+speak (objs[i].amount+objs[i].name);
 }
 }
 }
