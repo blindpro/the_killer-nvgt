@@ -189,8 +189,18 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
-
+if(string_left(wname,8)=="pack_of_")
+{
+string s=string_trim_left(wname,8); //remove this, we dont' need it.
+string[] p=string_split(s,"_",false);
+players[index].give(string_replace(s,p[0]+"_","",false),stn(p[0]));
+players[index].give("empty_pack", 1);
+//players[index].give(wname, 1);
+players[index].playsound("packopen");
 }
+players[index].give(wname, -1);
+}
+players[index].using1=false;
 }
 }
 else if(parsed[0]=="whatnear")
