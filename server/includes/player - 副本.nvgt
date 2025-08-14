@@ -504,7 +504,7 @@ players[i].storestage=2;
 players[i].playsound("storewarning");
 send_reliable(players[i].peer_id,"alert! You will be moved out of the store in the next 60 seconds. Please finish any remaining purchases!",2);
 }
-//开始
+/*
 if(players[i].storetimer.elapsed>60000 and players[i].storestage==2 and players[i].map=="store")
 {
 int newx=random(0,500);
@@ -532,7 +532,7 @@ if(players[i].reloading)
 if(players[i].reloadtimer.elapsed>players[i].reloadtime)
 {
 players[i].reloading=false;
-//players[i].w.reload();
+players[i].w.reload();
 send_reliable(players[i].peer_id, "candraw", 0);
 }
 }
@@ -605,7 +605,7 @@ players[i].health-=random(100,10000);
 }
 }
 }
-//结尾
+*/
 if(players[i].underwater==true and players[i].mask==0)
 {
 if(players[i].airwarntimer.elapsed>=15000)
@@ -753,7 +753,6 @@ send_reliable(players[i].peer_id,"startmoving",0);
 spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
 }
-*/
 if(players[i].antibioticed==true)
 {
 if(players[i].awarnouttimer.elapsed>=20000)
@@ -767,7 +766,6 @@ players[i].health=antibiotic(players[i].health);
 players[i].oldhealth=players[i].health;
 }
 }
-/*
 if(players[i].invseconds>0 and players[i].invinsibility_starting==true)
 {
 if(players[i].invinsibilitytimer.elapsed>=750)
@@ -991,44 +989,4 @@ net_loop();
 }
 }
 }
-}
-string getdisables(string[] f)
-{
-/*未完成的函数
-dictionary temp;
-for(uint i=0; i<f.length; i++)
-{
-temp.set(f[i],"d");
-}
-return serialize(temp);
-*/
-return (0);
-}
-
-int antibiotic(int ch)
-{
-double limit=80000,scaler=100;
-if(ch<=5000&&ch>=3500) 
-{
-scaler=70;
-limit=40000;
-}
-else if(ch<3500&&ch>=2000)
-{
-scaler=50;
-limit=30000;
-}
-else if(ch<2000&&ch>1000)
-{
-scaler=25;
-limit=20000;
-}
-else if(ch<=1000)
-{
-scaler=15;
-limit=15000;
-}
-if(ch==0) return 10000;
-else ch+=floor((limit/ch)*scaler);
-return ch;
 }

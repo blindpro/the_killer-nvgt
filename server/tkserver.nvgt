@@ -1334,3 +1334,58 @@ return true;
 }
 return false;
 }
+
+void move_player(player@p, string map, int x, int y, int z, bool sound=true,bool command=false,int sindex=-1)
+{
+if(p.hidden>0 or p.invinsible) sound=false;
+if(sound==true)
+play("unspawn",p.x,p.y,p.z,p.map);
+p.x=x;
+p.y=y;
+p.z=z;
+bool mapchanged=false;
+if(map!=p.map or command==false) mapchanged=true;
+if(map!=p.map)
+{
+/*
+if(in_shelter(p.name)>-1 or p.map=="store") send_reliable(p.peer_id,"exitshelter",0);
+else if(shelter_exists(map))
+{
+int x2=get_shelter_index(map);
+if(x2>-1) send_reliable(p.peer_id,"entershelter "+shelters[x2].x+" "+shelters[x2].y+" "+shelters[x2].z+" "+shelters[x2].map,0);
+}
+else if(map=="store") send_reliable(p.peer_id,"entershelter "+storex+" "+storey+" "+storez+" main",0);
+*/
+}
+if(mapchanged)
+{
+p.map=map;
+string ite;
+/*
+for(uint i=0;i<sources.length();i++)
+{
+if(sources[i].map==map)
+ite+="src:"+sources[i].lx+":"+sources[i].rx+":"+sources[i].miny+":"+sources[i].maxy+":"+sources[i].minz+":"+sources[i].maxz+":"+sources[i].soundfile+":"+sources[i].id+"\r\n";
+}
+*/
+send_reliable(p.peer_id,"mapname "+map,0);
+/*
+if(sindex>-1)
+send_reliable(p.peer_id, "m_data "+shelters[sindex].generate_map()+ite, 0);
+else
+*/
+send_reliable(p.peer_id, "m_data "+get_map_text(map)+ite, 0);
+if(p.bleedsound!="" or p.bleeding)
+{
+destroy_moving_sound(p.bleedsound);
+p.bleedsound=spawn_moving_sound("bleeding.ogg",p.x,p.y,p.z,p.map);
+}
+}
+send_reliable(p.peer_id,"move "+p.x+" "+p.y+" "+p.z,0);
+if(mapchanged==false and p.bleedsound!="") update_moving_sound(p.bleedsound,p.x,p.y,p.z);
+if(sound==true)
+{
+send_reliable(0,"distsound movedist "+p.x+" "+p.y+" "+p.z+" "+p.map,0);
+play("move",p.x,p.y,p.z,p.map);
+}
+}

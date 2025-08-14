@@ -344,3 +344,58 @@ ret=false;
 }
 return ret;
 }
+string get_map_text(string map)
+{
+int ind=get_map_index(map);
+if(ind<0) return "";
+else return maps[ind].rawdata;
+}
+bool is_travelpoint(int x, int y, int z, string map)
+{
+bool ret=false;
+int ind=get_map_index(map);
+if(ind<0)
+{
+return false;
+}
+string d=maps[ind].rawdata;
+string[] text=string_split(d,"\r\n",false);
+for(uint i=0; i<text.length(); i++)
+{
+string[] parsed=string_split(text[i],":",false);
+if(parsed[0]=="door" && parsed.length()==12)
+{
+string doorx = parsed[1];
+string doory = parsed[2];
+string doorz = parsed[3];
+string finishx = parsed[4];
+string finishy = parsed[5];
+string finishz = parsed[6];
+string dtime = parsed[7];
+string ds1 = parsed[8];
+string ds2 = parsed[9];
+string ds3 = parsed[10];
+string ds4 = parsed[11];
+send_reliable(0, "door_at "+doorx+" "+doory+" "+doorz+" "+finishx+" "+finishy+" "+finishz+" "+dtime+" "+ds1+" "+ds2+" "+ds3+" "+ds4, 0);
+}
+if(parsed[0]=="travelpoint" and parsed.length()>11)
+{
+int minx=string_to_number(parsed[1]);
+int maxx=string_to_number(parsed[2]);
+int miny=string_to_number(parsed[3]);
+int maxy=string_to_number(parsed[4]);
+int minz=stn(parsed[5]);
+int maxz=stn(parsed[6]);
+string newmap=parsed[7];
+int newx=string_to_number(parsed[8]);
+int newy=string_to_number(parsed[9]);
+int newz=stn(parsed[10]);
+string text=parsed[11];
+if(minx<=x and maxx>=x and miny<=y and maxy>=y and minz<=z and maxz>=z)
+{
+ret=true;
+}
+}
+}
+return ret;
+}
