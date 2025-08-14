@@ -1,5 +1,5 @@
 #include "speech.nvgt"
-#include "bgt_compat.nvgt"//To make development easier
+#include "bgt_compat_own.nvgt"//To make development easier
 #include "compid_handler.nvgt"
 #include "file_contents.nvgt"
 #include "logger.nvgt"

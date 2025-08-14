@@ -200,6 +200,80 @@ players[index].give(string_replace(s,p[0]+"_","",false),stn(p[0]));
 players[index].give("empty_pack", 1);
 players[index].playsound("packopen");
 }
+else if(wname=="antibiotic")
+{
+if(players[index].antibioticed==true)
+{
+takeobj=false;
+send_reliable(players[index].peer_id,"Wait until your antibiotic ware's off!",0);
+return;
+}
+else if(players[index].statchangetimer.elapsed<20000)
+{
+takeobj=false;
+send_reliable(players[index].peer_id,"speak You can't use this yet!",0);
+return;
+}
+else
+{
+takeobj = true;
+players[index].playsound("antibiotic");
+players[index].antibiotictimer.restart();players[index].awarnouttimer.restart();
+players[index].antibioticed=true;
+}
+}
+else if(wname=="mini_antibiotic_pack")
+{
+takeobj = true;
+players[index].give("antibiotic",5);
+players[index].give("empty_pack", 1);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="tk_donation_pack")
+{
+takeobj = true;
+players[index].give("tank",10);
+players[index].give("aircraft",10);
+players[index].give("coin",10000);
+send_reliable(players[index].peer_id,"You have activated a donation pack! Thank you for donating!",2);
+send_reliable(players[index].peer_id,"play_s teamcreate.ogg",0);
+}
+else if(wname=="grenade_pack")
+{
+takeobj = true;
+players[index].give("grenade",10);
+players[index].give("empty_pack", 1);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="wood_pack")
+{
+int rand;
+takeobj = true;
+if(players[index].paid==1)
+rand=random(25, 50);
+else
+rand=random(5,15);
+players[index].give("wood",rand);
+players[index].give("empty_pack", 1);
+send_reliable(players[index].peer_id,"the pack contained "+rand+" wood!",2);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="metal_pack")
+{
+takeobj = true;
+int rand=random(20,50);
+players[index].give("metal",rand);
+players[index].give("empty_pack", 1);
+send_reliable(players[index].peer_id,"the pack contained "+rand+" metal!",2);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="ultra_antibiotic_pack")
+{
+takeobj = true;
+players[index].give("antibiotic",50);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+players[index].give("empty_pack", 1);
+}
 if(takeobj)
 {
 players[index].give(wname, -1);
