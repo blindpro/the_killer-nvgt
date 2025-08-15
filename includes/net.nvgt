@@ -358,6 +358,10 @@ add_buffer_item("misc",parsed[4]+" just went offline");
 }
 }
 }
+else if(parsed[0]=="isadmin")
+{
+admin=true;
+}
 else if(parsed[0]=="speak")
 {
 string temp = s;

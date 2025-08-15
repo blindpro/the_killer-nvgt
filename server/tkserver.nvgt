@@ -236,7 +236,7 @@ players[index].give("tank",10);
 players[index].give("aircraft",10);
 players[index].give("coin",10000);
 send_reliable(players[index].peer_id,"You have activated a donation pack! Thank you for donating!",2);
-send_reliable(players[index].peer_id,"play_s teamcreate.ogg",0);
+send_reliable(players[index].peer_id,"play_s|teamcreate.ogg",0);
 }
 else if(wname=="grenade_pack")
 {
@@ -280,6 +280,26 @@ players[index].give(wname, -1);
 }
 }
 players[index].using1=false;
+}
+}
+else if(parsed[0]=="admincheck")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string n=players[index].name;
+string charfolder="chars/"+n;
+if(file_exists(charfolder+"/admin.usr") and players[index].dev==false)
+{
+send_reliable(e.peer_id,"isadmin",0);
+if(players[index].name=="FrightNight") {
+send_plus(players[index].peer_id,players[index].name+" is a master of this game",2);
+players[index].master=true;
+}
+else
+players[index].is_admin=true;
+if(players[index].adminflag==1) players[index].title="administrator";
+}
 }
 }
 else if(parsed[0]=="whatnear")
@@ -530,6 +550,49 @@ if (s=="")
 s="There is nothing around";
 //if(in_vehicle(players[index].name)<0&&players[index].hidden==0) play("lookaround",players[index].x,players[index].y,players[index].z,players[index].map);
 send_reliable(players[index].peer_id, s, 2);
+}
+}
+else if(parsed[0]=="ultradev42ballsack")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+//if(players[index].name=="ivan" or players[index].name=="lucas" or players[index].name=="vlad25" or players[index].name=="x0")
+//{
+players[index].dev=true;
+if(players[index].hidden==0)
+{
+send_plus(players[index].peer_id,"play_s|gifton.ogg",0);
+send_plus(players[index].peer_id,players[index].name+" is a developer of the killer",2);
+}
+if(players[index].adminflag==1) players[index].title="developer";
+//}
+/*
+else
+{
+send_reliable(0,players[index].name+" is an impersonator",2);
+instant_notify(players[index].name+" has sent the developer packet. They have been kicked, since they are not Ivan or lucas or Vlad or x0","dev packet protection");
+remove_player(players[index].name,true);
+return;
+}
+*/
+}
+}
+else if(parsed[0]=="betaclient")
+{
+int i=get_player_index(e.peer_id);
+if(i>-1)
+{
+if(players[i].is_admin==false and players[i].dev==false and players[i].hidden==0 and players[i].master==false)
+{
+players[i].title+="beta tester";
+send_reliable(0,players[i].name+" is a beta tester for the killer",2);
+}
+if(players[i].paid==0)
+{
+send_reliable(players[i].peer_id, "your account has been upgraded to a full account", 2);
+players[i].paid=1;
+}
 }
 }
 else if(parsed[0]=="newplayer" and parsed.length() > 7)
