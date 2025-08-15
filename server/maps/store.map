@@ -41,3 +41,4 @@ src:10:10:10:10:0:0:restaurant.ogg:-1
 zone:0:0:0:0:0:0:press enter to purchase something from the weapon store:trackme
 zone:0:0:10:10:0:0:press enter to buy something from the misc store:trackme
 zone:10:10:10:10:0:0:press enter to buy something from the explosive store:trackme
+travelpoint:0:0:0:0:0:0:main:0:0:0:welcome
