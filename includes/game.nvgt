@@ -378,6 +378,7 @@ trm.reset();
 objs.resize(0);
 players.resize(0);
 focuseditem="";
+if(pinging) pinging = false;
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
 if(return_to_menu==true)
