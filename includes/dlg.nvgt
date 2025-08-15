@@ -4,6 +4,7 @@ speak (message);
 while(true)
 {
 if(connected) tk_loop();
+if(connected==false) copy_translation_text_loop();
 if (key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
 {
 speak (message);
@@ -23,6 +24,7 @@ timer d;
 while(true)
 {
 if(connected) tk_loop();
+if(connected==false) copy_translation_text_loop();
 if (key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
 {
 speak (message);
@@ -44,6 +46,7 @@ if(message!="") speak (message);
 while(p.playing)
 {
 if(connected) tk_loop();
+if(connected==false) copy_translation_text_loop();
 if (message!="" and key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
 {
 speak (message);

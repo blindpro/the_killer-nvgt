@@ -86,3 +86,5 @@ bool global_hrtf = true;
 bool in_game = false;
 bool in_game1=false;
 int importbufferlogs = 1;
+string t_text;
+string has_been_t_text;

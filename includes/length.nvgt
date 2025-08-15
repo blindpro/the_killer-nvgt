@@ -20,5 +20,23 @@ return text;
 }
 string translation_callback(const string&in text)
 {
-return speak_length(text);
+t_text = text;
+has_been_t_text = speak_length(t_text);
+return has_been_t_text;
+}
+void copy_translation_text_loop()
+{
+if(key_pressed(KEY_F12))
+{
+if(key_down(KEY_LALT)||key_down(KEY_RALT))
+{
+clipboard_set_text(t_text);
+speak("copy");
+}
+else
+{
+clipboard_set_text(has_been_t_text);
+speak("copy");
+}
+}
 }
