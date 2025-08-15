@@ -1422,7 +1422,7 @@ send_reliable(p.peer_id,"move|"+p.x+"|"+p.y+"|"+p.z,0);
 if(mapchanged==false and p.bleedsound!="") update_moving_sound(p.bleedsound,p.x,p.y,p.z);
 if(sound==true)
 {
-send_reliable(0,"distsound|movedist "+p.x+"|"+p.y+"|"+p.z+"|"+p.map,0);
+send_reliable(0,"distsound|movedist|"+p.x+"|"+p.y+"|"+p.z+"|"+p.map,0);
 play("move",p.x,p.y,p.z,p.map);
 }
 }

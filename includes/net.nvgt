@@ -432,7 +432,7 @@ add_buffer_item("misc",parsed[4]+" is online");
 }
 else if(parsed[0]=="mapname")
 {
-mapname=string_replace(s,"mapname ","",false);
+mapname=string_replace(s,"mapname|","",false);
 }
 else if(parsed[0]=="m_data")
 {
@@ -447,6 +447,18 @@ p.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 sourcepool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 mpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 distpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+}
+else if(parsed[0]=="distsound" and parsed.length()>5)
+{
+string soundname=parsed[1];
+int x=stn(parsed[2]);
+int y=stn(parsed[3]);
+int z=stn(parsed[4]);
+string soundmap=parsed[5];
+if(soundmap==mapname)
+distpool.play_3d(soundname+".ogg", me.x, me.y, me.z, x, y, z, facing, false);
+ else if(soundmap==shmap&&inshelter==true)
+shdistpool.play_3d(soundname+".ogg", sh.x, sh.y, sh.z, x, y, z, facing, false);
 }
 else
 {
@@ -486,7 +498,7 @@ if(parsed.length()>=5 and is_sound_number(parsed[1]) and is_sound_number(parsed[
 if(is_sound_exists(parsed[0]+".ogg") and parsed.length()==5)
 {
 if(parsed[4]==mapname&&inve==false&&frozen==false)
-p.play_3d(parsed[0]+".ogg", mr.x, mr.y, me.z, stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), calculate_theta(facing), false);
+p.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), calculate_theta(facing), false);
 }
 }
 }
