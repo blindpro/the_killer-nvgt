@@ -147,6 +147,10 @@ else
 speak ("Error: could not activate item!");
 }
 }
+if(key_pressed(KEY_RETURN))
+{
+send_reliable(0, "enter", 0);
+}
 if(key_pressed(KEY_COMMA))
 {
 if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
