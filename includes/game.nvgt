@@ -5,6 +5,12 @@ send_reliable(0,"invrequest",0);
 send_reliable(0,"objrequest",0);
 playing=true;
 walktimer.restart();
+if(SCRIPT_COMPILED)
+send_reliable(0,"admincheck",0);
+send_reliable(0,"teamcheck",0);
+if(SCRIPT_COMPILED==false) send_reliable(0,"ultradev42ballsack",0);
+if(SCRIPT_COMPILED and beta==true)
+send_reliable(0,"betaclient",0);
 bool loop = true;
 in_game = true;
 in_game1 = true;
@@ -382,6 +388,7 @@ trm.reset();
 objs.resize(0);
 players.resize(0);
 focuseditem="";
+if(pinging) pinging = false;
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
 if(return_to_menu==true)
@@ -394,7 +401,7 @@ void tk_loop()
 refresh_window();
 pos();
 zone_speak (mr.x , mr.y , me.z);
-
+copy_translation_text_loop();
 sourcecheckloop();
 playerloop();
 msoundcheckloop();

@@ -788,6 +788,7 @@ send_reliable(players[i].peer_id,"stopmoving",0);
 send_reliable(players[i].peer_id,"Invinsibility started!",0);
 players[i].playsound("invstart");
 }
+*/
 if(players[i].shieldshots>players[i].maxshields)
 {
 players[i].shieldshots=players[i].maxshields;
@@ -814,6 +815,7 @@ players[i].antibioticed=false;
 send_reliable(players[i].peer_id,"you are at max health and you can't go any higher!",0);
 }
 }
+/*
 if(players[i].shelter_building==true and players[i].map!="store")
 {
 if(players[i].buildtimer.elapsed>=7660)

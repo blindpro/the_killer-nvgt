@@ -204,5 +204,6 @@ return item1;
 int netclb(dynamic_menu_pro@ m, string data)
 {
 if(n.connected_peers>0&&connected) tk_loop();
+copy_translation_text_loop();
 return 0;
 }
