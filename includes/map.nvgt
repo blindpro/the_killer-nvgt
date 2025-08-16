@@ -45,13 +45,11 @@ return t;
 
 void load_map(string data)
 {
-speak ("loading map...");
 maploadtimer.restart();
 sound loading;
 in_map=false;
 loading.load("maploading.ogg");
 loading.play_looped();
-//p.destroy_all();
 destroy_all_sources();
 zm.reset();
 tm.reset();

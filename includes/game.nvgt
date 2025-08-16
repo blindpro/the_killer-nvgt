@@ -15,10 +15,10 @@ bool loop = true;
 in_game = true;
 in_game1 = true;
 async<int> call (net_loop);
+enable_input();
 while (loop)
 {
 tk_loop();
-enable_input();
 if(in_game1==false)
 {
 exitgame();
