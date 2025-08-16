@@ -11,6 +11,7 @@ js.set ("user_mail",mail);
 js.set ("currently_input_device",currently_input_device);
 js.set ("currently_output_device",currently_output_device);
 js.set ("speakonlinemsgs",speakonlinemsgs);
+js.set ("importbufferlogs",importbufferlogs);
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -46,6 +47,7 @@ mail = js["user_mail"];
 currently_input_device = js["currently_input_device"];
 currently_output_device = js["currently_output_device"];
 speakonlinemsgs = js["speakonlinemsgs"];
+importbufferlogs = js["importbufferlogs"];
 }
 catch 
 {
