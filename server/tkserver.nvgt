@@ -191,6 +191,25 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
+else if(wname=="shield")
+{
+if(players[index].shieldshots>=players[index].maxshields)
+{
+send_reliable(players[index].peer_id,"I think you'll be ok for now",0);
+return;
+}
+if(players[index].statchangetimer.elapsed<15000)
+{
+send_reliable(players[index].peer_id,"speak You can't use this yet!",0);
+return;
+}
+else
+{
+takeobj = true;
+players[index].shieldshots+=random(8,20);
+play("shieldon",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+}
 else if(string_left(wname,8)=="pack_of_")
 {
 takeobj=true;
@@ -238,12 +257,61 @@ players[index].give("coin",10000);
 send_reliable(players[index].peer_id,"You have activated a donation pack! Thank you for donating!",2);
 send_reliable(players[index].peer_id,"play_s|teamcreate.ogg",0);
 }
+else if(wname=="tk_warp_box_pack")
+{
+takeobj = true;
+players[index].playsound("gift");
+players[index].give("warp_box",20);
+send_reliable(players[index].peer_id,"you have opened a "+string_replace(wname,"_"," ",true)+"!",2);
+}
+else if(wname=="tk_mini_warp_box_pack")
+{
+takeobj = true;
+players[index].playsound("gift");
+players[index].give("warp_box",5);
+send_reliable(players[index].peer_id,"you have opened a "+string_replace(wname,"_"," ",true)+"!",2);
+}
+else if(wname=="tk_ultra_warp_box_pack")
+{
+takeobj = true;
+players[index].playsound("gift");
+players[index].give("warp_box",50);
+send_reliable(players[index].peer_id,"you have opened a "+string_replace(wname,"_"," ",true)+"!",2);
+}
+else if(wname=="tk_dollar_pack")
+{
+takeobj = true;
+players[index].give("tk_dollar",5);
+play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
 else if(wname=="grenade_pack")
 {
 takeobj = true;
 players[index].give("grenade",10);
 players[index].give("empty_pack", 1);
 play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="tk_ultra_health_potion_set")
+{
+takeobj = true;
+players[index].playsound("gift");
+players[index].give("tk_ultra_health_potion",5);
+send_reliable(players[index].peer_id,"you have opened a "+string_replace(wname,"_"," ",true)+"!",2);
+}
+else if(wname=="tk_shelter_pack")
+{
+takeobj = true;
+players[index].give("wood",500);
+players[index].give("security_bomb",5);
+players[index].give("mine",20);
+players[index].give("toolbox",1);
+players[index].give("remote_gun",10);
+players[index].give("remote_timebomb",10);
+players[index].give("fuel_tank",4);
+players[index].give("fire_extinguisher",5);
+if(players[index].get_item_count("remote_timebomb_controller")<1) players[index].give("remote_timebomb_controller",1);
+players[index].playsound("gift");
+send_reliable(players[index].peer_id,"you have opened a "+string_replace(wname,"_"," ",true)+"!",2);
 }
 else if(wname=="wood_pack")
 {
@@ -1001,6 +1069,23 @@ if(parsed[0]=="/newbie" and players[index].newb==1)
 players[index].newbtimer.restart();
 players[index].newb=2;
 players[index].playsound("newbiestopping");
+}
+else if(parsed[0]=="/give" and parsed.length()>3)
+{
+if(players[index].adminable() or beta==true)
+{
+int i=get_player_index_from(parsed[1]);
+if(i>-1)
+{
+players[i].give(parsed[2],stn(parsed[3]));
+send_reliable(e.peer_id,"you have sent "+parsed[3]+" "+string_replace(parsed[2],"_"," ",true)+"s to "+players[i].name,2);
+log("give",players[index].name+" just gave "+parsed[3]+" "+parsed[2]+"s to "+players[i].name+(players[index].itemtesting&&players[i].name==players[index].name ? " (while testing items),": ""),false,false);
+}
+else
+{
+send_reliable(e.peer_id,"Player "+parsed[1]+" not found.",2);
+}
+}
 }
 }
 }
