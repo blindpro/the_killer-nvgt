@@ -1004,7 +1004,7 @@ if(s=="")
 {
 return;
 }
-string[] parsed = s.split("|");
+string[] parsed = s.split(" ");
 int index=get_player_index(e.peer_id);
 if (index>-1)
 {
