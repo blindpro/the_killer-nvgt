@@ -391,6 +391,7 @@ focuseditem="";
 if(pinging) pinging = false;
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
+disable_input();
 if(return_to_menu==true)
 {
 mainmenu();
