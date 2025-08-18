@@ -102,14 +102,14 @@ if(key_pressed(KEY_F))
 {
 speak ("You are facing "+dir_to_string(getdir(facing)));
 }
-if(khome.pressing() and get_sound_master_volume()<0)
+if(khome.pressing() and round(get_sound_master_volume(),0)<0)
 {
-set_sound_master_volume(get_sound_master_volume()+1);
+set_sound_master_volume(round(get_sound_master_volume(),0)+1);
 p.play_stationary("volume_up.ogg",false);
 }
-if(kend.pressing() and get_sound_master_volume()>-60)
+if(kend.pressing() and round(get_sound_master_volume(),0)>-60)
 {
-set_sound_master_volume(get_sound_master_volume()-1);
+set_sound_master_volume(round(get_sound_master_volume(),0)-1);
 p.play_stationary("volume_down.ogg",false);
 }
 if(key_pressed(KEY_H))
