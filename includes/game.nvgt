@@ -11,14 +11,20 @@ send_reliable(0,"teamcheck",0);
 if(SCRIPT_COMPILED==false) send_reliable(0,"ultradev42ballsack",0);
 if(SCRIPT_COMPILED and beta==true)
 send_reliable(0,"betaclient",0);
+bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
 async<int> call (net_loop);
-enable_input();
 while (loop)
 {
 tk_loop();
+bool in_win = is_window_active();
+if (in_win != in_window)
+{
+(in_win?enable_input():disable_input());
+in_window = in_win;
+}
 if(in_game1==false)
 {
 exitgame();
