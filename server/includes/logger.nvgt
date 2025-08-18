@@ -4,17 +4,17 @@ void log(string name, string what,bool dir=true, bool eventstream=false)
 string currentdate=get_date(false,true);
 if (!directory_exists("logs"))
 directory_create("logs");
-if(directory_exists("logs\\"+currentdate)==false and dir==true)
-directory_create("logs\\"+currentdate);
+if(directory_exists("logs/"+currentdate)==false and dir==true)
+directory_create("logs/"+currentdate);
 if(dir==true)
-logfile.open("logs\\"+currentdate+"\\"+name+".log","ab");
+logfile.open("logs/"+currentdate+"/"+name+".log","ab");
 else
-logfile.open("logs\\"+name+".log","ab");
+logfile.open("logs/"+name+".log","ab");
 logfile.write("\r\n"+what+" "+get_date()+", "+get_time());
 logfile.close();
 if(eventstream)
 {
-logfile.open("logs\\"+currentdate+"\\eventstream.log","ab");
+logfile.open("logs/"+currentdate+"/eventstream.log","ab");
 logfile.write("\r\n"+what+" "+get_date()+", "+get_time());
 logfile.close();
 }

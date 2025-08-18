@@ -98,7 +98,7 @@ return;
 if (parsed[0]=="get_map" && parsed.length() ==2)
 {
 file f;
-f.open ("maps\\"+parsed[1],"rb");
+f.open ("maps/"+parsed[1],"rb");
 string data = f.read();
 f.close();
 int index = get_player_index(e.peer_id);
@@ -1265,7 +1265,7 @@ put_file_contents(charfolder+"/map.usr","main",true);
 f.open(charfolder+"/map.usr","rb");
 string m=f.read();
 f.close();
-f.open ("maps\\"+m+".map","rb");
+f.open ("maps/"+m+".map","rb");
 string data = f.read();
 f.close();
 //send_reliable(id,"mapname "+m,0);
