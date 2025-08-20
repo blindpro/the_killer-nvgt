@@ -405,7 +405,6 @@ mainmenu();
 }
 void tk_loop()
 {
-refresh_window();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();

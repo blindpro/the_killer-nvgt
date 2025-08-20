@@ -200,7 +200,7 @@ return;
 }
 if(players[index].statchangetimer.elapsed<15000)
 {
-send_reliable(players[index].peer_id,"speak You can't use this yet!",0);
+send_reliable(players[index].peer_id,"speak|You can't use this yet!",0);
 return;
 }
 else
@@ -230,7 +230,7 @@ return;
 else if(players[index].statchangetimer.elapsed<20000)
 {
 takeobj=false;
-send_reliable(players[index].peer_id,"speak You can't use this yet!",0);
+send_reliable(players[index].peer_id,"speak|You can't use this yet!",0);
 return;
 }
 else

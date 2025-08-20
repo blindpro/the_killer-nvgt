@@ -1,0 +1,12 @@
+garbage_collect(bool full = true)
+true: 执行完整的垃圾回收周期
+false: 执行单步垃圾回收
+set_garbage_collect_mode (int)
+get_garbage_collect_mode (int)
+获取或设置垃圾回收模式
+取值范围13，，1禁用垃圾回收，2，默认正常垃圾回收，3，自动垃圾回收，后台现成
+get_garbage_collect_auto_frequency (int)
+set_garbage_collect_auto_frequency (int)
+获取或设置自动垃圾回收的频率（毫秒）
+取值范围: 2000-86400000 毫秒（2秒到24小时）
+默认值: 300000 毫秒（5分钟）
