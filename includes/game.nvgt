@@ -15,7 +15,7 @@ bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
-async<int> call (net_loop);
+@t_net_loop = async<int> (net_loop);
 while (loop)
 {
 tk_loop();
@@ -398,6 +398,10 @@ if(pinging) pinging = false;
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
 disable_input();
+while(t_net_loop.complete == false)
+{
+wait (5);
+}
 if(return_to_menu==true)
 {
 mainmenu();
