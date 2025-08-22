@@ -140,6 +140,10 @@ mapispawns.insert_last(temp);
 }
 void loop()
 {
+if (players.length () <=0)
+{
+return;
+}
 for(uint i=0; i<mapispawns.length(); i++)
 {
 mapispawns[i].loop();
@@ -226,7 +230,7 @@ if(mapispawntimer.elapsed>mapispawntime)
 {
 mapispawntimer.restart();
 int tempobjs=get_objs_in_area_length();
-if(tempobjs>=maxobjs)
+if(tempobjs>=maxobjs || players.length () >0)
 {
 return;
 }
@@ -398,4 +402,32 @@ ret=true;
 }
 }
 return ret;
+}
+
+vector get_max_values(string mapname)
+{
+int ind=get_map_index(mapname);
+int s;
+//int s=get_shelter_index(mapname);
+vector temp;
+if(ind<0 and s<0) return temp;
+if(ind<0 and s>-1)
+{
+/*
+string m=shelters[s].generate_map();
+string[] p=string_split(m, "\r\n", false);
+for(int i=0; i<p.length(); i++)
+{
+string[] p2=string_split(p[i], ":", false);
+if(p2[0]=="maxx") temp.x=stn(p2[1]);
+else if(p2[0]=="maxy") temp.y=stn(p2[1]);
+else if(p2[0]=="maxz") temp.z=stn(p2[1]);
+}
+return temp;
+*/
+}
+temp.x=maps[ind].max.x;
+temp.y=maps[ind].max.y;
+temp.z=maps[ind].max.z;
+return temp;
 }

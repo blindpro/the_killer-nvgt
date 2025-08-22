@@ -315,6 +315,10 @@ string string_decompress(string str) {
 	return string_inflate(str);
 }
 
+int bool_to_int (bool r)
+{
+return ((r?1:0));
+}
 //key constants
 const uint KEY_PRIOR = KEY_PAGEUP;
 const uint KEY_NEXT = KEY_PAGEDOWN;

@@ -68,7 +68,7 @@ exit ();
 }
 if(key_pressed(KEY_A))
 {
-speak(objspawns+","+objgrabs);
+speak(objspawns+","+objgrabs + "," + players.length ());
 }
 }
 }
@@ -1123,7 +1123,7 @@ bodyfallloop();
 timepacketloop();
 maploop();
 objloop();
-if(players.length()==0) {
+if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
 }

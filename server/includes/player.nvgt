@@ -184,6 +184,35 @@ if(file_exists("chars/"+name+"/playtime.usr"))
 hidden=phid;
 if(hidden>0) is_dead=true;
 }
+float antibiotic_hit_factor=1.5;
+void hit(int mindamage, int maxdamage)
+{
+playsound("hit"+random(1,3));
+if(antibioticed==false) this.health-=random(mindamage,maxdamage);
+else this.health-=random(round(mindamage*antibiotic_hit_factor,0),round(maxdamage*antibiotic_hit_factor,0));
+}
+void stun(int ms,bool playafter=false,bool fall=false,int cooldown=0)
+{
+if(this.stunagaintimer.elapsed<=this.stunagaintime)
+{
+return;
+}
+else
+{
+this.stunagaintime=0;
+this.stunagaintimer.restart();
+}
+send_reliable(peer_id,"stopmoving",0);
+stunned=true;
+stuntime=ms;
+stuntimer.restart();
+this.stunagaintime=ms+cooldown;
+unstunplay=playafter;
+if(fall==true) {
+vo("standup");
+spawn_bodyfall(x,y,z,map,500,get_player_index_from(name));
+}
+}
 void chat(string message)
 {
 spammedmsgs++;
@@ -357,6 +386,10 @@ else
 inventory.get(item,amount);
 return amount;
 }
+}
+void vo(string a)
+{
+send_reliable(this.peer_id,"play_s speaker_"+a+".ogg",0);
 }
 void playsound(string sound, bool include_me=true)
 {
@@ -988,7 +1021,7 @@ if(players[pl].name!=players[i].name and players[pl].beacon>0 and players[i].dis
 //if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,3);
 //else 
 send_unreliable(players[pl].peer_id,"beacon|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
-net_loop();
+//net_loop();
 }
 }
 }
