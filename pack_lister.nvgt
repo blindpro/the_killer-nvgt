@@ -1,0 +1,45 @@
+pack_file obj;
+string[] file_list;
+string filename, key;
+void main()
+{
+@sound_default_pack = null;
+if(file_exists("packc.pdata"))
+{
+int e = question("Simple pack lister","would you like to use last saved settings?");
+if(e==1)
+{
+file f;
+f.open("packc.pdata","rb");
+string[] parsed=f.read().split(";",false);
+f.close();
+if(parsed.length()==2) parsed.insert_last("");
+if(parsed.length()==3) parsed.insert_last("");
+filename=parsed[0];
+key=parsed[3];
+}
+else
+input_info();
+}
+else
+input_info();
+obj.open(filename, key);
+if(@obj==null)
+{
+alert("error","Either this file does not exist or it is not a valid pack file");
+exit();
+}
+@sound_default_pack = obj;
+file_list = cast<pack_file@>(sound_default_pack).list_files();
+string total = "total files: "+file_list.length();
+file_list.insert_last(total);
+clipboard_set_text(join(file_list,"\r\n"));
+alert("Complete! ", "The sound list is now on your clipboard. ");
+}
+void input_info()
+{
+filename = input_box("Simple pack lister","Enter the path/name to a pack file, such as sounds.dat");
+if(filename.is_empty()) exit();
+key = input_box("Simple pack lister","enter key");
+if(key.is_empty()) exit();
+}
