@@ -23,8 +23,8 @@ input_info();
 }
 else
 input_info();
-obj.open(filename, key);
-if(@obj==null)
+bool success = obj.open(filename, key);
+if(!success)
 {
 alert("error","Either this file does not exist or it is not a valid pack file");
 exit();
