@@ -1,13 +1,15 @@
-#include "speech.nvgt"
-string key;
-string foldername;
+//#include "speech.nvgt"
+bool encrypt = false;
+string key , foldername , filename;
 string[] file_list;
-string filename;
 pack_file sounds;
 sound@ progress_sound;
 tone_synth progress_synth;
 timer t;
 void main()
+{
+int pd=question("pack creator","would you like to use last saved settings?");
+if(pd!=1)
 {
 foldername = input_box("pack_creater","Enter folder name");
 if(foldername.is_empty())
@@ -19,10 +21,30 @@ if(filename.is_empty())
 {
 exit();
 }
+int answer=question("pack creater", "would you like these files to be encrypted");
+if (answer==1)
+{
+encrypt = true;
 key = input_box("pack_creater","Enter encryption key");
 if(key.is_empty())
 {
 exit();
+}
+}
+}
+else
+{
+file f;
+f.open("packc.pdata","rb");
+string[] parsed=f.read().split(";",false);
+f.close();
+if(parsed.length()==2) parsed.insert_last("");
+if(parsed.length()==3) parsed.insert_last("");
+filename=parsed[0];
+foldername=parsed[1];
+int e=parse_double(parsed[2].trim_whitespace_left());
+if(e==1) encrypt=true;
+key=parsed[3];
 }
 get_in_total();
 alert("pack_creater",file_list.length()+" files will be packaged, press enter to continue.");
@@ -46,13 +68,13 @@ file_list.insert_last((path == ""?files[i]:path+"/"+files[i]));
 }
 void creater()
 {
+string key1 = key;
 int percent = -1;
 sounds.create(filename,key);
 show_window("working");
 t.restart();
 for(uint i = 0; i < file_list.length(); i++)
 {
-wait(5);
 double l=file_list.length(), ind = i;
 int perc = ind/l*100.0;
 if(percent!=perc)
@@ -72,8 +94,8 @@ exit();
 void write_key()
 {
 file f;
-f.open("packc.pdata","w");
-f.write(filename+";"+key);
+f.open("packc.pdata","wb");
+f.write(filename+";"+foldername+";"+(encrypt?1:0)+";"+key);
 f.close();
 }
 void beep_progress(double value)
