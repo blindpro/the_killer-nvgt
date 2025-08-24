@@ -284,7 +284,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(parsed[1]!=name and map==mapname and inve==false)
 {
-p.play_3d("jump.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d("jump.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="fall")
@@ -295,7 +295,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(parsed[1]!=name and map==mapname and inve==false)
 {
-p.play_3d("fall.ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
+tp.play_3d("fall.ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
 }
 }
 else if(parsed[0]=="land")
@@ -306,7 +306,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(parsed[1]!=name and map==mapname and inve==false)
 {
-p.play_3d(get_tile_at(x, y, z)+"land.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d(get_tile_at(x, y, z)+"land.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="remove_obj")
@@ -346,14 +346,14 @@ string m=parsed[5];
 remove_player(n);
 if(speakonlinemsgs==1)
 {
-p.play_stationary("offline.ogg",false);
+tp.play_stationary("offline.ogg",false);
 add_buffer_item("misc",parsed[4]+" went offline");
 }
 else if(parsed[4]!=name)
 {
 if(speakonlinemsgs==1)
 {
-p.play_stationary("offline.ogg", false);
+tp.play_stationary("offline.ogg", false);
 add_buffer_item("misc",parsed[4]+" just went offline");
 }
 }
@@ -372,19 +372,19 @@ else if(parsed[0]=="notify")
 {
 string msg;
 msg=string_replace(s,"notify|","",false);
-p.play_stationary("notify.ogg",false);
+tp.play_stationary("notify.ogg",false);
 add_buffer_item("misc",msg);
 }
 else if(parsed[0]=="play_s")
 {
-p.play_stationary(parsed[1],false);
+tp.play_stationary(parsed[1],false);
 }
 else if(parsed[0]=="pong" and pinging==true)
 {
 pingpongtimer.pause();
 int ms=pingpongtimer.elapsed;
 pinging=false;
-p.play_stationary("pingstop.ogg",false);
+tp.play_stationary("pingstop.ogg",false);
 string spk;
 spk="The ping took ";
 if(ms<1000) //1second.
@@ -401,7 +401,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(map==mapname and inve==false)
 {
-p.play_3d(get_tile_at(x, y, z)+"hardland.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d(get_tile_at(x, y, z)+"hardland.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="sitstart")
@@ -421,7 +421,7 @@ string n=parsed[4];
 string mp=parsed[5];
 if(speakonlinemsgs==1 and name!=n)
 {
-p.play_stationary("online.ogg",false);
+tp.play_stationary("online.ogg",false);
 spawn_player(x,y,z,mp,n);
 add_buffer_item("misc",parsed[4]+" came online");
 }
@@ -429,7 +429,7 @@ else if(parsed[4]!=name)
 {
 if(speakonlinemsgs==1)
 {
-p.play_stationary("online.ogg", false);
+tp.play_stationary("online.ogg", false);
 add_buffer_item("misc",parsed[4]+" is online");
 }
 }
@@ -447,10 +447,12 @@ else if(parsed[0]=="move" and parsed.length()>=3)
 me.x=stn(parsed[1]);
 me.y=stn(parsed[2]);
 me.z=stn(parsed[3]);
+/*
 p.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 sourcepool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 mpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 distpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+*/
 }
 else if(parsed[0]=="distsound" and parsed.length()>5)
 {
@@ -480,7 +482,7 @@ string[] parsed=s.split("|");
 if(parsed.length()>1)
 {
 string action=parsed[0];
-p.play_stationary(action+".ogg",false);
+tp.play_stationary(action+".ogg",false);
 string mess=string_trim_left(s,string_len(action)+1);
 add_buffer_item("chats",mess);
 }
@@ -502,7 +504,7 @@ if(parsed.length()>=5 and is_sound_number(parsed[1]) and is_sound_number(parsed[
 if(is_sound_exists(parsed[0]+".ogg") and parsed.length()==5)
 {
 if(parsed[4]==mapname&&inve==false&&frozen==false)
-p.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), calculate_theta(facing), false);
+tp.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), calculate_theta(facing), false);
 }
 }
 }

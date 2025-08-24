@@ -2,6 +2,7 @@
 void main()
 {
 @tts_default_text_processing_callback = @translation_callback;
+tp.behind_pitch_decrease = 5;
 p.behind_pitch_decrease = 5;
 distpool.behind_pitch_decrease = -5;
 distpool.pan_step = 0.2;

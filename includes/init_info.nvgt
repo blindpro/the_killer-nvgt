@@ -3,7 +3,7 @@ int menumusvol=100;
 int sidescrolling=0;
 coordinate_map tm , zm , trm;
 double facing = 0.0;
-sound_pool distpool , sourcepool , p, mpool , shdistpool,objpool;
+sound_pool distpool , sourcepool , p, mpool , shdistpool,objpool , tp;
 string last_zone;
 vector me,mr,sh,max,camera;
 bool onwall=false;

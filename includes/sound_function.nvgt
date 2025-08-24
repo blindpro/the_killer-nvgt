@@ -9,6 +9,7 @@ return sound_name;
 }
 void pos()
 {
+tp.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
 p.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
 sourcepool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
 mpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));

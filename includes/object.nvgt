@@ -23,7 +23,7 @@ id=oid;
 }
 void objloop()
 {
-obj@[] objs1(objs.length());
+obj@[] objs1;
 objs1 = objs;
 for(uint i = 0; i < objs1.length(); i++)
 {
