@@ -15,9 +15,12 @@ bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
-//@t_net_loop = async<int> (net_loop);
+@t_net_loop = async<int> (net_loop);
 while (loop)
 {
+wait (5);
+//mutex_lock exclusive(t_net_loop_mutex);
+t_net_loop_mutex.lock();
 tk_loop();
 bool in_win = is_window_active();
 if (in_win != in_window)
@@ -27,6 +30,7 @@ in_window = in_win;
 }
 if(in_game1==false)
 {
+t_net_loop_mutex.unlock();
 exitgame();
 }
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
@@ -362,8 +366,7 @@ camera.x=me.x;
 camera.y=me.y;
 camera.z=me.z;
 }
-refresh_window();
-wait (5);
+t_net_loop_mutex.unlock();
 }
 }
 
@@ -409,7 +412,7 @@ mainmenu();
 }
 void tk_loop()
 {
-net_loop ();
+//net_loop ();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();

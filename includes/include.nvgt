@@ -30,3 +30,5 @@
 #include "Moving_sound.nvgt"
 #include "object.nvgt"
 #include "progress_bar.nvgt"
+//#pragma namespace sound upcoming
+//#pragma plugin legacy_sound
