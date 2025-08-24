@@ -250,9 +250,9 @@ return r;
 }
 
 
-void net_loop()
+int net_loop()
 {
-//while (in_game)
+while (in_game)
 {
 wait (1);
 garbage_collect();
@@ -265,12 +265,12 @@ if(e.channel==0)
 s = get_event_message(e.message);
 if (s=="")
 {
-return;
+continue;
 }
 string[] parsed = s.split("|");
 if (parsed.length()<1)
 {
-return;
+continue;
 }
 if (parsed[0]=="map" && parsed.length() >=2)
 {
@@ -476,7 +476,7 @@ else if (e.channel==1 and readmessages==1)
 s=get_event_message(e.message);
 if(s=="")
 {
-return;
+continue;
 }
 string[] parsed=s.split("|");
 if(parsed.length()>1)
@@ -496,7 +496,7 @@ else if(e.channel==3)
 s = get_event_message(e.message);
 if (s=="")
 {
-return;
+continue;
 }
 string[] parsed=s.split("|");
 if(parsed.length()>=5 and is_sound_number(parsed[1]) and is_sound_number(parsed[2]) and is_sound_number(parsed[3]))
@@ -511,7 +511,7 @@ tp.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), s
 else if(e.channel==4)
 {
 s = get_event_message(e.message);
-if (s=="") return;
+if (s=="") continue;
 string[] parsed=s.split("|");
 if(parsed[0]=="createmsound"&&parsed.length()>=8) createmsound(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6],stn(parsed[7]));
 else if(parsed[0]=="updatemsound"&&parsed.length()>=6) updatemsound(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),stn(parsed[5]));
@@ -522,5 +522,5 @@ else if(parsed[0]=="destroymsound"&&parsed.length()>1) destroymsound(parsed[1]);
 }
 }
 }
-return ;
+return (0);
 }

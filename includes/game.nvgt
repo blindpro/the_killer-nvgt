@@ -15,7 +15,7 @@ bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
-@t_net_loop = async<int> (net_loop);
+//@t_net_loop = async<int> (net_loop);
 while (loop)
 {
 tk_loop();
@@ -409,6 +409,7 @@ mainmenu();
 }
 void tk_loop()
 {
+net_loop ();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
