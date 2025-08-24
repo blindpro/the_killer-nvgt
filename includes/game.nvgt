@@ -413,7 +413,7 @@ pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
 sourcecheckloop();
-playerloop();
+//playerloop();
 msoundcheckloop();
 objloop();
 if(trackx!=-1&&tracky!=-1&&trackz!=-1&&tracking!="")
