@@ -327,6 +327,23 @@ else if(parsed[0]=="load_obj" and parsed.length()>=1)
 string data = string_replace(s,"load_obj|","",false);
 load_obj(data);
 }
+else if(parsed[0]=="walkmod" and parsed.length()>2)
+{
+walkmod=true;
+walktime=stn(parsed[1]);
+airtime=(stn(parsed[1])/2);
+canjump=stn(parsed[2]);
+movetime=walktime;
+walktimer.restart();
+}
+else if(parsed[0]=="resetwalktime")
+{
+walkmod=false;
+walktime=100;
+movetime=walktime;
+if(canjump==0) canjump=1;
+airtime=70;
+}
 else if(parsed[0]=="invstring")
 {
 inv=string_decompress(string_trim_left(s, 10));
