@@ -9,10 +9,10 @@ return sound_name;
 }
 void pos()
 {
-tp.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
-p.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
-sourcepool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
-mpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
-distpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
-objpool.update_listener_3d(mr.x, mr.y, me.z, calculate_theta(facing));
+tp.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+p.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+sourcepool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+mpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+distpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
+objpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 }

@@ -319,6 +319,10 @@ int bool_to_int (bool r)
 {
 return ((r?1:0));
 }
+bool int_to_bool (double r)
+{
+return ((r>0?true:false));
+}
 //key constants
 const uint KEY_PRIOR = KEY_PAGEUP;
 const uint KEY_NEXT = KEY_PAGEDOWN;

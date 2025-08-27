@@ -1067,3 +1067,28 @@ if(ch==0) return 10000;
 else ch+=floor((limit/ch)*scaler);
 return ch;
 }
+string cn2n(string pname,bool vi=false)
+{
+string ret=pname;
+for(uint i=0; i<players.length (); i++)
+{
+if(players[i].name==pname)
+{
+ret=players[i].nickname;
+if(vi)
+{
+/*
+for(uint v=0; v<vs.length ();; v++)
+{
+if(vs[v].owner==pname) ret+="'s "+vs[v].type;
+}
+*/
+}
+}
+}
+if(ret==pname&&file_exists("chars/"+pname+"/nickname.usr"))
+{
+ret=get_char_val(pname,"nickname");
+}
+return ret;
+}

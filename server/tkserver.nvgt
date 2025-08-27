@@ -4,6 +4,7 @@ network n;
 network_event e;
 uint64 port = 10000;
 bool netsetup;
+bool s_quit;
 int filterstuff=1;
 file fl;
 int connections=0, disconnections=0;
@@ -62,9 +63,9 @@ saveloop();
 }
 refresh_window ();
 //loops();
-if(key_pressed(KEY_ESCAPE))
+if(key_pressed(KEY_ESCAPE) || s_quit)
 {
-exit ();
+server_quit ();
 }
 if(key_pressed(KEY_A))
 {
@@ -1087,6 +1088,52 @@ send_reliable(e.peer_id,"Player "+parsed[1]+" not found.",2);
 }
 }
 }
+else if (parsed[0] == "/quit")
+{
+s_quit = true;
+}
+else if(parsed[0]=="/moveplayer" and parsed.length()>2)
+{
+if(players[index].adminable()||beta==true)
+{
+int i=get_player_index_from(parsed[1]);
+int i2=get_player_index_from(parsed[2]);
+if(i>-1 and i2>-1)
+{
+move_player(players[i],players[i2].map,players[i2].x,players[i2].y,players[i2].z,(players[i].hidden==0),true, get_shelter_index(players[i2].map));
+log("move",players[index].name+" has moved "+players[i].name+" to "+players[i].x+", "+players[i].y+", "+players[i].z+" on map "+players[i].map,false,false);
+send_reliable(e.peer_id,"Moved",0);
+}
+else
+send_reliable(e.peer_id,"Something went wrong, try again",2);
+}
+}
+else if(parsed[0]=="/move" && parsed.length()>4)
+{
+if(players[index].adminable()||beta==true)
+{
+int i=get_player_index_from(parsed[1]);
+if(i>-1)
+{
+string map=players[i].map;
+if(parsed.length() >5) map=parsed[5];
+if(!map_exists(map))
+{
+send_reliable(e.peer_id,"this map does not exist",0);
+return;
+}
+move_player(players[i],map,stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),(players[i].hidden==0),true, get_shelter_index(map));
+log("move",players[index].name+" has moved "+players[i].name+" to "+players[i].x+", "+players[i].y+", "+players[i].z+" on map "+players[i].map,false,false);
+send_reliable(e.peer_id,"moved",0);
+}
+else
+send_reliable(e.peer_id,"player not found",2);
+}
+}
+else
+{
+
+}
 }
 }
 }
@@ -1204,6 +1251,16 @@ else
 {
 n.send_unreliable(peer, mess, channel);
 }
+}
+void send_serverbox(int peerid, int mode=0, int maxlength=-1, int autosend=0, int keypresses=-1, string sendtext="server_box", string text="enter text")
+{
+send_reliable(peerid,"input ++"+mode+"++"+maxlength+"++"+autosend+"++"+keypresses+"++"+sendtext+"++"+text,0);
+}
+void send_menu(int id, string menuintro, string text, string items)
+{
+menuintro=string_replace(menuintro," ","[SPCE]",true);
+text=string_replace(text, " ", "[SPCE", true);
+send_reliable(id,"launchmenu "+menuintro+" "+text+" "+items,0);
 }
 string get_event_message(string r)
 {
@@ -1577,4 +1634,12 @@ if(sound==true)
 send_reliable(0,"distsound|movedist|"+p.x+"|"+p.y+"|"+p.z+"|"+p.map,0);
 play("move",p.x,p.y,p.z,p.map);
 }
+}
+
+void server_quit ()
+{
+send_reliable(0,"notify|The server is shutting down",0);
+send_reliable(0,"server_quit",0);
+saveloop();
+exit ();
 }

@@ -19,7 +19,7 @@ set_sound_input_device (currently_input_device);
 */
 if (currently_output_device != 1)
 {
-set_sound_output_device (currently_output_device);
+//set_sound_output_device (currently_output_device);
 }
 create_buffer("all");
 create_buffer("chats");

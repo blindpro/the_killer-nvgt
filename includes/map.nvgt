@@ -57,6 +57,7 @@ trm.reset();
 zones.resize(0);
 travel_point.resize(0);
 string[]@ map_data = data.split("\r\n");
+pos ();
 for (uint i=0; i<map_data.length(); i++)
 {
 string[]@ parts = map_data[i].split(":");
@@ -382,7 +383,7 @@ p.play_extended_3d(gct()+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(came
 }
 else
 {
-p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
 }
 }
 int get_zone_index(string z)

@@ -21,3 +21,5 @@
 #include "weapon.nvgt"
 #include "weaponparser.nvgt"
 #include "hip.nvgt"
+#include "shelter.nvgt"
+#include "readable_time.nvgt"

@@ -65,6 +65,7 @@ x=true;
 }
 if(xtimer.elapsed>2500 and x==true)
 {
+t_net_loop_mutex.unlock();
 exitgame();
 }
 if(key_pressed(KEY_Z))
