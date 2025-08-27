@@ -1,0 +1,5 @@
+weapon_store=0=0=0=store
+misc_store=0=10=0=store
+medical_store=10=20=0=store
+explosive_store=10=10=0=store
+vehicle_store=20=10=0=store
