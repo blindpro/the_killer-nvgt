@@ -4,6 +4,10 @@ network n;
 network_event e;
 uint64 port = 10000;
 bool netsetup;
+dictionary sellitems;
+int storex=0,storey=100,storez=0,fstorex=0,fstorey=100,fstorez=0;
+bool storemoving=false,fstorecoords=false;
+int storeopened=1;
 bool s_quit;
 int filterstuff=1;
 file fl;
@@ -50,6 +54,9 @@ else
 netsetup=n.setup_server(port, 200, 500);
 init_mapsystem();
 load_compids();
+load_store_registers();
+load_stores ();
+load_sell();
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");
@@ -963,6 +970,127 @@ login(parsed[1],parsed[2],parsed[3],e.peer_id,parsed[4]);
 else if(parsed[0]=="enter")
 {
 int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing)
+return;
+if(round(players[index].x,0)==0 and round(players[index].y,0)==4 and players[index].z==0 and in_shelter(players[index].name)>-1)
+{
+int s=in_shelter(players[index].name);
+if(shelters[s].on==false)
+{
+send_reliable(players[index].peer_id,"The computer is off",0);
+return;
+}
+send_serverbox(players[index].peer_id,0,-1,1,1,"shcommand","what would you like to do. Press H to see help");
+}
+else if(round(players[index].x,0)==0 and round(players[index].y,0)==0 and players[index].z==0 and in_shelter(players[index].name)>-1)
+{
+int s=in_shelter(players[index].name);
+shelters[s].on=int_to_bool(toggle(bool_to_int(shelters[s].on)));
+if(shelters[s].on==true)
+{
+shelters[s].compplay("shelter_computeron");
+shelters[s].compsound=spawn_moving_sound("shelter_computerloop.ogg",0,4,0,shelters[s].sheltername);
+play("shelter_poweron",0,0,0,shelters[s].sheltername);
+shelters[s].soundloop=spawn_moving_sound("shelter_generator.ogg",shelters[s].x,shelters[s].y,shelters[s].z,shelters[s].map);
+play("shelter_generatorstart",shelters[s].x,shelters[s].y,shelters[s].z,shelters[s].map);
+}
+else
+{
+shelters[s].compplay("shelter_computeroff");
+destroy_moving_sound(shelters[s].compsound);
+play("shelter_poweroff",0,0,0,shelters[s].sheltername);
+destroy_moving_sound(shelters[s].soundloop);
+play("shelter_generatoroff",shelters[s].x,shelters[s].y,shelters[s].z,shelters[s].map);
+}
+}
+else if(round(players[index].x,0)==storex and round(players[index].y,0)==storey and players[index].z==storez and players[index].map=="main" and storemoving==false)
+{
+if(players[index].storestage==0&&players[index].hidden==0)
+{
+send_reliable(players[index].peer_id,"Sorry, you can't enter the store yet",0);
+return;
+}
+if(players[index].statchangetimer.elapsed<60000)
+{
+send_reliable(players[index].peer_id,"You can not be losing health or fighting to do this",0);
+return;
+}
+if(storeopened==1 and players[index].firing==false)
+{
+move_player(players[index],"store",10,1,0);
+if(players[index].hidden==0) play("storeopen",round(players[index].x,0),round(players[index].y,0),players[index].z,players[index].map);
+send_reliable(players[index].peer_id,"You walk into the store .",0);
+send_reliable(players[index].peer_id,"entershelter 0 100 0 main",0);
+players[index].storetimer.restart();
+players[index].storestage=1;
+return;
+}
+else
+{
+send_reliable(players[index].peer_id,"You try to open the door...but it doesn't open. You see there's a sign that reads: \"Closed\"",0);
+return;
+}
+}
+/*
+int v=get_vending_index(round(players[index].x,0),round(players[index].y,0),players[index].z,players[index].map);
+if(v>-1)
+{
+send_serverbox(e.peer_id,1,-1,1,1,"vendingpress","Press Space to buy something and get the menu. Press C to see how many coins are in the machine. Press r to return any money inside the machine. Press escape to cancel");
+}
+*/
+for(int i=0; i<stores.length(); i++)
+{
+if(round(players[index].x,0)==stores[i].x and round(players[index].y,0)==stores[i].y and players[index].z==stores[i].z and players[index].map==stores[i].map)
+{
+stores[i].send(players[index].peer_id);
+}
+}
+if(round(players[index].x,0)==4 and round(players[index].y,0)==4 and players[index].z==0 and in_shelter(players[index].name)>-1)
+{
+players[index].playsound("shelter_storage_open");
+send_serverbox(players[index].peer_id,0,-1,1,1,"shstoragecommand","what would you like to do? Press G to get something from the storage's cabinet, or S to store something");
+}
+else if(round(players[index].x,0)==2 and round(players[index].y,0)==2 and players[index].z==0 and in_shelter(players[index].name)>-1)
+{
+int stuff=in_shelter(players[index].name);
+if(stuff<0) {}
+else
+{
+players[index].newb=0;
+file_delete("chars/"+players[index].name+"/newb.usr");
+move_player(players[index],shelters[stuff].map,shelters[stuff].x,shelters[stuff].y,shelters[stuff].z);
+send_reliable(players[index].peer_id,"exitshelter",0);
+return;
+}
+}
+else if(round(players[index].x,0)==10 and round(players[index].y,0)==0 and players[index].z==0 and players[index].map=="store" and storemoving==false)
+{
+if(storeopened==1)
+{
+//storeplay("exit",2,index);
+send_reliable(players[index].peer_id,"You walk out of the store",0);
+send_reliable(players[index].peer_id,"exitshelter",0);
+move_player(players[index],"main",random(0,500),random(0,500),0);
+return;
+}
+else
+send_reliable(players[index].peer_id,"You try to open the door...but nothing happens. You're locked in!",2);
+}
+for(uint i=0; i<shelters.length(); i++)
+{
+if(shelters[i].x==round(players[index].x,0) and shelters[i].y==round(players[index].y,0) and shelters[i].z==players[index].z and shelters[i].map==players[index].map)
+{
+if(shelters[i].is_allowed(players[index].name)==false&&players[index].hidden==0) send_reliable(players[index].peer_id,"speak you are not allowed to enter this shelter.",0);
+else
+{
+move_player(players[index],shelters[i].sheltername,2,2,0,true,false,i);
+send_reliable(players[index].peer_id,"entershelter "+shelters[i].x+" "+shelters[i].y+" "+shelters[i].z+" "+shelters[i].map,0);
+return;
+}
+}
+}
 int ind=get_map_index(players[index].map);
 if(ind>-1)
 {
@@ -996,6 +1124,27 @@ send_reliable(players[index].peer_id,text,2);
 }
 }
 }
+}
+}
+else if(parsed[0]=="menuedge")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].hidden==0) send_reliable(0,"menusound "+players[index].x+" "+players[index].y+" "+players[index].z+" "+players[index].map+" "+players[index].name+" menuedge.ogg",0);
+}
+}
+else if(parsed[0]=="menuenter"&&parsed.length () >1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].hidden==0) send_reliable(0,"menusound "+players[index].x+" "+players[index].y+" "+players[index].z+" "+players[index].map+" "+players[index].name+" "+parsed[1],0);
+}
+}
+else
+{
+
 }
 }
 else if(e.channel==1)
@@ -1260,7 +1409,7 @@ void send_menu(int id, string menuintro, string text, string items)
 {
 menuintro=string_replace(menuintro," ","[SPCE]",true);
 text=string_replace(text, " ", "[SPCE", true);
-send_reliable(id,"launchmenu "+menuintro+" "+text+" "+items,0);
+send_reliable(id,"launchmenu|"+menuintro+"|"+text+"|"+items,0);
 }
 string get_event_message(string r)
 {
@@ -1642,4 +1791,94 @@ send_reliable(0,"notify|The server is shutting down",0);
 send_reliable(0,"server_quit",0);
 saveloop();
 exit ();
+}
+int[] get_amounts()
+{
+int[] a;
+for(int i=0; i<stores.length(); i++)
+{
+for(int i2=0; i2<stores[i].prices.length(); i2++)
+{
+a.insert_last(stores[i].prices[i2]);
+}
+}
+return a;
+}
+
+bool load_stores()
+{
+string sdata;
+bool s=fl.open("prefs/store.svr", "rb");
+if(!s) return false;
+sdata=fl.read();
+fl.close();
+string[] items=string_split(sdata, "\r\n", false);
+if(items.length () <=1) return false;
+for(int i=0; i<items.length(); i++)
+{
+string[] parsed=string_split(items[i], "=", true);
+if(parsed.length () >=4) add_to_store(parsed[0], parsed[2], stn(parsed[1]), parsed[3]);
+}
+return true;
+}
+bool load_sell()
+{
+bool s=fl.open("prefs/sell.svr","rb");
+if(!s) return false;
+string[] data=string_split(fl.read(),"\r\n",false);
+fl.close();
+if(data.length () <=1) return false;
+for(uint i=0; i<data.length (); i++)
+{
+string[] parsed=string_split(data[i],"=",false);
+if(parsed.length () ==2)
+{
+int val=stn(parsed[1]);
+sellitems.set(parsed[0],val);
+}
+}
+return true;
+}
+bool load_store_registers()
+{
+file f;
+if(!f.open("prefs/store_registers.svr", "rb")) return false;
+string stuff=f.read();
+f.close();
+string[] store_registers=string_split(stuff, "\r\n", false);
+if(store_registers.length () <1) return false;
+for(int i=0; i<store_registers.length(); i++)
+{
+string[] parsed=string_split(store_registers[i], "=", false);
+create_store(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[0]);
+}
+return true;
+}
+void save_store_registers()
+{
+file f;
+f.open("prefs/store_registers.svr", "wb");
+string final;
+for(int i=0; i<stores.length(); i++)
+{
+final+=stores[i].name+"="+stores[i].x+"="+stores[i].y+"="+stores[i].z+"="+stores[i].map+"\r\n";
+}
+f.write(final);
+f.close();
+}
+int get_item_index(string name)
+{
+string[] items;
+for(int i=0; i<stores.length (); i++)
+{
+for(int i2=0; i2<stores[i].item_names.length(); i2++)
+{
+items.insert_last(stores[i].item_names[i2]);
+}
+}
+for(int i=0; i<items.length(); i++)
+{
+if(items[i]==name) return i;
+}
+return -1;
 }

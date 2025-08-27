@@ -1,5 +1,5 @@
-string netaddress="127.0.0.1";
-//string netaddress="39.105.7.77";
+//string netaddress="127.0.0.1";
+string netaddress="39.105.7.77";
 uint64 netport = 10000;
 
 void testc ()
@@ -470,6 +470,15 @@ shdistpool.play_3d(soundname+".ogg", sh.x, sh.y, sh.z, x, y, z, facing, false);
 else if(parsed[0]=="server_quit")
 {
 in_game1 = false;
+}
+else if(parsed[0]=="launchmenu" && parsed.length () >= 3)
+{
+string i=string_replace(parsed[1],"[SPCE]"," ",true);
+string t=string_replace(parsed[2], "[]", " ", true);
+string items=string_replace(s,parsed[0]+"|"+parsed[1]+"|"+parsed[2]+"|","",true);
+speak (items);
+t_net_loop_mutex.unlock();
+serverside_menu(t,i,items);
 }
 else
 {

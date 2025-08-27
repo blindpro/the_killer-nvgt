@@ -134,7 +134,9 @@ send_reliable(0,"sitstand",0);
 }
 if(key_pressed(KEY_SLASH))
 {
+t_net_loop_mutex.unlock();
 string chat=input_box("enter chat");
+t_net_loop_mutex.lock(1000);
 if(chat!="")
 send_reliable(0,chat,1);
 }
