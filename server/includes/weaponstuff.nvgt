@@ -1,0 +1,72 @@
+class playerweapon
+{
+player@p;
+int max_ammo;
+playerweapon(player@pl)
+{
+@p=pl;
+}
+int get_reloadtime()
+{
+if(p.weapon=="crossbow") return 2873;
+if(p.weapon=="ML420HuntingRifle") return 1718;
+if(p.weapon=="ML7TinyMG") return 1713;
+if(p.weapon=="shotgun") return 2663;
+if(p.weapon=="glock") return 1200;
+if(p.weapon=="FlameThrower") return 3751;
+if(p.weapon=="FRNTAssaultRifle") return 3700;
+if(p.weapon=="sniper") return 2648;
+else return -1;
+}
+int get_max_ammo()
+{
+if(p.weapon=="sniper")
+{
+max_ammo=2;
+}
+if(p.weapon=="ML420HuntingRifle")
+{
+max_ammo=1;
+}
+if(p.weapon=="ML7TinyMG")
+{
+max_ammo=25;
+}
+if(p.weapon=="glock")
+{
+max_ammo=20;
+}
+if(p.weapon=="VNPLTasergun")
+{
+max_ammo= 4;
+}
+if(p.weapon=="FRNTAssaultRifle")
+{
+max_ammo=30;
+}
+if(p.weapon=="crossbow")
+{
+max_ammo=30;
+}
+if(p.weapon=="shotgun")
+{
+max_ammo=7;
+}
+if(p.weapon=="FlameThrower")
+{
+max_ammo=13;
+}
+return max_ammo;
+}
+void reload()
+{
+int amount;
+if(p.get_item_count("ammo_"+p.weapon)<get_max_ammo()) amount=p.get_item_count("ammo_"+p.weapon);
+else amount=get_max_ammo();
+if(p.get_ammo_count(p.weapon)<amount)
+{
+p.give("ammo_"+p.weapon,-amount);
+p.ammo_give(p.weapon,amount);
+}
+}
+}

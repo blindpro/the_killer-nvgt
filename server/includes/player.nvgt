@@ -272,6 +272,39 @@ if(invparser.length()>1)
 give(invparser[0],stn(invparser[1]));
 }
 }
+dictionary ammo;
+int get_ammo_count_from(string we)
+{
+int amount=0;
+for (uint i=0; i<ammo.get_keys().length(); i++)
+{
+int a=0;
+if (ammo.get_keys()[i]==we)
+ammo.get(we,a);
+amount+=a;
+}
+return amount;
+}
+void ammo_give(string we, int amount)
+{
+int a;
+if (!ammo.exists(we))
+{
+ammo.set(we,amount);
+}
+else
+{
+ammo.get(we,a);
+if (a+amount<=0)
+ammo.delete(we);
+else
+{
+int b=(a+amount);
+ammo.delete(we);
+ammo.set(we,b);
+}
+}
+}
 void eat(string fooditem)
 {
 eattimer.restart();
@@ -408,6 +441,42 @@ return true;
 }
 }
 return false;
+}
+void get_weapon_propperties(string wname)
+{
+int walktime=200;
+int canjump=1;
+if(wname=="ML7TinyMG")
+{
+firetime=200;
+}
+if(wname=="machinegun")
+{
+firetime=300;
+}
+if(wname=="sniper")
+{
+walktime=400;
+}
+if(wname=="ML420HuntingRifle")
+{
+walktime=700;
+}
+if(wname=="FRNTAssaultRifle")
+{
+firetime=200;
+}
+send_reliable(peer_id,"walkmod|"+walktime+"|"+canjump,0);
+}
+int get_ammo_count(string w)
+{
+return get_ammo_count_from(w);
+}
+bool hasammo(string w)
+{
+if(get_item_count("ammo_"+w)<=0)
+return false;
+return true;
 }
 bool adminable()
 {

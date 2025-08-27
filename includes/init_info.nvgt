@@ -95,3 +95,5 @@ async<int>@ t_net_loop;
 mutex t_net_loop_mutex;
 virtualizer v;
 int charrepeat=0;
+bool walkmod;
+
