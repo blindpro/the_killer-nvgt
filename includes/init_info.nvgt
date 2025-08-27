@@ -96,4 +96,6 @@ mutex t_net_loop_mutex;
 virtualizer v;
 int charrepeat=0;
 bool walkmod;
-
+servermenu sm;
+bool inbox;
+string is_serverbox;

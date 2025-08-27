@@ -225,13 +225,12 @@ for(uint i=0; i<items.length(); i++)
 string[] parsed=string_split(items[i],":",false);
 m.add_item_tts(parsed[0],parsed[1]);
 }
-alert ("","1");
 int mres=m.run(menu,true);
 if(m.get_item_name(mres)=="back" or mres==0)
-send_reliable(0,sndtxt+" back",0);
+send_reliable(0,sndtxt+"|back",0);
 else
 {
-send_reliable(0,sndtxt+" "+m.get_item_name(mres),0);
+send_reliable(0,sndtxt+"|"+m.get_item_name(mres),0);
 }
 }
 void store_menu(string storeitems)
@@ -256,6 +255,13 @@ int mres=m.run("store menu. There are "+items.length()+" items.",true);
 if (mres!=0)
 {
 string amount=v.input("Amount of "+m.get_item_name(mres)+"?");
-send_reliable(0,"purchase "+m.get_item_name(mres)+" "+amount,0);
+send_reliable(0,"purchase|"+m.get_item_name(mres)+"|"+amount,0);
 }
+}
+
+class servermenu
+{
+string t;
+string i;
+string items;
 }

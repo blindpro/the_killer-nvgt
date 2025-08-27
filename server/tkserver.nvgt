@@ -6,6 +6,7 @@ uint64 port = 10000;
 bool netsetup;
 dictionary sellitems;
 int storex=0,storey=100,storez=0,fstorex=0,fstorey=100,fstorez=0;
+string sellsend;
 bool storemoving=false,fstorecoords=false;
 int storeopened=1;
 bool s_quit;
@@ -53,10 +54,10 @@ netsetup=n.setup_server(19932, 20, 500);
 else
 netsetup=n.setup_server(port, 200, 500);
 init_mapsystem();
+load_sell();
 load_compids();
 load_store_registers();
 load_stores ();
-load_sell();
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");
@@ -1142,6 +1143,59 @@ if(index>-1)
 if(players[index].hidden==0) send_reliable(0,"menusound "+players[index].x+" "+players[index].y+" "+players[index].z+" "+players[index].map+" "+players[index].name+" "+parsed[1],0);
 }
 }
+else if(parsed[0]=="purchase" and parsed.length()>2)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+purchase(parsed[1],stn(parsed[2]),index);
+}
+}
+else if(parsed[0]=="buysomething" and parsed.length () >1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="back") return;
+send_serverbox(players[index].peer_id, 2, 1, 0, -1, "purchase "+parsed[1], "type the amount you wish to buy");
+}
+}
+else if(parsed[0]=="selling" and parsed.length () >1)
+{
+if(parsed[1]=="back")
+{
+send_reliable(e.peer_id,"canceled",0);
+return;
+}
+int index=get_player_index(e.peer_id);
+if(index<0) return;
+players[index].sellitem=parsed[1];
+//players[index].usestoretimer.restart();
+send_serverbox(e.peer_id,2,-1,0,-1,"sellamount","how many "+parsed[1]+"s do you want to sell? You have "+players[index].get_item_count(parsed[1]));
+}
+else if(parsed[0]=="sellamount" and parsed.length () >1)
+{
+int index=get_player_index(e.peer_id);
+if(index<0) return;
+string item=players[index].sellitem;
+int amount=stn(parsed[1]);
+if(amount<=0) return;
+if(players[index].get_item_count(item)<amount)
+{
+send_reliable(players[index].peer_id,"you don't have "+amount+" "+item+"s. You only have "+players[index].get_item_count(item)+".",2);
+return;
+}
+int itemprice;
+sellitems.get(item,itemprice);
+int totalprice=itemprice*amount;
+totalprice=round((totalprice*0.75),0);
+players[index].give(item,-amount);
+players[index].give("coin",totalprice);
+players[index].sellitem="";
+//players[index].usestoretimer.restart();
+players[index].playsound("store_purchase_success");
+send_reliable(players[index].peer_id,"you have received "+totalprice+" coins in return for your contribution",2);
+}
 else
 {
 
@@ -1279,6 +1333,11 @@ else
 send_reliable(e.peer_id,"player not found",2);
 }
 }
+else if(parsed[0]=="/sell")
+{
+//players[index].usestoretimer.restart();
+send_menu(e.peer_id,"Sell menu. What would you like to sell?","selling",sellsend);
+}
 else
 {
 
@@ -1403,7 +1462,7 @@ n.send_unreliable(peer, mess, channel);
 }
 void send_serverbox(int peerid, int mode=0, int maxlength=-1, int autosend=0, int keypresses=-1, string sendtext="server_box", string text="enter text")
 {
-send_reliable(peerid,"input ++"+mode+"++"+maxlength+"++"+autosend+"++"+keypresses+"++"+sendtext+"++"+text,0);
+send_reliable(peerid,"input|++"+mode+"++"+maxlength+"++"+autosend+"++"+keypresses+"++"+sendtext+"++"+text,0);
 }
 void send_menu(int id, string menuintro, string text, string items)
 {
@@ -1695,6 +1754,46 @@ int toggle(int intt)
 if(intt==0) return 1;
 else return 0;
 }
+void purchase(string name, int amount, int index)
+{
+if(index>-1)
+{
+if(amount<=0)
+{
+send_reliable(players[index].peer_id,"you must buy at least 1 of any item to buy anything!",2);
+play("store_error",players[index].x,players[index].y,players[index].z,players[index].map);
+return;
+}
+int itemindex=get_item_index(name);
+if(itemindex>-1)
+{
+int[] a=get_amounts();
+double totalamount=amount*a[itemindex];
+if(totalamount<=0)
+{
+send_reliable(players[index].peer_id,"overflow error.",2);
+play("store_error",players[index].x,players[index].y,players[index].z,players[index].map);
+return;
+}
+int coin=players[index].get_item_count("coin");
+if(coin<totalamount)
+{
+send_reliable(players[index].peer_id,"Error. Not enough coins. You need "+totalamount+" coins and you only have "+players[index].get_item_count("coin")+".",0);
+play("store_error",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else
+{
+players[index].give("coin",-totalamount);
+players[index].give(name,amount);
+if(amount==1) send_reliable(players[index].peer_id,"1 "+name+" purchased",2);
+else send_reliable(players[index].peer_id,""+amount+" "+name+"s purchased",2);
+players[index].add_log_entry("player_actions","bought "+amount+" "+name+"s");
+//storeplay("purchase",3,index);
+play("store_purchase_success",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+}
+}
+}
 int inv_item_number(string inv, string item)
 {
 string content=inv;
@@ -1837,6 +1936,16 @@ int val=stn(parsed[1]);
 sellitems.set(parsed[0],val);
 }
 }
+string[] temparray=sellitems.get_keys();
+temparray.sort_ascending();
+for(uint i=0; i<temparray.length (); i++)
+{
+int tempkey;
+sellitems.get(temparray[i],tempkey);
+tempkey=round(tempkey*0.75,0);
+sellsend+=temparray[i]+" for "+tempkey+" coins a piece:"+temparray[i]+"[]";
+}
+sellsend=string_trim_right(sellsend,2);
 return true;
 }
 bool load_store_registers()

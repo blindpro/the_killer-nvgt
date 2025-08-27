@@ -1,5 +1,5 @@
-//string netaddress="127.0.0.1";
-string netaddress="39.105.7.77";
+string netaddress="127.0.0.1";
+//string netaddress="39.105.7.77";
 uint64 netport = 10000;
 
 void testc ()
@@ -493,9 +493,13 @@ else if(parsed[0]=="launchmenu" && parsed.length () >= 3)
 string i=string_replace(parsed[1],"[SPCE]"," ",true);
 string t=string_replace(parsed[2], "[]", " ", true);
 string items=string_replace(s,parsed[0]+"|"+parsed[1]+"|"+parsed[2]+"|","",true);
-speak (items);
-t_net_loop_mutex.unlock();
-serverside_menu(t,i,items);
+sm.i = i;
+sm.t = t;
+sm.items = items;
+}
+else if(parsed[0]=="input")
+{
+is_serverbox = s;
 }
 else
 {

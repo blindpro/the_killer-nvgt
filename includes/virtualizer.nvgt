@@ -264,3 +264,136 @@ return "";
 return "";
 }
 }
+
+void serverbox(int mode=0, int maxlength=-1, int autosend=0, int keypresses=-1, string sendtext="server_box", string text="enter text")
+{
+inbox=true;
+string message;
+speak(text);
+get_characters();
+int total_keypresses=0;
+while(true)
+{
+tk_loop ();
+string char=get_characters();
+if(keyboard_modifiers & KEYMOD_CTRL > 0)
+{
+if(key_pressed(KEY_V))
+{
+if(clipboard_read_text()=="")
+{
+speak("There is no text on the clipboard");
+}
+else
+{
+speak(clipboard_read_text()+" pasted");
+message+=clipboard_read_text();
+}
+}
+}
+if (key_pressed(KEY_F2))
+{
+if (charrepeat==1)
+{
+speak("character repeat off");
+charrepeat=0;
+}
+else
+{
+speak("character repeat on");
+charrepeat=1;
+}
+}
+if(mode==1)
+{
+if(!string_is_alphanumeric(char) and char!=" ") char="";
+}
+if(mode==2)
+{
+if(!string_is_digits(char)) char="";
+}
+if(char!="")
+{
+total_keypresses+=char.length();
+if(mode==2)
+send_reliable(0,"codeclick",0);
+if (charrepeat==1)
+{
+speak(char);
+}
+message+=char;
+if(total_keypresses>=keypresses and keypresses>-1)
+{
+if(autosend>=1)
+{
+message=string_replace(message, " ", "[SPCE]", true);
+send_reliable(0, sendtext+" "+message, 0);
+keys_pressed();
+get_characters();
+keys_released();
+//keys_up();
+inbox=false;
+return;
+}
+}
+}
+if(key_pressed(KEY_BACK))
+{
+if(message.length()>0)
+{
+string char=message[message.length()-1];
+speak(char);
+message.resize(message.length()-1);
+}
+total_keypresses--;
+if(total_keypresses>=keypresses and keypresses>-1)
+{
+if(autosend>=1)
+{
+if(message.length()<=0)
+message="[bckspace]";
+send_reliable(0, sendtext+" "+message, 0);
+keys_pressed();
+get_characters();
+keys_released();
+//keys_up();
+inbox=false;
+return;
+}
+}
+}
+if(key_pressed(KEY_LEFT) or key_pressed(KEY_RIGHT) or key_pressed(KEY_UP) or key_pressed(KEY_DOWN))
+{
+if(message.length() > 0)
+speak(message);
+else
+speak("blank");
+}
+if(key_pressed(KEY_ESCAPE))
+{
+send_reliable(0, sendtext+" [cncel]", 0);
+keys_pressed();
+get_characters();
+keys_released();
+//keys_up();
+inbox=false;
+return;
+}
+else if(key_pressed(KEY_RETURN) and message.length() > 0)
+{
+send_reliable(0, sendtext+"|"+message, 0);
+get_characters();
+keys_released();
+//keys_up();
+inbox=false;
+return;
+}
+wait(5);
+}
+keys_pressed();
+get_characters();
+get_characters();
+keys_released();
+//keys_up();
+return;
+}

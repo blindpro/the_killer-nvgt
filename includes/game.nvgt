@@ -19,7 +19,6 @@ in_game1 = true;
 while (loop)
 {
 wait (5);
-//mutex_lock exclusive(t_net_loop_mutex);
 t_net_loop_mutex.lock();
 tk_loop();
 bool in_win = is_window_active();
@@ -32,6 +31,21 @@ if(in_game1==false)
 {
 t_net_loop_mutex.unlock();
 exitgame();
+}
+if (sm.t != "" && sm.i!= "" && sm.items !="")
+{
+t_net_loop_mutex.unlock();
+serverside_menu(sm.t,sm.i,sm.items);
+sm.items = "";
+t_net_loop_mutex.lock(1000);
+}
+if (is_serverbox != "")
+{
+t_net_loop_mutex.unlock();
+string[] ds=string_split(string_replace(is_serverbox, "input|++", "", false), "++", false);
+is_serverbox = "";
+serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
+t_net_loop_mutex.lock(1000);
 }
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
 if (key_pressed (KEY_ESCAPE))
