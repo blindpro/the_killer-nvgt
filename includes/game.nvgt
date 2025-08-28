@@ -70,8 +70,6 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
-if(key_pressed(KEY_A))
-speak(can_move+"."+join(weapons," ， "));
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
 if (key_pressed (KEY_ESCAPE))
 {
