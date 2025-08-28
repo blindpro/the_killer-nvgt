@@ -206,6 +206,7 @@ speak ("Error: could not activate item!");
 if(key_pressed(KEY_RETURN))
 {
 send_reliable(0, "enter", 0);
+doorcheck();
 }
 if(key_pressed(KEY_COMMA))
 {
@@ -458,6 +459,7 @@ pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
 sourcecheckloop();
+doorcheckloop ();
 //playerloop();
 msoundcheckloop();
 objloop();

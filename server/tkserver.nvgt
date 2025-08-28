@@ -1236,6 +1236,27 @@ respawn(index);
 }
 }
 }
+else if(parsed[0]=="xplay" and parsed.length () >1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1&&players[index].hidden==0) playext(parsed[1],players[index].x,players[index].y,players[index].z,players[index].map,players[index].name);
+}
+else if(parsed[0]=="iamdmoving")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+players[index].dmoving=true;
+}
+}
+else if(parsed[0]=="iamnotdmoving")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+players[index].dmoving=false;
+}
+}
 else
 {
 

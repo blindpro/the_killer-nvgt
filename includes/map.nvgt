@@ -51,6 +51,7 @@ in_map=false;
 loading.load("maploading.ogg");
 loading.play_looped();
 destroy_all_sources();
+destroy_all_doors();
 zm.reset();
 tm.reset();
 trm.reset();
@@ -84,6 +85,21 @@ spawn_source(lx, rx, miny, maxy, minz, maxz, parts[7], false, id);
 else if(parts[0]=="amb" and parts.length()>7)
 {
 create_amb(stn(parts[1]),stn(parts[2]),stn(parts[3]),stn(parts[4]),stn(parts[5]),stn(parts[6]),parts[7]);
+}
+else if(parts[0]=="door" and parts.length()>=12)
+{
+int x=string_to_number(parts[1]);
+int y=string_to_number(parts[2]);
+int z=string_to_number(parts[3]);
+int fx=string_to_number(parts[4]);
+int fy=string_to_number(parts[5]);
+int fz=string_to_number(parts[6]);
+int speed=string_to_number(parts[7]);
+string snd1=parts[8];
+string snd2=parts[9];
+string snd3=parts[10];
+string snd4=parts[11];
+spawn_door(x, y, z, fx, fy,fz,speed,snd1,snd2,snd3,snd4);
 }
 else if(parts[0]=="mapname")
 {
