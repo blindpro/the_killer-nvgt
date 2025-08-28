@@ -1719,7 +1719,6 @@ objloop();
 weaponloop();
 shelterloop();
 teamloop();
->>>>>>> 45e486d40edff5073f9375f7527b08435eda13e7
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
