@@ -479,6 +479,7 @@ add_buffer_item("misc",parsed[4]+" is online");
 else if(parsed[0]=="mapname")
 {
 mapname=string_replace(s,"mapname|","",false);
+msound_map_update ();
 }
 else if(parsed[0]=="m_data")
 {
