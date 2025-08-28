@@ -25,3 +25,5 @@
 #include "readable_time.nvgt"
 #include "store.nvgt"
 #include "weaponstuff.nvgt"
+
+#include "team.nvgt"

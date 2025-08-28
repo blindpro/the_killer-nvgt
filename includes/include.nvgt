@@ -33,3 +33,4 @@
 //#pragma namespace sound upcoming
 //#pragma plugin legacy_sound
 #include "virtualizer.nvgt"
+#include "door.nvgt"

@@ -254,8 +254,8 @@ int net_loop()
 {
 while (in_game)
 {
-//wait (1);
-//garbage_collect();
+wait (1);
+garbage_collect();
 t_net_loop_mutex.lock();
 string s;
 e = n.request(0);

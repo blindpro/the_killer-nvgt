@@ -1,0 +1,11 @@
+mapname:%shelter%
+maxx:5
+maxy:5
+maxz:10
+tile:0:5:0:5:0:0:shelter
+src:0:5:0:5:0:10:shelteramb.ogg:-1
+zone:0:5:0:5:0:10:%shelter%
+zone:0:0:0:0:0:0:shelter power breaker:trackme
+zone:0:0:4:4:0:0:shelter computer:track
+zone:4:4:4:4:0:0:shelter storage:track
+zone:2:2:2:2:0:0:to exit this shelter, press enter.:track";

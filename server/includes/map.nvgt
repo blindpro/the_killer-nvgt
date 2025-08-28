@@ -1,4 +1,5 @@
 mapdata@[] maps(0);
+maptile@[] maptiles;
 class mapdata
 {
 string name;
@@ -245,7 +246,6 @@ if(includeglobal==true)
 int index=get_map_index(mapname);
 if(index<0)
 {
-/*
 int s=get_shelter_index(mapname);
 if(s>-1)
 {
@@ -266,7 +266,6 @@ if(x>=minx and x<=maxx and y>=miny and y<=maxy and z>=minz and z<=maxz) return p
 }
 }
 }
-*/
 return "";
 }
 else
@@ -311,7 +310,7 @@ maps[i].loop();
 }
 bool can_spawn_item_at(int x, int y, int z, string mapname,string item)
 {
-//if(shelter_exists(mapname)) return true;
+if(shelter_exists(mapname)) return true;
 string[] tempi;
 bool ret=true;
 int ind=get_map_index(mapname);
@@ -376,7 +375,7 @@ string ds1 = parsed[8];
 string ds2 = parsed[9];
 string ds3 = parsed[10];
 string ds4 = parsed[11];
-send_reliable(0, "door_at "+doorx+" "+doory+" "+doorz+" "+finishx+" "+finishy+" "+finishz+" "+dtime+" "+ds1+" "+ds2+" "+ds3+" "+ds4, 0);
+//send_reliable(0, "door_at "+doorx+" "+doory+" "+doorz+" "+finishx+" "+finishy+" "+finishz+" "+dtime+" "+ds1+" "+ds2+" "+ds3+" "+ds4, 0);
 }
 if(parsed[0]=="travelpoint" and parsed.length()>11)
 {
@@ -403,8 +402,7 @@ return ret;
 vector get_max_values(string mapname)
 {
 int ind=get_map_index(mapname);
-int s;
-//int s=get_shelter_index(mapname);
+int s=get_shelter_index(mapname);
 vector temp;
 if(ind<0 and s<0) return temp;
 if(ind<0 and s>-1)
@@ -449,4 +447,48 @@ maps.remove_at(id);
 if(delete==true)
 file_delete("maps/"+mapname+".map");
 return true;
+}
+string linear(string[] a)
+{
+string final;
+for(uint i=0; i<a.length(); i++)
+{
+final+=(a[i]+"\r\n");
+}
+return final;
+}
+string[] delinear2(string a)
+{
+return string_split(a, ":", false);
+}
+bool is_staircase(double x, double y, double z)
+{
+if(!tile_exists(x,y,z)) return false;
+for(uint i=0; i<maptiles.length(); i++)
+{
+if(maptiles[i].is_on_tile(x, y, z)&&maptiles[i].maxz!=maptiles[i].minz)
+return true;
+}
+return false;
+}
+bool is_staircase(double x, double y, double z, string mapname)
+{
+int index=get_map_index(mapname);
+if(index<0)
+{
+return false;
+}
+else
+{
+return maps[index].is_staircase(x, y, z);
+}
+}
+bool tile_exists(double x, double y, double z)
+{
+for(uint i=0; i<maptiles.length(); i++)
+{
+if(maptiles[i].is_on_tile(x, y, z))
+return true;
+}
+return false;
 }

@@ -42,7 +42,7 @@ compsound=spawn_moving_sound("shelter_computerloop.ogg",0,4,0,sheltername);
 }
 string generate_map()
 {
-string mapdata="mapname:"+sheltername+"\R\Nmaxx:5\R\Nmaxy:5\R\Nmaxz:10\R\Ntile:0:5:0:5:0:0:shelter\R\Nsrc:0:5:0:5:0:10:shelteramb.ogg:-1\R\Nzone:0:5:0:5:0:10:"+sheltername+"\R\Nzone:0:0:0:0:0:0:shelter power breaker:trackme\R\Nzone:0:0:4:4:0:0:shelter computer:track\R\Nzone:4:4:4:4:0:0:shelter storage:track\R\Nzone:2:2:2:2:0:0:to exit this shelter, press enter.:track";
+string mapdata=string_replace(get_file_contents ("prefs/sheltermap.svr"), "%shelter%",sheltername ,true);
 return mapdata;
 }
 bool players_nearby()
@@ -94,7 +94,7 @@ play(sound,0,4,0,sheltername);
 bool is_allowed(string playername)
 {
 if(broken==true) return true;
-//return (aplayers.find(playername)>-1||playername==owner||(teamname!=""&&is_part_of_team(playername,teamname)));
+return (aplayers.find(playername)>-1||playername==owner||(teamname!=""&&is_part_of_team(playername,teamname)));
 return false;
 }
 int add_allowed_player(string playername)
@@ -643,7 +643,7 @@ return;
 shelter sh(x,y,z,map,owner,name,power);
 shelters.insert_last(sh);
 saveshelters();
-init_mapsystem();
+//init_mapsystem();
 }
 bool has_shelter(player@p)
 {

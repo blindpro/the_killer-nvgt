@@ -91,12 +91,17 @@ else
 if(jumping==false)
 {
 int e;
+t_net_loop_mutex.unlock();
 e=yesno("Are you sure you want to exit?");
 if(e==1)
 {
 send_reliable(0, "close", 0);
 xtimer.restart();
 x=true;
+}
+else
+{
+t_net_loop_mutex.lock(1000);
 }
 }
 }
@@ -235,6 +240,7 @@ speak ("Error: could not activate item!");
 if(key_pressed(KEY_RETURN))
 {
 send_reliable(0, "enter", 0);
+doorcheck();
 }
 if(key_pressed(KEY_COMMA))
 {
@@ -493,12 +499,12 @@ mainmenu();
 }
 void tk_loop()
 {
-//net_loop ();
 if (lowhealth) healthloop();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
 sourcecheckloop();
+doorcheckloop ();
 //playerloop();
 msoundcheckloop();
 objloop();
