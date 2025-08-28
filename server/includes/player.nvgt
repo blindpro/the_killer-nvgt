@@ -1239,3 +1239,14 @@ ret=get_char_val(pname,"nickname");
 }
 return ret;
 }
+bool is_on_server(string playername)
+{
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==playername)
+{
+return true;
+}
+}
+return false;
+}

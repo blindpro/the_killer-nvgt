@@ -45,6 +45,7 @@ return t;
 
 void load_map(string data)
 {
+
 maploadtimer.restart();
 sound loading;
 in_map=false;
@@ -61,6 +62,7 @@ string[]@ map_data = data.split("\r\n");
 pos ();
 for (uint i=0; i<map_data.length(); i++)
 {
+pos ();
 string[]@ parts = map_data[i].split(":");
 if(parts[0] == "tile")
 {
