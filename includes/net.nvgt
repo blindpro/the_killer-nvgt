@@ -312,6 +312,14 @@ if(parsed[1]!=name and map==mapname and inve==false)
 tp.play_3d(get_tile_at(x, y, z)+"land.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
+else if(parsed[0]=="cannotdraw")
+{
+can_draw_weapon=false;
+}
+else if(parsed[0]=="candraw")
+{
+can_draw_weapon=true;
+}
 else if(parsed[0]=="remove_obj")
 {
 int index = get_obj_index(stn(parsed[1]));

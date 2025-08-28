@@ -105,9 +105,18 @@ if(xtimer.elapsed>2500 and x==true)
 t_net_loop_mutex.unlock();
 exitgame();
 }
-if(key_pressed(KEY_A))
+if(key_pressed(KEY_A)&&w>-1)
 {
 send_reliable(0,"ammocheck|"+weapons[w],0);
+}
+if(key_pressed(KEY_R))
+{
+if(alt_is_down())
+send_reliable(0,"air",0);
+else if(shift_is_down())
+send_reliable(0,"remconnect",0);
+else
+send_reliable(0,"reload",0);
 }
 if(key_pressed(KEY_Z))
 {
@@ -172,6 +181,22 @@ if(key_pressed(KEY_S) and posetimer.elapsed>=760 and can_move==true&&!inve)
 {
 posetimer.restart();
 send_reliable(0,"sitstand",0);
+}
+if((firetimer.elapsed>=firetime and control_is_down() &&can_move and firing==false&&!inve) and weaponauto and mapname!="store")
+{
+firetimer.restart();
+firing=true;
+send_reliable(0,"firestart "+weapons[w],0);
+}
+if(firing==true and !control_is_down() and weaponauto==true)
+{
+firing=false;
+send_reliable(0,"firestop",0);
+}
+if((firetimer.elapsed>=firetime and( control_is_pressed() or mouse_pressed(0)) &&can_move&&!inve) and !weaponauto and !weapons.is_empty())
+{
+firetimer.restart();
+send_reliable(0,"fire|"+weapons[w],0);
 }
 if(key_pressed(KEY_SLASH))
 {

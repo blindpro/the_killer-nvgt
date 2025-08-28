@@ -107,7 +107,7 @@ timer chattimer;
 string ammostuff;
 string muted;
 //achievements a;
-//playerweapon w(this);
+playerweapon w(this);
 string zone;
 string ip;
 string vtype;
@@ -212,6 +212,10 @@ if(fall==true) {
 vo("standup");
 spawn_bodyfall(x,y,z,map,500,get_player_index_from(name));
 }
+}
+void fire_auto()
+{
+firing=true;
 }
 int warpdist=0;
 int warpmoved=0;
@@ -705,7 +709,7 @@ if(players[i].reloading)
 if(players[i].reloadtimer.elapsed>players[i].reloadtime)
 {
 players[i].reloading=false;
-//players[i].w.reload();
+players[i].w.reload();
 send_reliable(players[i].peer_id, "candraw", 0);
 }
 }
@@ -809,7 +813,7 @@ if(players[i].firetimer.elapsed>=players[i].firetime and players[i].firing==true
 {
 players[i].firetimer.restart();
 players[i].playsound(players[i].weapon);
-send_reliable_x(0,"distsound "+players[i].weapon+"dist "+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
+send_reliable_x(0,"distsound|"+players[i].weapon+"dist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
 if(hasammo(players[i].weapon)==true)
 {
 players[i].ammo_give(players[i].weapon,-1);

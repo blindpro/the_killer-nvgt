@@ -22,6 +22,7 @@ string[] guns={"crossbow","ML7TinyMG","shotgun","ML420HuntingRifle","glock","Fla
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
+int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=0;
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -122,6 +123,98 @@ else
 send_reliable(e.peer_id,"map|"+data,0);
 }
 }
+else if(parsed[0]=="firestop")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+players[index].firing=false;
+}
+}
+else if(parsed[0]=="firestart" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].newb==1)
+{
+send_reliable(players[index].peer_id,"You can't fire if you are a newbie!",0);
+return;
+}
+if(players[index].reloading and hasammo(parsed[1]))
+{
+send_reliable(players[index].peer_id,"You need to wait for your weapon to reload itself! You might jam it!",0);
+return;
+}
+int mapindex=get_map_index(players[index].map);
+if(mapindex<0 and get_shelter_index(players[index].map)<0)
+{
+send_reliable(players[index].peer_id,"Can not fire in this map. Error with index",0);
+return;
+}
+if(players[index].is_dead or players[index].invinsible or players[index].stunned or players[index].weapon=="" or (mapindex>-1 and maps[mapindex].fighting==0) or (players[index].map=="store" and storefight==0))
+return;
+string wname=parsed[1];
+if(players[index].get_ammo_count(wname)>0 or hasammo(wname)==false)
+{
+if(players[index].map=="jail")
+{
+return;
+}
+players[index].fire_auto();
+}
+else
+{
+players[index].vo("outofammo");
+players[index].playsound(players[index].weapon+"empty");
+}
+}
+}
+else if(parsed[0]=="fire")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].newb==1)
+{
+send_reliable(players[index].peer_id,"You can't fire if you are a newbie!",0);
+return;
+}
+int mapindex=get_map_index(players[index].map);
+if(players[index].is_dead or players[index].invinsible or players[index].stunned or players[index].weapon=="" or (mapindex>-1 and maps[mapindex].fighting==0) or (players[index].map=="store" and storefight==0))
+return;
+string wname=players[index].weapon;
+if(players[index].reloading and hasammo(wname))
+{
+send_reliable(players[index].peer_id,"You need to wait for your weapon to reload itself! You might jam it!",0);
+return;
+}
+if(players[index].get_ammo_count(wname)>0 or hasammo(wname)==false)
+{
+if(players[index].map=="jail")
+{
+return;
+}
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+play(wname, players[index].x, players[index].y, players[index].z, players[index].map);
+send_reliable(0,"distsound|"+wname+"dist|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
+if(hasammo(wname)==true)
+{
+players[index].ammo_give(wname,-1);
+if(players[index].get_ammo_count(wname)<=0)
+{
+players[index].vo("reload");
+return;
+}
+}
+}
+else
+{
+players[index].playsound(wname+"empty");
+players[index].vo("outofammo");
+}
+}
+}
 else if(parsed[0]=="invrequest")
 {
 int index=get_player_index(e.peer_id);
@@ -142,6 +235,21 @@ obj+=objs[i].x+"|"+objs[i].y+"|"+objs[i].z+"|"+objs[i].map+"|"+objs[i].name+"|"+
 if(i!=objs.length()-1) obj+="\r\n";
 }
 send_reliable(players[index].peer_id,obj,0);
+}
+}
+else if(parsed[0]=="ammocheck" and parsed.length()>=1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(hasammo(parsed[1])==true)
+{
+int loadedammo=players[index].get_ammo_count(parsed[1]);
+int currentammo=players[index].get_item_count("ammo_"+parsed[1]);
+send_reliable(players[index].peer_id,"You have "+loadedammo+" of "+players[index].w.get_max_ammo()+" ammo in your "+parsed[1]+", and you have "+currentammo+" bullets remaining",2);
+}
+else
+send_reliable(players[index].peer_id,"The "+parsed[1]+" does not take ammo",0);
 }
 }
 else if(parsed[0]=="draw" and parsed.length()>1)
@@ -420,6 +528,43 @@ players[index].master=true;
 else
 players[index].is_admin=true;
 if(players[index].adminflag==1) players[index].title="administrator";
+}
+}
+}
+else if(parsed[0]=="reload")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].stunned==false and players[index].firing==false and players[index].reloading==false)
+{
+if(players[index].weapon=="knife" or players[index].weapon=="fists" or players[index].weapon=="sword")
+{
+send_reliable(players[index].peer_id,"This weapon does not take ammo",0);
+return;
+}
+else if(players[index].weapon=="")
+{
+send_reliable(players[index].peer_id, "you have no weapon equipped", 0);
+return;
+}
+if(players[index].get_ammo_count_from(players[index].weapon)>0)
+{
+return;
+}
+if(players[index].get_item_count("ammo_"+players[index].weapon)<=0)
+{
+send_reliable(players[index].peer_id,"no ammo left for "+players[index].weapon+"!",0);
+return;
+}
+else
+{
+players[index].reloadtime=players[index].w.get_reloadtime();
+players[index].reloadtimer.restart();
+send_reliable(players[index].peer_id, "cannotdraw", 0);
+players[index].reloading=true;
+players[index].playsound(players[index].weapon+"reload");
+}
 }
 }
 }
@@ -1435,6 +1580,7 @@ bodyfallloop();
 timepacketloop();
 maploop();
 objloop();
+weaponloop();
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
