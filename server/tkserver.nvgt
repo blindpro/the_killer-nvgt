@@ -759,7 +759,8 @@ for(uint i=0; i<sirens.length; i++)
 send_reliable(players[index].peer_id,"createsiren "+sirens[i].id+" "+sirens[i].soundloop+" "+sirens[i].x+" "+sirens[i].y+" "+sirens[i].z+" "+sirens[i].map,4);
 }
 */
-send_reliable(players[index].peer_id,"weaponlist|"+wnames,0);
+string text = wnames.replace(" ","|");
+send_reliable(players[index].peer_id,"weaponlist|"+text,0);
 players[index].oldhealth=players[index].health;
 players[index].statchangetimer.force(60000);
 players[index].invusetimer.force(60000);
@@ -2180,18 +2181,18 @@ for(uint i=0; i<wpn.length(); i++)
 export_weapon(wpn[i]);
 }
 */
-wdata.set("fists","200 norm");
-wdata.set("knife","280 norm");
-wdata.set("admingun","800 norm");
-wdata.set("ML7TinyMG","150 auto");
-wdata.set("ML420HuntingRifle","2000 norm");
-wdata.set("FlameThrower","850 norm");
-wdata.set("sword","850 norm");
-wdata.set("crossbow","600 norm");
-wdata.set("glock","350 norm");
-wdata.set("shotgun","1500 norm");
-wdata.set("sniper","1000 norm");
-wdata.set("FRNTAssaultRifle","200 norm");
+wdata.set("fists","200|norm");
+wdata.set("knife","280|norm");
+wdata.set("admingun","800|norm");
+wdata.set("ML7TinyMG","150|auto");
+wdata.set("ML420HuntingRifle","2000|norm");
+wdata.set("FlameThrower","850|norm");
+wdata.set("sword","850|norm");
+wdata.set("crossbow","600|norm");
+wdata.set("glock","350|norm");
+wdata.set("shotgun","1500|norm");
+wdata.set("sniper","1000|norm");
+wdata.set("FRNTAssaultRifle","200|norm");
 /*
 animaltypes.insert_last("hog");
 animaltypes.insert_last("monster");

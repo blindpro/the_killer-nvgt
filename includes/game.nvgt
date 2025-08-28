@@ -405,28 +405,13 @@ move(Right);
 }
 if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon)
 {
-keylist=keys_pressed();
-for(uint i=0; i<keylist.length(); i++)
+for(uint i = 0; i < weapon_key_codes.length(); i++)
 {
-if (keylist[i]>=2 and keylist[i]<=14 and weapons.length()>keylist[i]-2 and i==0)
-{if (w<0)
+if(key_pressed(weapon_key_codes[i])&&i<=weapons.length()-1&&i!=w)
 {
-if(w!=keylist[i]-2 and mapname!="store")
-{
-w=keylist[i]-2;
+w = i;
 speak(weapons[w]);
 send_reliable(0, "draw|"+weapons[w], 0);
-}
-}
-else if (w>=0)
-{
-if(w!=keylist[i]-2)
-{
-w=keylist[i]-2;
-speak(weapons[w]);
-send_reliable(0, "draw|"+weapons[w], 0);
-}
-}
 }
 }
 }

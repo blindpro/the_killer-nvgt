@@ -342,12 +342,12 @@ walkmod=false;
 walktime=100;
 movetime=walktime;
 if(canjump==0) canjump=1;
-airtime=70;
+airtime=50;
 }
 else if(parsed[0]=="weaponlist" and parsed.length()>1)
 {
 weapons.resize(0);
-w=0;
+w=-1;
 for(uint i=1; i<parsed.length(); i++)
 {
 weapons.insert_last(parsed[i]);
