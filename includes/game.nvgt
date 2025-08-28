@@ -70,6 +70,8 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
+if(key_pressed(KEY_A))
+speak(can_move+"."+join(weapons," ， "));
 if(key_pressed(KEY_GRAVE)) checkarroundmenu();
 if (key_pressed (KEY_ESCAPE))
 {
@@ -104,6 +106,10 @@ if(xtimer.elapsed>2500 and x==true)
 {
 t_net_loop_mutex.unlock();
 exitgame();
+}
+if(key_pressed(KEY_A))
+{
+send_reliable(0,"ammocheck|"+weapons[w],0);
 }
 if(key_pressed(KEY_Z))
 {
@@ -397,6 +403,33 @@ else if(key_down(KEY_RIGHT))
 {
 walktimer.restart();
 move(Right);
+}
+}
+if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon)
+{
+keylist=keys_pressed();
+for(uint i=0; i<keylist.length(); i++)
+{
+if (keylist[i]>=2 and keylist[i]<=14 and weapons.length()>keylist[i]-2 and i==0)
+{if (w<0)
+{
+if(w!=keylist[i]-2 and mapname!="store")
+{
+w=keylist[i]-2;
+speak(weapons[w]);
+send_reliable(0, "draw|"+weapons[w], 0);
+}
+}
+else if (w>=0)
+{
+if(w!=keylist[i]-2)
+{
+w=keylist[i]-2;
+speak(weapons[w]);
+send_reliable(0, "draw|"+weapons[w], 0);
+}
+}
+}
 }
 }
 //连续判断加前面

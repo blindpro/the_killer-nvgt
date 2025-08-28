@@ -344,6 +344,20 @@ movetime=walktime;
 if(canjump==0) canjump=1;
 airtime=70;
 }
+else if(parsed[0]=="weaponlist" and parsed.length()>1)
+{
+weapons.resize(0);
+w=0;
+for(uint i=1; i<parsed.length(); i++)
+{
+weapons.insert_last(parsed[i]);
+}
+}
+else if(parsed[0]=="weapondata" and parsed.length()>2)
+{
+firetime=stn(parsed[1]);
+weaponauto=(parsed[2]=="auto" ? true : false);
+}
 else if(parsed[0]=="invstring")
 {
 inv=string_decompress(string_trim_left(s, 10));
