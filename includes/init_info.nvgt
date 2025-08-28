@@ -104,3 +104,4 @@ timer deathtimer;
 bool lowhealth;
 int currenthealth;
 timer heartsoundtimer;
+int rcontrol = 0;
