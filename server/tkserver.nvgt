@@ -629,6 +629,7 @@ s+="below, ";
 }
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, storex, storey, players[index].facing))+", "+players[index].distancecheck(storex,storey,storez)+" feet away. ";
 }
+*/
 for (uint i=0; i<shelters.length(); i++)
 {
 if (shelters[i].x<players[index].x+20 and shelters[i].x>players[index].x-20 and shelters[i].y<players[index].y+20 and shelters[i].y>players[index].y-20 and get_1d_distance(shelters[i].z,players[index].z)<=20 and shelters[i].map==players[index].map)
@@ -661,6 +662,7 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, shelters[i].x, shelters[i].y, players[index].facing))+", "+players[index].distancecheck(shelters[i].x,shelters[i].y,shelters[i].z)+" feet away. ";
 }
 }
+/*
 for (uint i=0; i<vending_machines.length(); i++)
 {
 if (vending_machines[i].x<players[index].x+20 and vending_machines[i].x>players[index].x-20 and vending_machines[i].y<players[index].y+20 and vending_machines[i].y>players[index].y-20 and get_1d_distance(vending_machines[i].z,players[index].z)<=20 and vending_machines[i].map==players[index].map)
