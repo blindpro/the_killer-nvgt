@@ -4,7 +4,7 @@ network n;
 network_event e;
 uint64 port = 10000;
 bool netsetup;
-dictionary sellitems;
+dictionary sellitems,wdata;
 int storex=0,storey=100,storez=0,fstorex=0,fstorey=100,fstorez=0;
 string sellsend;
 bool storemoving=false,fstorecoords=false;
@@ -66,6 +66,7 @@ for(uint i=0; i<stuff.length(); i++)
 {
 load_shelter(string_replace(stuff[i],".shelter","",false));
 }
+setupserver();
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");
@@ -148,6 +149,21 @@ obj+=objs[i].x+"|"+objs[i].y+"|"+objs[i].z+"|"+objs[i].map+"|"+objs[i].name+"|"+
 if(i!=objs.length()-1) obj+="\r\n";
 }
 send_reliable(players[index].peer_id,obj,0);
+}
+}
+else if(parsed[0]=="draw" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].map=="jail" or players[index].is_dead)
+return;
+players[index].stun(404,false,false);
+play(parsed[1]+"draw", players[index].x, players[index].y, players[index].z, players[index].map);
+send_reliable(players[index].peer_id,"weapondata|"+dget_string(wdata,parsed[1]),0);
+players[index].weapon=parsed[1];
+players[index].get_weapon_propperties(players[index].weapon);
+players[index].firing=false;
 }
 }
 else if(parsed[0]=="use" and parsed.length()>1)
@@ -770,7 +786,7 @@ for(uint i=0; i<sirens.length; i++)
 send_reliable(players[index].peer_id,"createsiren "+sirens[i].id+" "+sirens[i].soundloop+" "+sirens[i].x+" "+sirens[i].y+" "+sirens[i].z+" "+sirens[i].map,4);
 }
 */
-//send_reliable(players[index].peer_id,"weaponlist "+wnames,0);
+send_reliable(players[index].peer_id,"weaponlist|"+wnames,0);
 players[index].oldhealth=players[index].health;
 players[index].statchangetimer.force(60000);
 players[index].invusetimer.force(60000);
@@ -2313,4 +2329,135 @@ players[index].oldhealth=players[index].health;
 players[index].sitting=1;
 send_reliable(players[index].peer_id,"sitstart",0);
 players[index].statchangetimer.force(60000);
+}
+void setupserver()
+{
+/*
+string[] wpn=string_split(wnames," ",false);
+for(uint i=0; i<wpn.length(); i++)
+{
+export_weapon(wpn[i]);
+}
+*/
+wdata.set("fists","200 norm");
+wdata.set("knife","280 norm");
+wdata.set("admingun","800 norm");
+wdata.set("ML7TinyMG","150 auto");
+wdata.set("ML420HuntingRifle","2000 norm");
+wdata.set("FlameThrower","850 norm");
+wdata.set("sword","850 norm");
+wdata.set("crossbow","600 norm");
+wdata.set("glock","350 norm");
+wdata.set("shotgun","1500 norm");
+wdata.set("sniper","1000 norm");
+wdata.set("FRNTAssaultRifle","200 norm");
+/*
+animaltypes.insert_last("hog");
+animaltypes.insert_last("monster");
+animaltypes.insert_last("giant");
+gifts.insert_last("antibiotic");
+gifts.insert_last("invisibility_shield");
+gifts.insert_last("timebomb");
+gifts.insert_last("remote_gun");
+gifts.insert_last("remote_timebomb");
+*/
+//add_snack_item("chips",20);
+//add_snack_item("chocolate_bar",30);
+//add_snack_item("banana_bread",50);
+add_drink_item("pop_can",20);
+//add_drink_item("energy_drink",50);
+add_drink_item("health_drink",150);
+add_drink_item("beer_bottle",200);
+//spawn_jplayer(13, 20,0,"store");
+if(!load_store_registers())
+{
+create_store(0, 0, 0, "store", "weapon_store");
+create_store(0, 10, 0, "store", "misc_store");
+create_store(10, 20, 0, "store", "medical_store");
+create_store(10, 10, 0, "store", "explosive_store");
+create_store(20, 10, 0, "store", "vehicle_store");
+}
+if(!load_stores())
+{
+add_to_store("aircraft","An airborn vehicle with a high powered lazer and capable of very high speeds",500);
+add_to_store("tank","A massive ground vehicle equipped with a very powerful cannon",400);
+add_to_store("fuel_tank","A fuel tank for both the aircraft and tank",120);
+add_to_store("wirebomb","A bomb with wires sticking out of them. Good for trapping!",300, "explosive_store");
+add_to_store("FRNTAssaultRifle_ammo_pack","ammo for the FRNTAssaultRifle",110, "weapon_store");
+add_to_store("carrier_missile","A missile that can send items and deploy them if possible",600);
+add_to_store("mini_antibiotic_pack","A pack of 5 antibiotics",20, "medical_store");
+add_to_store("antibiotic_pack","A normal pack of 20 antibiotics",120, "medical_store");
+add_to_store("ultra_antibiotic_pack","A pack of antibiotics containing 50 antibiotics",800, "medical_store");
+add_to_store("stun_dart","a throwing dart that will stun a player for five seconds if hit",10, "weapon_store");
+add_to_store("timebomb","a bomb with a beeping timer on it.",15, "explosive_store");
+add_to_store("remote_gun","a gun that can be placed and remote controlled from a distance, good for protection of a certain area.",30, "weapon_store");
+add_to_store("mine","A bomb that activates if a player steps on it",75, "explosive_store");
+add_to_store("remote_timebomb","a remote controlled timebomb that can be detinated from anywhere with a keystroke. Packs a decent range and damage, as well as a very short time pre explosion.",30, "explosive_store");
+add_to_store("security_bomb","A bomb that detects players and vehicles and can inflict some serious damage. Good for shelter protection!",450, "explosive_store");
+add_to_store("toolbox","A very useful item needed for repairing vehicles",1000);
+add_to_store("guided_missile","A powerful missile that you can send after a player or to a set of coordinates",600, "weapon_store");
+add_to_store("missile_interceptor","A device you can use to intercept incoming missiles",60, "weapon_store");
+add_to_store("warp_box","a smart little device that will allow you to fly ahead an catch a running coward",90);
+add_to_store("motion_bomb","A powerful bomb that detects motion",100, "explosive_store");
+add_to_store("grenade_pack","a pack of 10 grenades",200, "explosive_store");
+add_to_store("shield","a good layer of protection. Not fool proof though!",60);
+add_to_store("wood_pack","A pack of wood for shelters",100);
+add_to_store("metal_pack","a pack full of metal for vehicle repairs",150);
+add_to_store("impact_bomb","a bomb that will explode if hit enough, great in chains!",75, "explosive_store");
+add_to_store("ultrabomb","A very powerfull bomb that can be detenated with coins. Packs lots of range",350, "explosive_store");
+add_to_store("ultrabomb_silencer","a device used to remove the noticeable buzzing from an active ultrabomb",70);
+add_to_store("glock_ammo_pack","a pack of ammo for a glock",70, "weapon_store");
+add_to_store("sniper_ammo_pack","a pack of ammo for a sniper",120, "weapon_store");
+add_to_store("shotgun_ammo_pack","a pack of ammo for a shotgun",150, "weapon_store");
+add_to_store("crossbow_ammo_pack","A pack of ammo for a crossbow",80, "weapon_store");
+add_to_store("FlameThrower_ammo_pack","A pack of ammo for a flame thrower",250, "weapon_store");
+add_to_store("ML7TinyMG_ammo_pack","A pack of ammo for an ML7TinyMG",350, "weapon_store");
+add_to_store("team_member_booster","These devices will open 1 slot for a member in your team",5000);
+}
+if(!load_sell())
+{
+sellitems.set("aircraft",500);
+sellitems.set("tank",400);
+sellitems.set("fuel_tank",120);
+sellitems.set("antibiotic",5);
+sellitems.set("wirebomb",150);
+sellitems.set("carrier_missile",300);
+sellitems.set("mini_antibiotic_pack",20);
+sellitems.set("antibiotic_pack",120);
+sellitems.set("ultra_antibiotic_pack",800);
+sellitems.set("stun_dart",10);
+sellitems.set("timebomb",15);
+sellitems.set("remote_gun",30);
+sellitems.set("mine",75);
+sellitems.set("remote_timebomb",25);
+sellitems.set("security_bomb",450);
+sellitems.set("toolbox",1000);
+sellitems.set("guided_missile",600);
+sellitems.set("missile_interceptor",60);
+sellitems.set("warp_box",90);
+sellitems.set("motion_bomb",100);
+sellitems.set("grenade",20);
+sellitems.set("grenade_pack",200);
+sellitems.set("impact_bomb",75);
+sellitems.set("ultrabomb",350);
+sellitems.set("ultrabomb_silencer",70);
+sellitems.set("ultrabomb_locator",20);
+sellitems.set("shield",60);
+sellitems.set("metal_pack",150);
+sellitems.set("metal",5);
+sellitems.set("wood_pack",100);
+sellitems.set("wood",2);
+sellitems.set("fire_extinguisher",40);
+sellitems.set("invisibility_shield",90);
+}
+string[] temparray=sellitems.get_keys();
+temparray.sort_ascending();
+for(uint i=0; i<temparray.length(); i++)
+{
+int tempkey;
+sellitems.get(temparray[i],tempkey);
+tempkey=round(tempkey*0.75,0);
+sellsend+=temparray[i]+" for "+tempkey+" coins a piece:"+temparray[i]+"[]";
+}
+sellsend=string_trim_right(sellsend,2);
 }
