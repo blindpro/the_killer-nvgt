@@ -20,6 +20,29 @@ while (loop)
 {
 wait (5);
 t_net_loop_mutex.lock();
+if (dead)
+{
+while(deathtimer.elapsed<5000)
+{
+wait(5);
+tk_loop();
+if(key_pressed(KEY_ESCAPE))
+{
+int e;
+e=yesno("Are you sure you want to exit?");
+if(e==1)
+{
+send_reliable(0, "close", 0);
+xtimer.restart();
+x=true;
+}
+}
+}
+resume_all_sources();
+frozen=false;
+dead=false;
+send_reliable(0,"revive",0);
+}
 tk_loop();
 bool in_win = is_window_active();
 if (in_win != in_window)
@@ -430,6 +453,7 @@ mainmenu();
 void tk_loop()
 {
 //net_loop ();
+if (lowhealth) healthloop();
 pos();
 zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
@@ -561,5 +585,14 @@ me.z=1;
 falling=false;
 }
 send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
+}
+}
+void healthloop()
+{
+if(lowhealth==false) return;
+if(heartsoundtimer.elapsed>=currenthealth/5+50)
+{
+heartsoundtimer.restart();
+p.play_stationary("heartbeat.ogg",false);
 }
 }

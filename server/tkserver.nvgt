@@ -21,6 +21,7 @@ int objgrabs=0, objspawns=0;
 string[] guns={"crossbow","ML7TinyMG","shotgun","ML420HuntingRifle","glock","FlameThrower","FRNTAssaultRifle","sniper"};
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
+string[] killmsgs;
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -227,6 +228,33 @@ string[] p=string_split(s,"_",false);
 players[index].give(string_replace(s,p[0]+"_","",false),stn(p[0]));
 players[index].give("empty_pack", 1);
 players[index].playsound("packopen");
+}
+else if(wname=="warp_box")
+{
+vector max=get_max_values(players[index].map);
+if(players[index].statchangetimer.elapsed<20000)
+{
+send_reliable(players[index].peer_id,"you can't use this yet",0);
+return;
+}
+/*
+if(in_vehicle(players[index].name)>-1)
+{
+send_reliable(players[index].peer_id,"Not in a "+vs[in_vehicle(players[index].name)].type+"!",2);
+return;
+}
+*/
+if(((max.x-players[index].x) <=100 and players[index].facing==90) or ((max.y-players[index].y) <= 100 and players[index].facing==0) or ((players[index].x-0) <= 100 and players[index].facing==270) or ((players[index].y-0) <= 100 and players[index].facing==180)) 
+{
+send_reliable(players[index].peer_id, "you can't use the warp_box here, because you are near edges ", 2);
+return;
+}
+takeobj = true;
+send_reliable(players[index].peer_id,"stopmoving",0);
+players[index].statchangetimer.restart();
+players[index].warptimer.restart();
+players[index].warping=true;
+players[index].playsound("wppowerup");
 }
 else if(wname=="antibiotic")
 {
@@ -1023,7 +1051,7 @@ if(storeopened==1 and players[index].firing==false)
 move_player(players[index],"store",10,1,0);
 if(players[index].hidden==0) play("storeopen",round(players[index].x,0),round(players[index].y,0),players[index].z,players[index].map);
 send_reliable(players[index].peer_id,"You walk into the store .",0);
-send_reliable(players[index].peer_id,"entershelter 0 100 0 main",0);
+send_reliable(players[index].peer_id,"entershelter|0|100|0|main",0);
 players[index].storetimer.restart();
 players[index].storestage=1;
 return;
@@ -1087,7 +1115,7 @@ if(shelters[i].is_allowed(players[index].name)==false&&players[index].hidden==0)
 else
 {
 move_player(players[index],shelters[i].sheltername,2,2,0,true,false,i);
-send_reliable(players[index].peer_id,"entershelter "+shelters[i].x+" "+shelters[i].y+" "+shelters[i].z+" "+shelters[i].map,0);
+send_reliable(players[index].peer_id,"entershelter|"+shelters[i].x+"|"+shelters[i].y+"|"+shelters[i].z+"|"+shelters[i].map,0);
 return;
 }
 }
@@ -1195,6 +1223,18 @@ players[index].sellitem="";
 //players[index].usestoretimer.restart();
 players[index].playsound("store_purchase_success");
 send_reliable(players[index].peer_id,"you have received "+totalprice+" coins in return for your contribution",2);
+}
+else if(parsed[0]=="revive")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].is_dead=true)
+{
+players[index].vo("revive");
+respawn(index);
+}
+}
 }
 else
 {
@@ -1846,9 +1886,9 @@ if(in_shelter(p.name)>-1 or p.map=="store") send_reliable(p.peer_id,"exitshelter
 else if(shelter_exists(map))
 {
 int x2=get_shelter_index(map);
-if(x2>-1) send_reliable(p.peer_id,"entershelter "+shelters[x2].x+" "+shelters[x2].y+" "+shelters[x2].z+" "+shelters[x2].map,0);
+if(x2>-1) send_reliable(p.peer_id,"entershelter|"+shelters[x2].x+"|"+shelters[x2].y+"|"+shelters[x2].z+"|"+shelters[x2].map,0);
 }
-else if(map=="store") send_reliable(p.peer_id,"entershelter "+storex+" "+storey+" "+storez+" main",0);
+else if(map=="store") send_reliable(p.peer_id,"entershelter|"+storex+"|"+storey+"|"+storez+"|main",0);
 */
 }
 if(mapchanged)
@@ -1990,4 +2030,128 @@ for(int i=0; i<items.length(); i++)
 if(items[i]==name) return i;
 }
 return -1;
+}
+bool automatic(string w)
+{
+string[] aut={"FRNTAssaultRifle","ML7TinyMG","machinegun"};
+if(aut.find(w)>-1)
+return true;
+return false;
+}
+bool hasammo(string w)
+{
+if(guns.find(w)>-1)
+return true;
+return false;
+}
+bool has_remgun(string name)
+{
+/*
+for(uint i=0; i<remguns.length(); i++)
+{
+if(remguns[i].owner==name)
+{
+return true;
+}
+}
+*/
+return false;
+}
+int select_random_player(string noname="")
+{
+int[] indexs;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].invinsible==true or players[i].is_dead==true or players[i].invisible==true or players[i].name==noname) continue;
+indexs.insert_last(get_player_index(players[i].peer_id));
+}
+if(indexs.length () <=0)
+{
+return -1;
+}
+else
+return indexs[random(0,indexs.length()-1)];
+}
+void intercept(int x,int y, int z, string map, int index=-1)
+{
+/*
+if(index>-1)
+{
+for(uint j=0; j<carrier_missiles.length(); j++)
+{
+int dist=get_3d_distance(carrier_missiles[j].x,carrier_missiles[j].y,carrier_missiles[j].z,x,y,z);
+if(dist<=15 and carrier_missiles[j].map==map and carrier_missiles[j].intercepted==false)
+{
+int index2=get_player_index_from(carrier_missiles[j].owner.name);
+if(index2>-1)
+{
+send_reliable(players[index2].peer_id,"Your carrier missile was just intercepted by "+players[index].name+"!",2);
+send_reliable(players[index].peer_id,"You're interceptor just intercepted "+players[index2].name+"'s carrier missile!",2);
+play("missile_interceptor_hit",carrier_missiles[j].x,carrier_missiles[j].y,carrier_missiles[j].z,map);
+destroy_moving_sound(carrier_missiles[j].mid);
+carrier_missiles[j].intercepted=true;
+carrier_missiles[j].intercepttimer.restart();
+}
+}
+}
+for(uint j=0; j<missiles.length(); j++)
+{
+int dist=get_3d_distance(missiles[j].x,missiles[j].y,missiles[j].z,x,y,z);
+if(dist<=15 and missiles[j].map==map and missiles[j].intercepted==false)
+{
+int index2=get_player_index_from(missiles[j].owner.name);
+if(index2>-1)
+{
+send_reliable(players[index2].peer_id,"Your missile was just intercepted by "+players[index].name+"!",2);
+send_reliable(players[index].peer_id,"You're interceptor just intercepted "+players[index2].name+"'s missile!",2);
+play("missile_interceptor_hit",missiles[j].x,missiles[j].y,missiles[j].z,map);
+destroy_moving_sound(missiles[j].mid);
+missiles[j].intercepted=true;
+missiles[j].intercepttimer.restart();
+}
+}
+}
+}
+*/
+}
+string killmsg(string player1, string player2, string player1weapon)
+{
+string temp=killmsgs[random(0,killmsgs.length()-1)];
+if(string_contains(player1,"'",1)>-1)
+{
+string pn=string_left(player1,string_contains(player1,"'",1));
+player1=string_replace(player1,pn,cn2n(pn),false);
+}
+else player1=cn2n(player1);
+if(string_contains(player2,"'",1)>-1)
+{
+string pn=string_left(player2,string_contains(player2,"'",1));
+player2=string_replace(player2,pn,cn2n(pn),false);
+}
+else player2=cn2n(player2);
+if(string_left(player2,9)=="internal:") temp=internal_killmsg(string_trim_left(player2,9));
+temp=string_replace(temp,"%1",player1,true);
+temp=string_replace(temp,"%2",player2,true);
+temp=string_replace(temp,"%3",player1weapon,true);
+log("eventstream","death: "+temp);
+return temp;
+}
+string internal_killmsg(string act)
+{
+if(act=="drown") return "%1 has drowned!";
+if(act=="rg:expire") return "%1 has expired!";
+else if(act=="rg:destruct") return "%1 just self destructed!";
+else if(string_left(act,8)=="vehicle:") return "%1 was obliterated by the explosion of their "+string_trim_left(act,8);
+else return "%1 was terminated by "+act;
+}
+void respawn(int index)
+{
+move_player(players[index],players[index].map,players[index].x,players[index].y,players[index].z);
+players[index].is_dead=false;
+players[index].storetimer.restart();
+players[index].storestage=1;
+players[index].oldhealth=players[index].health;
+players[index].sitting=1;
+send_reliable(players[index].peer_id,"sitstart",0);
+players[index].statchangetimer.force(60000);
 }

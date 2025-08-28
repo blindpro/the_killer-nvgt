@@ -99,3 +99,8 @@ bool walkmod;
 servermenu sm;
 bool inbox;
 string is_serverbox;
+bool dead;
+timer deathtimer;
+bool lowhealth;
+int currenthealth;
+timer heartsoundtimer;

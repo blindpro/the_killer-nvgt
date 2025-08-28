@@ -501,12 +501,77 @@ else if(parsed[0]=="input")
 {
 is_serverbox = s;
 }
+else if(parsed[0]=="entershelter"&&parsed.length () >=5)
+{
+sh.x=stn(parsed[1]);
+sh.y=stn(parsed[2]);
+sh.z=stn(parsed[3]);
+shmap=parsed[4];
+inshelter=true;
+}
+else if(parsed[0]=="exitshelter")
+{
+sh.x=0;sh.y=0;sh.z=0;shmap="";
+inshelter=false;
+}
+else if(parsed[0]=="death")
+{
+dead=true;
+pause_all_sources();
+frozen=true;
+deathtimer.restart();
+}
+else if(parsed[0]=="playerdeath")
+{
+string msg=string_replace(s,"playerdeath ","",true);
+add_buffer_item("kills",msg);
+}
+else if(parsed[0]=="stopmoving")
+{
+can_move=false;
+if(!SCRIPT_COMPILED&&file_exists("nostun.txt")) can_move=true;
+}
+else if(parsed[0]=="startmoving")
+{
+can_move=true;
+}
+else if(parsed[0]=="freezestart")
+{
+can_move=false;
+frozen=true;
+pause_all_sources();
+}
+else if(parsed[0]=="freezestop")
+{
+can_move=true;
+frozen=false;
+resume_all_sources();
+}
+else if(parsed[0]=="followstart")
+{
+can_move=false;
+following=true;
+}
+else if(parsed[0]=="followstop")
+{
+can_move=true;
+following=false;
+}
+else if(parsed[0]=="lowhealth" and parsed.length()>1)
+{
+lowhealth=true;
+currenthealth=stn(parsed[1]);
+}
+else if(parsed[0]=="goodhealth")
+{
+lowhealth=false;
+}
 else
 {
 speak (s);
 }
 }
-else if (e.channel==1 and readmessages==1)
+else if(e.channel==1 and readmessages==1)
 {
 s=get_event_message(e.message);
 if(s=="")
