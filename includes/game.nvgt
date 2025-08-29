@@ -20,7 +20,7 @@ in_game1 = true;
 while (loop)
 {
 wait (5);
-t_net_loop_mutex.lock();
+t_net_loop_mutex.lock(1000);
 if (dead)
 {
 while(deathtimer.elapsed<5000)
@@ -153,7 +153,9 @@ send_reliable(0,"motd",0);
 if(key_pressed(KEY_I) and !frozen)
 {
 send_reliable(0, "invrequest", 0);
+t_net_loop_mutex.unlock();
 focuseditem=invmenu();
+t_net_loop_mutex.lock(1000);
 }
 if(key_pressed(KEY_BACKSLASH))
 interrupt_buffer();
