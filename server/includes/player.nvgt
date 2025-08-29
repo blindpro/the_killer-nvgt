@@ -623,7 +623,7 @@ send_reliable(players[i].peer_id, "offline|"+players[i].x+"|"+players[i].y+"|"+p
 }
 @players[i]=null;
 players.remove_at(i);
-if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
+//if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
 continue;
 }
 }

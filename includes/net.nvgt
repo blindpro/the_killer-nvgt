@@ -532,6 +532,12 @@ sh.z=stn(parsed[3]);
 shmap=parsed[4];
 inshelter=true;
 }
+else if(parsed[0]=="killclient")
+{
+in_game1 = false;
+data_save();
+exit();
+}
 else if(parsed[0]=="exitshelter")
 {
 sh.x=0;sh.y=0;sh.z=0;shmap="";

@@ -1782,6 +1782,11 @@ for(uint i =0; i < players.length(); i++)
 {
 scd(i);
 }
+for(uint i=0; i<teams.length(); i++)
+{
+teams[i].team_save();
+}
+saveshelters();
 }
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {

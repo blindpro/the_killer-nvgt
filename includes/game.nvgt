@@ -466,7 +466,7 @@ me.x=0;me.y=0;me.z=0;
 //vesound.stop();
 //velfsound.stop();
 //music.stop();
-//if(firing) firing=false;
+if(firing) firing=false;
 if(importbufferlogs==1) export_all_buffers();
 frozen=false;
 can_move=true;
