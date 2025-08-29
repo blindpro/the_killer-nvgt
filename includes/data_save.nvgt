@@ -12,6 +12,7 @@ js.set ("currently_input_device",currently_input_device);
 js.set ("currently_output_device",currently_output_device);
 js.set ("speakonlinemsgs",speakonlinemsgs);
 js.set ("importbufferlogs",importbufferlogs);
+js.set ("rcontrol",rcontrol);
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -48,6 +49,7 @@ currently_input_device = js["currently_input_device"];
 currently_output_device = js["currently_output_device"];
 speakonlinemsgs = js["speakonlinemsgs"];
 importbufferlogs = js["importbufferlogs"];
+rcontrol = js["rcontrol"];
 }
 catch 
 {

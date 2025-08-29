@@ -56,6 +56,7 @@ audio_form f_game;
 f_game.create_window();
 int cu = f_game.create_button("Check for &updates");
 int buffer_logging = f_game.create_checkbox("buffer logging",(importbufferlogs==1?true:false));
+int rctrl = f_game.create_checkbox("right control detection",(rcontrol==1?true:false));
 audio_form f;
 f.create_window("game settings",false);
 	int f_category_list = f.create_list("&Category"); // The user will select categories from here. Note: you can also use create_list.
@@ -95,6 +96,14 @@ importbufferlogs = 1;
 else
 {
 importbufferlogs = 0;
+}
+if(f_game.is_checked(rctrl))
+{
+rcontrol = 1;
+}
+else
+{
+rcontrol = 0;
 }
 if (f_audio.is_checked(HRTF)==true)
 {
