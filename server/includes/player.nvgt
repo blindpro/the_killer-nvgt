@@ -1044,7 +1044,7 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-send_reliable(0,"play_s kill.ogg",0);
+send_reliable(0,"play_s|kill.ogg",0);
 string km;
 //string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;

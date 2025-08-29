@@ -337,3 +337,14 @@ int pi=get_player_index_from(playername);
 if(pi<0) return false;
 return teams[ti].is_member(playername);
 }
+bool are_teamed(string pn1, string pn2)
+{
+int x1=get_player_index_from(pn1);
+int x2=get_player_index_from(pn2);
+if(x1==-1||x2==-1) return false;
+int tx1=is_in_team(pn1);
+int tx2=is_in_team(pn2);
+if(tx1==-1||tx2==-1) return false;
+if(tx1==tx2 or teams[tx1].is_member(pn2) or teams[tx2].is_member(pn1)) return true;
+return false;
+}

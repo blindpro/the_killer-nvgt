@@ -1536,6 +1536,18 @@ return;
 }
 }
 }
+else if(parsed[0]=="sheltercheck")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(in_shelter(players[index].name)>-1)
+{
+int shind=in_shelter(players[index].name);
+send_reliable(players[index].peer_id,"entershelter|"+shelters[shind].x+"|"+shelters[shind].y+"|"+shelters[shind].z+"|"+shelters[shind].map,0);
+}
+}
+}
 else
 {
 
@@ -1876,7 +1888,7 @@ f.close();
 f.open ("maps/"+m+".map","rb");
 string data = f.read();
 f.close();
-//send_reliable(id,"mapname "+m,0);
+send_reliable(id,"mapname "+m,0);
 send_reliable(id,"mdata "+data,0);
 if(get_file_contents(charfolder+"/facing.usr")=="") put_file_contents(charfolder+"/facing.usr","0",true);
 if(get_file_contents(charfolder+"/x.usr")=="") put_file_contents(charfolder+"/x.usr",""+random(0,500),true);

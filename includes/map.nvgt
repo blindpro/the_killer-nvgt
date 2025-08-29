@@ -45,7 +45,6 @@ return t;
 
 void load_map(string data)
 {
-
 maploadtimer.restart();
 sound loading;
 in_map=false;

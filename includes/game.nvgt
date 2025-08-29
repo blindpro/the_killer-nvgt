@@ -1,6 +1,7 @@
 void game()
 {
 send_reliable(0, "newplayer|"+mr.x+"|"+mr.y+"|"+me.z+"|"+mapname+"|"+name+"|"+compid+"|"+ver+"|"+get_script_path(), 0);
+send_reliable(0,"sheltercheck",0);
 send_reliable(0,"invrequest",0);
 send_reliable(0,"objrequest",0);
 playing=true;

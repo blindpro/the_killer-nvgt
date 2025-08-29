@@ -71,7 +71,7 @@ connected=true;
 }
 else if(e.type==event_receive and get_event_message(e.message)=="loggedin")
 {
-//p.update_listener_3d(me.x, me.y, me.z);
+p.update_listener_3d(me.x, me.y, me.z);
 sourcecheckloop();
 mr.x=round(me.x,0);mr.y=round(me.y,0);
 game();
