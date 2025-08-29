@@ -227,7 +227,7 @@ if(warpstage==0 and warptimer.elapsed>=2460)
 send_reliable(peer_id,"freezestart",0);
 invinsible=true;
 playsound("wpvanish");
-send_plus(this.peer_id,"distsound wpvanishdist "+x+" "+y+" "+z+" "+map,0);
+send_plus(this.peer_id,"distsound|wpvanishdist|"+x+"|"+y+"|"+z+"|"+map,0);
 z+=1000;
 //send_reliable(peer_id,"move "+x+" "+y+" "+z,0);
 warpstage=1;
@@ -285,7 +285,7 @@ invinsible=false;
 send_reliable(peer_id,"freezestop",0);
 send_reliable(peer_id,"startmoving",0);
 playsound("wpappear");
-send_plus(this.peer_id,"distsound wpappeardist "+x+" "+y+" "+z+" "+map,0);
+send_plus(this.peer_id,"distsound|wpappeardist|"+x+"|"+y+"|"+z+"|"+map,0);
 }
 }
 void chat(string message)
