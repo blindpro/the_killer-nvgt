@@ -107,7 +107,7 @@ timer chattimer;
 string ammostuff;
 string muted;
 //achievements a;
-playerweapon w(this);
+//playerweapon w(this);
 string zone;
 string ip;
 string vtype;
@@ -184,110 +184,6 @@ if(file_exists("chars/"+name+"/playtime.usr"))
 hidden=phid;
 if(hidden>0) is_dead=true;
 }
-float antibiotic_hit_factor=1.5;
-void hit(int mindamage, int maxdamage)
-{
-playsound("hit"+random(1,3));
-if(antibioticed==false) this.health-=random(mindamage,maxdamage);
-else this.health-=random(round(mindamage*antibiotic_hit_factor,0),round(maxdamage*antibiotic_hit_factor,0));
-}
-void stun(int ms,bool playafter=false,bool fall=false,int cooldown=0)
-{
-if(this.stunagaintimer.elapsed<=this.stunagaintime)
-{
-return;
-}
-else
-{
-this.stunagaintime=0;
-this.stunagaintimer.restart();
-}
-send_reliable(peer_id,"stopmoving",0);
-stunned=true;
-stuntime=ms;
-stuntimer.restart();
-this.stunagaintime=ms+cooldown;
-unstunplay=playafter;
-if(fall==true) {
-vo("standup");
-spawn_bodyfall(x,y,z,map,500,get_player_index_from(name));
-}
-}
-void fire_auto()
-{
-firing=true;
-}
-int warpdist=0;
-int warpmoved=0;
-vector max,warp;
-void warpcheck()
-{
-if(warpstage==0 and warptimer.elapsed>=2460)
-{
-send_reliable(peer_id,"freezestart",0);
-invinsible=true;
-playsound("wpvanish");
-send_plus(this.peer_id,"distsound wpvanishdist "+x+" "+y+" "+z+" "+map,0);
-z+=1000;
-//send_reliable(peer_id,"move "+x+" "+y+" "+z,0);
-warpstage=1;
-warpdist=random(100,150);
-max=get_max_values(map);
-warp.x=x;
-warp.y=y;
-warp.z=z;
-send_reliable(peer_id,"play_s|wpmid.ogg",0);
-warptimer.restart();
-}
-if(warpstage==1 and warpmoved<warpdist and warptimer.elapsed<2000)
-{
-warp=move(warp.x,warp.y,facing);
-warpmoved++;
-if(warp.x>=max.x)
-{
-warp.x=max.x;
-}
-if(warp.y>=max.y)
-{
-warp.y=max.y;
-}
-if(warp.x<=0) warp.x=0;
-if(warp.y<=0) warp.y=0;
-}
-if(warpstage==1 and warptimer.elapsed>=2000)
-{
-if(warpmoved<warpdist)
-{
-do
-{
-warp=move(warp.x,warp.y,facing);
-warpmoved++;
-if(warp.x>=max.x)
-{
-warp.x=max.x;
-}
-if(warp.y>=max.y)
-{
-warp.y=max.y;
-}
-if(warp.x<=0) warp.x=0;
-if(warp.y<=0) warp.y=0;
-}
-while(warpmoved<warpdist);
-}
-warpstage=0;warpdist=0;warpmoved=0;
-warping=false;
-warp.x=round(warp.x,0);
-warp.y=round(warp.y,0);
-x=warp.x;y=warp.y;z-=1000;
-send_reliable(peer_id,"move|"+x+"|"+y+"|"+z,0);
-invinsible=false;
-send_reliable(peer_id,"freezestop",0);
-send_reliable(peer_id,"startmoving",0);
-playsound("wpappear");
-send_plus(this.peer_id,"distsound wpappeardist "+x+" "+y+" "+z+" "+map,0);
-}
-}
 void chat(string message)
 {
 spammedmsgs++;
@@ -345,39 +241,6 @@ for(uint i=0; i<invvalues.length(); i++)
 string[] invparser=string_split(invvalues[i],"=",false);
 if(invparser.length()>1)
 give(invparser[0],stn(invparser[1]));
-}
-}
-dictionary ammo;
-int get_ammo_count_from(string we)
-{
-int amount=0;
-for (uint i=0; i<ammo.get_keys().length(); i++)
-{
-int a=0;
-if (ammo.get_keys()[i]==we)
-ammo.get(we,a);
-amount+=a;
-}
-return amount;
-}
-void ammo_give(string we, int amount)
-{
-int a;
-if (!ammo.exists(we))
-{
-ammo.set(we,amount);
-}
-else
-{
-ammo.get(we,a);
-if (a+amount<=0)
-ammo.delete(we);
-else
-{
-int b=(a+amount);
-ammo.delete(we);
-ammo.set(we,b);
-}
 }
 }
 void eat(string fooditem)
@@ -495,10 +358,6 @@ inventory.get(item,amount);
 return amount;
 }
 }
-void vo(string a)
-{
-send_reliable(this.peer_id,"play_s|speaker_"+a+".ogg",0);
-}
 void playsound(string sound, bool include_me=true)
 {
 if(include_me) send_reliable(peer_id,"play_s|"+sound+".ogg",0);
@@ -516,42 +375,6 @@ return true;
 }
 }
 return false;
-}
-void get_weapon_propperties(string wname)
-{
-int walktime=100;
-int canjump=1;
-if(wname=="ML7TinyMG")
-{
-firetime=200;
-}
-if(wname=="machinegun")
-{
-firetime=300;
-}
-if(wname=="sniper")
-{
-walktime=400;
-}
-if(wname=="ML420HuntingRifle")
-{
-walktime=700;
-}
-if(wname=="FRNTAssaultRifle")
-{
-firetime=200;
-}
-send_reliable(peer_id,"walkmod|"+walktime+"|"+canjump,0);
-}
-int get_ammo_count(string w)
-{
-return get_ammo_count_from(w);
-}
-bool hasammo(string w)
-{
-if(get_item_count("ammo_"+w)<=0)
-return false;
-return true;
 }
 bool adminable()
 {
@@ -606,6 +429,7 @@ if(ind>-1) players[ind].following="";
 }
 */
 disconnections++;
+/*
 for(uint j=0; j<guns.length(); j++)
 {
 int a=players[i].get_ammo_count_from(guns[j]);
@@ -614,6 +438,7 @@ if(a>0)
 players[i].give("ammo_"+guns[j],a);
 }
 }
+*/
 scd(i);
 if(players[i].hidden==0) send_reliable(0, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
 else
@@ -623,7 +448,7 @@ send_reliable(players[i].peer_id, "offline|"+players[i].x+"|"+players[i].y+"|"+p
 }
 @players[i]=null;
 players.remove_at(i);
-//if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
+if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
 continue;
 }
 }
@@ -679,7 +504,7 @@ players[i].storestage=2;
 players[i].playsound("storewarning");
 send_reliable(players[i].peer_id,"alert! You will be moved out of the store in the next 60 seconds. Please finish any remaining purchases!",2);
 }
-//开始
+/*
 if(players[i].storetimer.elapsed>60000 and players[i].storestage==2 and players[i].map=="store")
 {
 int newx=random(0,500);
@@ -780,7 +605,7 @@ players[i].health-=random(100,10000);
 }
 }
 }
-//结尾
+*/
 if(players[i].underwater==true and players[i].mask==0)
 {
 if(players[i].airwarntimer.elapsed>=15000)
@@ -795,7 +620,7 @@ players[i].hitby="internal:drown";
 players[i].health=0;
 }
 }
-//开始
+/*
 if(players[i].cheater==1 and players[i].cheatertimer.elapsed>=30000)
 {
 players[i].statchangetimer.restart();
@@ -811,7 +636,7 @@ if(players[i].firetimer.elapsed>=players[i].firetime and players[i].firing==true
 {
 players[i].firetimer.restart();
 players[i].playsound(players[i].weapon);
-send_reliable_x(0,"distsound|"+players[i].weapon+"dist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
+send_reliable_x(0,"distsound "+players[i].weapon+"dist "+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
 if(hasammo(players[i].weapon)==true)
 {
 players[i].ammo_give(players[i].weapon,-1);
@@ -830,7 +655,7 @@ send_reliable(players[i].peer_id,"all your remote guns have disconnected!",2);
 if(players[i].health<1500 and players[i].lowhealth==false)
 {
 players[i].lowhealth=true;
-send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
+send_reliable(players[i].peer_id,"lowhealth "+players[i].health,0);
 players[i].bleedsound=spawn_moving_sound("bleeding.ogg",players[i].x,players[i].y,players[i].z,players[i].map);
 players[i].bleeding=true;
 }
@@ -842,7 +667,7 @@ destroy_moving_sound(players[i].bleedsound);
 players[i].bleedsound="";
 players[i].bleeding=false;
 }
-//结束
+*/
 if(players[i].newb==1 and players[i].newbtimer.elapsed>=20*60000)
 {
 players[i].newbtimer.restart();
@@ -858,7 +683,7 @@ send_reliable(0,"notify|"+players[i].nickname+" is no longer a newbie!",0);
 log("eventstream","server notification: "+players[i].nickname+" is no longer a newbie!");
 file_delete("chars/"+players[i].name+"/newb.usr");
 }
-//开始
+/*
 if(players[i].following!="")
 {
 int ind=get_player_index_from(players[i].following);
@@ -894,7 +719,7 @@ else
 if(players[j].x!=players[i].x or players[j].y!=players[i].y or players[j].z!=players[i].z)
 {
 players[j].x=players[i].x;players[j].y=players[i].y;players[j].z=players[i].z;
-send_reliable(players[j].peer_id,"move|"+players[j].x+"|"+players[j].y+"|"+players[j].z,0);
+send_reliable(players[j].peer_id,"move "+players[j].x+" "+players[j].y+" "+players[j].z,0);
 }
 }
 }
@@ -904,20 +729,20 @@ players[i].sbombplacing=false;
 players[i].sbombtimer.pause();
 send_reliable(players[i].peer_id,"Done!",0);
 send_reliable(players[i].peer_id,"startmoving",0);
-//spawn_security_bomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
+spawn_security_bomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
 if(players[i].shieldshots<0)
 {
 players[i].shieldshots=0;
 }
-//结束
+*/
 if(players[i].health!=players[i].oldhealth)
 {
 players[i].statchangetimer.restart();
 players[i].oldhealth=players[i].health;
-if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
+if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth "+players[i].health,0);
 }
-//开始
+/*
 if(players[i].ultrabombplacing==true)
 {
 if(players[i].ultrabombtimer.elapsed>=4921)
@@ -925,10 +750,9 @@ if(players[i].ultrabombtimer.elapsed>=4921)
 players[i].ultrabombplacing=false;
 players[i].ultrabombtimer.restart();
 send_reliable(players[i].peer_id,"startmoving",0);
-//spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
+spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
 }
-//结束
 if(players[i].antibioticed==true)
 {
 if(players[i].awarnouttimer.elapsed>=20000)
@@ -942,7 +766,6 @@ players[i].health=antibiotic(players[i].health);
 players[i].oldhealth=players[i].health;
 }
 }
-//开始
 if(players[i].invseconds>0 and players[i].invinsibility_starting==true)
 {
 if(players[i].invinsibilitytimer.elapsed>=750)
@@ -963,7 +786,6 @@ send_reliable(players[i].peer_id,"stopmoving",0);
 send_reliable(players[i].peer_id,"Invinsibility started!",0);
 players[i].playsound("invstart");
 }
-//结束
 if(players[i].shieldshots>players[i].maxshields)
 {
 players[i].shieldshots=players[i].maxshields;
@@ -990,7 +812,6 @@ players[i].antibioticed=false;
 send_reliable(players[i].peer_id,"you are at max health and you can't go any higher!",0);
 }
 }
-//开始
 if(players[i].shelter_building==true and players[i].map!="store")
 {
 if(players[i].buildtimer.elapsed>=7660)
@@ -1012,14 +833,12 @@ players[i].playsound("stun_dartstop");
 }
 players[i].stunned=false;
 }
-/*
 if(players[i].remconnecting==true and players[i].rmtimer.elapsed>=6343 and players[i].map!="store")
 {
 placeremgun(players[i].x,players[i].y,players[i].z,players[i].map,players[i].name);
 players[i].remconnecting=false;
 send_reliable(players[i].peer_id,"startmoving",0);
 }
-*/
 if(players[i].interceptortimer.elapsed>=775 and players[i].intercepting==true)
 {
 players[i].intercepting=false;
@@ -1042,14 +861,13 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-send_reliable(0,"play_s|kill.ogg",0);
-string km;
-//string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
+send_reliable(0,"play_s kill.ogg",0);
+string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;
 players[i].underwater=false;
 players[i].sbombplacing=false;
 players[i].ultrabombplacing=false;
-send_reliable(0,"playerdeath|"+km,0);
+send_reliable(0,"playerdeath "+km,0);
 send_reliable(players[i].peer_id, "death", 0);
 players[i].shelter_building=false;
 players[i].is_dead=true;
@@ -1059,7 +877,6 @@ players[i].oldhealth=10000;
 write_to(players[i].name,"lasthit.usr",players[i].hitby);
 write_to(players[i].name,"health.usr",players[i].health);
 players[i].statchangetimer.force(30000);
-/*
 int t=is_in_team(players[i].name);
 if(t>-1)
 {
@@ -1084,7 +901,6 @@ players[i].y=events[v].joiny;
 players[i].z=events[v].joinz;
 }
 else
-*/
 {
 players[i].storetimer.restart();
 players[i].storestage=1;
@@ -1092,9 +908,9 @@ players[i].map="store";
 players[i].x=random(0,20);
 players[i].y=random(0,20);
 players[i].z=0;
-send_reliable(players[i].peer_id, "entershelter|0|100|0|main", 0);
+send_reliable(players[i].peer_id, "entershelter 0 100 0 main", 0);
 }
-//if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
+if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
 string hb;
 if(string_contains(players[i].hitby,"'",1)>-1)
 {
@@ -1106,7 +922,7 @@ hb=players[i].hitby;
 int k=get_player_index_from(hb);
 if(k>-1)
 {
-//achloop(k,i);
+achloop(k,i);
 if(players[k].name!=players[i].name)
 {
 if(string_contains(players[i].hitby,"bomb",1)<0)
@@ -1116,7 +932,6 @@ players[k].give("coin",extracoins);
 send_reliable(players[k].peer_id,"You get "+extracoins+"extra coins! Nice job!",2);
 }
 players[k].kills+=1;
-/*
 int tm=is_in_team(players[k].name);
 if(tm>-1 and !are_teamed(players[i].name, players[k].name)) {
 int l=random(500,1000);
@@ -1124,16 +939,15 @@ teams[tm].points+=l;
 teams[tm].transmit("This team just got "+l+" extra points!");
 teams[tm].teamkills+=1;
 }
-*/
 if(players[i].should_subtract)
 {
 string[] keys=players[i].inventory.get_keys();
-for(uint j=0; j<dontlose.length (); j++)
+for(uint j=0; j<dontlose.length; j++)
 {
 int l=keys.find(dontlose[j]);
 if(l>-1) keys.remove_at(l);
 }
-if(keys.length () >0)
+if(keys.length>0)
 {
 string choice=keys[random(0,(keys.length()-1))];
 double loseperc=(random(0,5)/100.0);
@@ -1143,7 +957,7 @@ if(lost>0)
 players[i].give(choice,-lost);
 send_reliable(players[i].peer_id,"you lost "+lost+" "+choice+"s!",2);
 }
-for(uint g=0; g<guns.length (); g++)
+for(uint g=0; g<guns.length; g++)
 {
 if(players[i].get_item_count("ammo_"+guns[g])<=0) players[i].give("ammo_"+guns[g],random(50,90));
 }
@@ -1158,7 +972,7 @@ players[i].stunned=false;
 }
 scd(i);
 }
-//结束
+*/
 if( players[i].beacontimer.elapsed>=players[i].beacontime and players[i].invisible==false and players[i].is_dead==false and players[i].invinsible==false and players[i].hidden==0)
 {
 players[i].beacontimer.restart();
@@ -1170,85 +984,9 @@ if(players[pl].name!=players[i].name and players[pl].beacon>0 and players[i].dis
 //if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,3);
 //else 
 send_unreliable(players[pl].peer_id,"beacon|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
-//net_loop();
+net_loop();
 }
 }
 }
 }
-}
-string getdisables(string[] f)
-{
-/*未完成的函数
-dictionary temp;
-for(uint i=0; i<f.length; i++)
-{
-temp.set(f[i],"d");
-}
-return serialize(temp);
-*/
-return (0);
-}
-
-int antibiotic(int ch)
-{
-double limit=80000,scaler=100;
-if(ch<=5000&&ch>=3500) 
-{
-scaler=70;
-limit=40000;
-}
-else if(ch<3500&&ch>=2000)
-{
-scaler=50;
-limit=30000;
-}
-else if(ch<2000&&ch>1000)
-{
-scaler=25;
-limit=20000;
-}
-else if(ch<=1000)
-{
-scaler=15;
-limit=15000;
-}
-if(ch==0) return 10000;
-else ch+=floor((limit/ch)*scaler);
-return ch;
-}
-string cn2n(string pname,bool vi=false)
-{
-string ret=pname;
-for(uint i=0; i<players.length (); i++)
-{
-if(players[i].name==pname)
-{
-ret=players[i].nickname;
-if(vi)
-{
-/*
-for(uint v=0; v<vs.length ();; v++)
-{
-if(vs[v].owner==pname) ret+="'s "+vs[v].type;
-}
-*/
-}
-}
-}
-if(ret==pname&&file_exists("chars/"+pname+"/nickname.usr"))
-{
-ret=get_char_val(pname,"nickname");
-}
-return ret;
-}
-bool is_on_server(string playername)
-{
-for(uint i=0; i<players.length(); i++)
-{
-if(players[i].name==playername)
-{
-return true;
-}
-}
-return false;
 }
