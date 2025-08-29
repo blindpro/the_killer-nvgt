@@ -192,7 +192,7 @@ if((firetimer.elapsed>=firetime and control_is_down() &&can_move and firing==fal
 {
 firetimer.restart();
 firing=true;
-send_reliable(0,"firestart "+weapons[w],0);
+send_reliable(0,"firestart|"+weapons[w],0);
 }
 if(firing==true and !control_is_down() and weaponauto==true)
 {

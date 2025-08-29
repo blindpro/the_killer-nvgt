@@ -519,7 +519,7 @@ return false;
 }
 void get_weapon_propperties(string wname)
 {
-int walktime=200;
+int walktime=100;
 int canjump=1;
 if(wname=="ML7TinyMG")
 {
@@ -606,7 +606,6 @@ if(ind>-1) players[ind].following="";
 }
 */
 disconnections++;
-/*
 for(uint j=0; j<guns.length(); j++)
 {
 int a=players[i].get_ammo_count_from(guns[j]);
@@ -615,7 +614,6 @@ if(a>0)
 players[i].give("ammo_"+guns[j],a);
 }
 }
-*/
 scd(i);
 if(players[i].hidden==0) send_reliable(0, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
 else
