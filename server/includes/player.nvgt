@@ -915,7 +915,7 @@ if(players[i].health!=players[i].oldhealth)
 {
 players[i].statchangetimer.restart();
 players[i].oldhealth=players[i].health;
-if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth "+players[i].health,0);
+if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
 }
 //开始
 if(players[i].ultrabombplacing==true)

@@ -486,6 +486,7 @@ objs.resize(0);
 players.resize(0);
 focuseditem="";
 if(pinging) pinging = false;
+if(dmoving) dmoving = false;
 reset_network();
 //if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
 disable_input();
@@ -530,7 +531,7 @@ else
 {
 movetime = walktime;
 }
-if(in_map&&!following&&!frozen&&playing&&!inve)
+if(in_map&&!following&&!frozen&&playing&&!inve&&!dmoving)
 {
 fallloop();
 fallcheck();
