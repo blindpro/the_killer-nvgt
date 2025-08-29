@@ -507,11 +507,11 @@ if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(
 hit=true;
 }
 }
+*/
 if(hit) { @weapons[j]=null;
  weapons.remove_at(j);
  break;
 }
-*/
 }
 }
 }
