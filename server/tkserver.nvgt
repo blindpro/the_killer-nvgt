@@ -23,6 +23,9 @@ int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
 int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=0;
+timer gifttimer;
+int gifting = 1;
+string[] gifts;
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -1643,6 +1646,39 @@ send_reliable(e.peer_id,"Player "+parsed[1]+" not found.",2);
 }
 }
 }
+else if(parsed[0]=="/giveall" and parsed.length()>2)
+{
+if(players[index].adminable() or beta==true)
+{
+log("give",players[index].name+" just gave "+parsed[2]+" "+parsed[1]+"s to the entire server!",false,false);
+for(uint i=0; i<players.length(); i++)
+{
+players[i].playsound("give");
+players[i].give(parsed[1],stn(parsed[2]));
+}
+send_reliable(e.peer_id,"you have given "+parsed[2]+" "+string_replace(parsed[1],"_"," ",true)+"s to everyone!",2);
+}
+}
+else if(parsed[0]=="/givegift")
+{
+if(players[index].adminable())
+{
+givegift();
+}
+else
+{
+send_reliable(e.peer_id,"Sorry, can not give out gifts",0);
+}
+}
+else if(parsed[0]=="/gifting")
+{
+if(players[index].adminable())
+{
+if(gifting==1) { send_reliable(0,"play_s|giftoff.ogg",0); send_reliable(players[index].peer_id,"gifting has been disabled",0); gifting=0; }
+else if(gifting==0) { send_reliable(0,"play_s|gifton.ogg",0); send_reliable(players[index].peer_id,"Gifting has been enabled",0); gifting=1; }
+//writedata();
+}
+}
 else if (parsed[0] == "/quit")
 {
 s_quit = true;
@@ -1733,6 +1769,7 @@ objloop();
 weaponloop();
 shelterloop();
 teamloop();
+giftloop();
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
@@ -2516,12 +2553,12 @@ wdata.set("FRNTAssaultRifle","200|norm");
 animaltypes.insert_last("hog");
 animaltypes.insert_last("monster");
 animaltypes.insert_last("giant");
+*/
 gifts.insert_last("antibiotic");
 gifts.insert_last("invisibility_shield");
 gifts.insert_last("timebomb");
 gifts.insert_last("remote_gun");
 gifts.insert_last("remote_timebomb");
-*/
 //add_snack_item("chips",20);
 //add_snack_item("chocolate_bar",30);
 //add_snack_item("banana_bread",50);
@@ -2621,4 +2658,20 @@ tempkey=round(tempkey*0.75,0);
 sellsend+=temparray[i]+" for "+tempkey+" coins a piece:"+temparray[i]+"[]";
 }
 sellsend=string_trim_right(sellsend,2);
+}
+void givegift() {
+int gifted=random(0,players.length()-1);
+string gift=gifts[random(0,gifts.length()-1)];
+players[gifted].give(gift,1);
+send_reliable(0,"A random gift has been given out. The recipient, randomly chosen, was "+players[gifted].name+", and they have received "+gift,2);
+send_reliable(players[gifted].peer_id,"the server has given you a gift! The item is "+gift,2);
+play("gift",players[gifted].x,players[gifted].y,players[gifted].z,players[gifted].map);
+}
+void giftloop()
+{
+if(gifttimer.elapsed>=300000 and gifting==1 and players.length()>0)
+{
+gifttimer.restart();
+givegift();
+}
 }
