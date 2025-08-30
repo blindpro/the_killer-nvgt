@@ -1,4 +1,6 @@
 #include "bgt_compat.nvgt"
+#pragma namespace sound upcoming
+#pragma plugin legacy_sound
 string foldername;
 string[] fol;
 pack sounds;
