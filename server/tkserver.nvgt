@@ -390,6 +390,16 @@ players[index].warptimer.restart();
 players[index].warping=true;
 players[index].playsound("wppowerup");
 }
+else if(wname=="fire_extinguisher")
+{
+takeobj = true;
+play("fire_extinguisher",players[index].x,players[index].y,players[index].z,players[index].map);
+for(uint i=0; i<fires.length(); i++)
+{
+if(get_3d_distance(players[index].x,players[index].y,players[index].z,fires[i].x,fires[i].y,fires[i].z)<=5 and players[index].map==fires[i].map)
+fires[i].lifetimer.force(fires[i].lifetime);
+}
+}
 else if(wname=="antibiotic")
 {
 if(players[index].antibioticed==true)
@@ -1721,6 +1731,39 @@ else
 send_reliable(e.peer_id,"player not found",2);
 }
 }
+else if(parsed[0]=="/fireoutall")
+{
+if(players[index].adminable()||beta==true)
+{
+for(uint i=0; i<fires.length(); i++)
+{
+fires[i].lifetimer.force(fires[i].lifetime);
+}
+send_reliable(players[index].peer_id,"Done",0);
+}
+}
+else if(parsed[0]=="/spawn_fire"&&parsed.length()>=5)
+{
+if(players[index].adminable()||beta==true)
+{
+int x = parse_double(parsed[2]);
+int y = parse_double(parsed[3]);
+int z = parse_double(parsed[4]);
+string map;
+int damage = parse_double(parsed[1]);
+if (parsed.length()>5)
+{
+map = parsed[5];
+if(!map_exists(map))
+{
+send_reliable(players[index].peer_id,"this map does not exist",0);
+return;
+}
+}
+map.is_empty()?spawn_fire(x, y, z, players[index].map, damage):spawn_fire(x, y, z, map, damage);
+send_reliable(players[index].peer_id,"done",0);
+}
+}
 else if(parsed[0]=="/sell")
 {
 //players[index].usestoretimer.restart();
@@ -1770,6 +1813,7 @@ weaponloop();
 shelterloop();
 teamloop();
 giftloop();
+fireloop();
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);

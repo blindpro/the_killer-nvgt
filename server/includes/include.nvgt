@@ -27,3 +27,4 @@
 #include "weaponstuff.nvgt"
 
 #include "team.nvgt"
+#include "fire.nvgt"
