@@ -25,7 +25,7 @@ return false;
 }
 bool is_sound_exists(string s)
 {
-string[] filelist=cast<pack_file@>(sound_default_pack).list_files();
+string[] filelist=cast<pack@>(sound_default_pack).list_files();
 for(uint i = 0; i < filelist.length(); i++)
 {
 if(s==filelist[i])
@@ -91,4 +91,36 @@ int dist=get_3d_distance(mr.x,mr.y,me.z,x,y,z);
 speak (go+go4+" ("+dist+" tiles away) "+boing+"at "+x+", "+y+", "+z);
 p.play_3d(soundname+".ogg",mr.x,mr.y,me.z,trackx,tracky,trackz,calculate_theta(facing),false);
 go="";
+}
+bool shift_is_down()
+{
+if(key_down(KEY_LSHIFT) or key_down(KEY_RSHIFT))
+{
+return true;
+}
+return false;
+}
+bool alt_is_down()
+{
+if(key_down(KEY_LALT) or key_down(KEY_RALT))
+{
+return true;
+}
+return false;
+}
+bool control_is_down()
+{
+if(key_down(KEY_LCONTROL) or (key_down(KEY_RCONTROL)&&rcontrol==1))
+{
+return true;
+}
+return false;
+}
+bool control_is_pressed()
+{
+if(key_pressed(KEY_LCONTROL) or (key_pressed(KEY_RCONTROL)&&rcontrol==1))
+{
+return true;
+}
+return false;
 }

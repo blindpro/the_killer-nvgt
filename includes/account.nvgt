@@ -136,9 +136,13 @@ f.focus(ipass);
 }
 else
 {
+/*
 p.play_stationary("progress.ogg",false);
 dlg ("Success!");
 connectionmenu();
+*/
+data_save();
+login();
 }
 }
 }

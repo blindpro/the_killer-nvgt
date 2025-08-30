@@ -207,3 +207,61 @@ if(n.connected_peers>0&&connected) tk_loop();
 copy_translation_text_loop();
 return 0;
 }
+void serverside_menu(string sndtxt, string menu, string menuitems)
+{
+//setupmenu();
+m.reset(true);
+m.click_sound="menumove.ogg";
+m.enter_sound="menuenter.ogg";
+m.enable_first_letter_navigation=true;
+m.wrap=true;
+m.enable_up_and_down=true;
+m.set_callback(netclb,"");
+if(menuitems=="")
+return;
+string[] items=string_split(menuitems,"[]",false);
+for(uint i=0; i<items.length(); i++)
+{
+string[] parsed=string_split(items[i],":",false);
+m.add_item_tts(parsed[0],parsed[1]);
+}
+int mres=m.run(menu,true);
+if(m.get_item_name(mres)=="back" or mres==0)
+send_reliable(0,sndtxt+"|back",0);
+else
+{
+send_reliable(0,sndtxt+"|"+m.get_item_name(mres),0);
+}
+}
+void store_menu(string storeitems)
+{
+m.reset(true);
+m.enter_sound="store_menuenter.ogg";
+m.click_sound="store_move.ogg";
+m.edge_sound="menuedge.ogg";
+m.enable_first_letter_navigation=true;
+m.enable_up_and_down=true;
+m.wrap=false;
+m.enable_home_and_end=true;
+m.set_callback(netclb,"");
+string[] items=string_split(storeitems,"\r\n",true);
+for (uint i=0; i<items.length(); i++)
+{
+string[] item=string_split(items[i]," ",true);
+string it=string_replace(item[0],".","",true);
+m.add_item_tts(items[i],it);
+}
+int mres=m.run("store menu. There are "+items.length()+" items.",true);
+if (mres!=0)
+{
+string amount=v.input("Amount of "+m.get_item_name(mres)+"?");
+send_reliable(0,"purchase|"+m.get_item_name(mres)+"|"+amount,0);
+}
+}
+
+class servermenu
+{
+string t;
+string i;
+string items;
+}

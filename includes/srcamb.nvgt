@@ -21,7 +21,7 @@ maxy= source_maxy;
 minz=source_minz;
 maxz=source_maxz;
 soundfile=file;
-source_sound=sourcepool.play_3d(soundfile, mr.x, mr.y, me.z, lx, miny, minz, facing, true);
+source_sound=sourcepool.play_3d(soundfile, mr.x, mr.y, me.z, lx, miny, minz, facing , true , true);
 id=source_id;
 sourcepool.update_sound_3d(source_sound, lx, miny, minz);
 paused=source_paused;
@@ -31,6 +31,10 @@ sourcepool.pause_sound(source_sound);
 }
 p2=paused;
 sourcepool.update_sound_range_3d(source_sound, 0, rx-lx, 0, maxy-miny, 0, maxz-minz);
+}
+bool is_in_range()
+{
+return (lx<=mr.x&&rx>=mr.x&&miny<=mr.y&&maxy>=mr.y&&minz<=me.z&&maxz>=me.z);
 }
 }
 class amb

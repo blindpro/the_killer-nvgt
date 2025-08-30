@@ -23,7 +23,7 @@ for(uint i=0; i<players.length(); i++)
 if(players[i].btimer.elapsed>=690 and beaconing==1 and players[i].map==mapname and players[i].name!=name)
 {
 players[i].btimer.restart();
-p.play_3d("beacon.ogg", me.x, me.y, me.z, players[i].x, players[i].y, players[i].z, calculate_theta(facing), false);
+//p.play_3d("beacon.ogg", me.x, me.y, me.z, players[i].x, players[i].y, players[i].z, calculate_theta(facing), false);
 }
 }
 }

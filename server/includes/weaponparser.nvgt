@@ -1,0 +1,191 @@
+void load_weapon_from_file(string filename)
+{
+string[] data;
+data = delinear(file_get_contents("prefs/weapons/"+filename+".wpn"));
+for(uint i=0; i<data.length(); i++)
+{
+string[] parsed = string_split(data[i]," ", false);
+string type;
+int mindamage, maxdamage, range, speed, spread;
+if(parsed[0]=="name" and parsed.length() == 2)
+type = parsed[1];
+else if(parsed[0]=="dammage" and parsed.length () ==3)
+{
+mindamage = string_to_number(parsed[1]);
+maxdamage = string_to_number(parsed[2]);
+}
+else if(parsed[0]=="range" and parsed.length () ==2)
+{
+range = string_to_number(parsed[1]);
+}
+else if(parsed[0]=="spread" and parsed.length () ==2)
+{
+spread= string_to_number(parsed[1]);
+}
+}
+}void export_weapon(string w)
+{
+string type=w;
+int speedtime;
+int range;
+int stuntime;
+int mindammage,maxdammage;
+int distance;
+string map;
+string owner;
+int spread;
+int shieldhits,shieldchance;
+int hitsounds;
+bool stunning=false;
+bool bullet=true;
+bool requires_ammo=true;
+if(type=="crossbow")
+{
+bullet=false;
+requires_ammo=true;
+speedtime=20;
+range=75;
+mindammage=500;
+maxdammage=1100;
+spread=5;
+shieldchance=10;
+shieldhits=random(1,3);
+}
+if(type=="ML7TinyMG")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=5;
+range=20;
+mindammage=900;
+maxdammage=3500;
+spread=5;
+shieldchance=10;
+shieldhits=random(1,3);
+}
+if(type=="knife")
+{
+bullet=false;
+requires_ammo=false;
+speedtime=10;
+range=4;
+mindammage=800;
+maxdammage=1500;
+spread=3;
+shieldhits=random(4,8);
+shieldchance=15;
+}
+else if(type=="glock")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=5;
+range=15;
+mindammage=800;
+maxdammage=1500;
+spread=5;
+shieldhits=random(3,7);
+shieldchance=50;
+}
+else if(type=="VNPLTasergun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=5;
+range=6;
+mindammage=100;
+maxdammage=450;
+spread=3;
+shieldhits=random(3,7);
+shieldchance=90;
+stunning=true;
+stuntime=1800;
+}
+else if(type=="fists")
+{
+bullet=false;
+speedtime=5;
+range=4;
+mindammage=100;
+maxdammage=400;
+spread=3;
+shieldhits=0;
+shieldchance=100;
+hitsounds=3;
+}
+else if(type=="FlameThrower")
+{
+bullet=false;
+requires_ammo=true;
+speedtime=2;
+range=7;
+mindammage=900;
+maxdammage=2000;
+spread=5;
+shieldhits=random(3,7);
+shieldchance=75;
+}
+else if(type=="FRNTAssaultRifle")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=5;
+range=18;
+mindammage=1000;
+maxdammage=2400;
+spread=4;
+shieldhits=random(4,10);
+shieldchance=30;
+}
+else if(type=="admingun")
+{
+bullet=true;
+requires_ammo=false;
+speedtime=5;
+range=50;
+mindammage=25000;
+maxdammage=200014000;
+spread=10;
+shieldchance=0;
+shieldhits=random(40,80);
+}
+else if(type=="shotgun")
+{
+speedtime=10;
+requires_ammo=true;
+range=5;
+mindammage=3200;
+maxdammage=3800;
+spread=4;
+shieldhits=random(10,20);
+shieldchance=40;
+}
+else if(type=="machinegun")
+{
+bullet=false;
+requires_ammo=true;
+speedtime=5;
+range=15;
+mindammage=60;
+maxdammage=175;
+spread=6;
+shieldhits=random(3,9);
+shieldchance=5;
+}
+else if(type=="sniper")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=10;
+range=150;
+mindammage=1350;
+maxdammage=2500;
+spread=6;
+shieldhits=3;
+shieldchance=15;
+}
+string write="name "+type+"\r\ndammage "+mindammage+" "+maxdammage+"\r\nrange "+range+"\r\nspread "+spread+"\r\nbullet "+bool_to_int(bullet)+"\r\nstunning "+bool_to_int(stunning)+"\r\nstuntime "+stuntime+"\r\nhitsounds "+hitsounds+"\r\nshieldchance "+shieldchance+"\r\nspeedtime "+speedtime+"\r\nshieldhits"+shieldhits+"\r\nreloadable "+bool_to_int(requires_ammo);
+if(directory_exists("prefs/weapons")==false)
+directory_create("prefs/weapons");
+file_put_contents("prefs/weapons/"+w+".wpn",write,250);
+}

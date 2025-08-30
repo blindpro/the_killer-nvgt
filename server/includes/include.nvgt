@@ -18,3 +18,12 @@
 #include "object.nvgt"
 #include "itemlist.nvgt"
 #include "vendingfunctions.nvgt"
+#include "weapon.nvgt"
+#include "weaponparser.nvgt"
+#include "hip.nvgt"
+#include "shelter.nvgt"
+#include "readable_time.nvgt"
+#include "store.nvgt"
+#include "weaponstuff.nvgt"
+
+#include "team.nvgt"

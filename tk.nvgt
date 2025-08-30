@@ -1,13 +1,15 @@
 #include "includes/include.nvgt"
 void main()
 {
-@tts_default_text_processing_callback = @translation_callback;
+@tts_default_text_processing_callback = translation_callback;
+tp.behind_pitch_decrease = 5;
 p.behind_pitch_decrease = 5;
 distpool.behind_pitch_decrease = -5;
 distpool.pan_step = 0.2;
 mpool.behind_pitch_decrease = 5;
 objpool.behind_pitch_decrease = 5;
-set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+//set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+set_sound_storage("sounds.dat");
 data_read();
 set_sound_global_hrtf(global_hrtf);
 /*
@@ -18,7 +20,7 @@ set_sound_input_device (currently_input_device);
 */
 if (currently_output_device != 1)
 {
-set_sound_output_device (currently_output_device);
+//set_sound_output_device (currently_output_device);
 }
 create_buffer("all");
 create_buffer("chats");
@@ -26,5 +28,8 @@ create_buffer("misc");
 create_buffer("kills");
 speak_length_start();
 show_window ("the killer version "+netver);
+weapons.reserve(15);
+set_garbage_collect_mode (3);
+set_garbage_collect_auto_frequency (5000);
 mainmenu();
 }

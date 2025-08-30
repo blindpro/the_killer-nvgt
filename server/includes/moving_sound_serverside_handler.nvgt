@@ -56,12 +56,12 @@ for(uint i=0; i<msounds.length(); i++)
 if(msounds[i].id==id)
 {
 msounds[i].updateme(x,y,z,pitch);
-if(msounds[i].owner=="") sendmap("updatemsound "+id+" "+x+" "+y+" "+z+" "+msounds[i].pitch,msounds[i].map,4,false);
+if(msounds[i].owner=="") sendmap("updatemsound|"+id+"|"+x+"|"+y+"|"+z+"|"+msounds[i].pitch,msounds[i].map,4,false);
 else
 {
 for(uint j=0; j<players.length(); j++)
 {
-if(players[j].name!=msounds[i].owner) send_unreliable(players[j].peer_id,"updatemsound "+id+" "+x+" "+y+" "+z+" "+msounds[i].pitch,4);
+if(players[j].name!=msounds[i].owner) send_unreliable(players[j].peer_id,"updatemsound|"+id+"|"+x+"|"+y+"|"+z+"|"+msounds[i].pitch,4);
 }
 }
 }

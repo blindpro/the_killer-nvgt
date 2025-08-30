@@ -1,0 +1,35 @@
+FRNTAssaultRifle_ammo_pack=110=ammo for the FRNTAssaultRifle=weapon_store
+stun_dart=10=a throwing dart that will stun a player for five seconds if hit=weapon_store
+remote_gun=30=a gun that can be placed and remote controlled from a distance, good for protection of a certain area.=weapon_store
+remote_gun_controller=50=a device used to control remote guns=weapon_store
+guided_missile=600=A powerful missile that you can send after a player or to a set of coordinates=weapon_store
+missile_interceptor=60=A device you can use to intercept incoming missiles=weapon_store
+glock_ammo_pack=70=a pack of ammo for a glock=weapon_store
+sniper_ammo_pack=120=a pack of ammo for a sniper=weapon_store
+shotgun_ammo_pack=150=a pack of ammo for a shotgun=weapon_store
+crossbow_ammo_pack=80=A pack of ammo for a crossbow=weapon_store
+FlameThrower_ammo_pack=250=A pack of ammo for a flame thrower=weapon_store
+ML7TinyMG_ammo_pack=350=A pack of ammo for an ML7TinyMG=weapon_store
+aircraft=500=An airborn vehicle with a high powered lazer and capable of very high speeds=misc_store
+tank=400=A massive ground vehicle equipped with a very powerful cannon=misc_store
+fuel_tank=120=A fuel tank for both the aircraft and tank=misc_store
+carrier_missile=600=A missile that can send items and deploy them if possible=misc_store
+toolbox=1000=A very useful item needed for repairing vehicles=misc_store
+warp_box=90=a smart little device that will allow you to fly ahead an catch a running coward=misc_store
+shield=60=a good layer of protection. Not fool proof though!=misc_store
+wood_pack=100=A pack of wood for shelters=misc_store
+metal_pack=150=a pack full of metal for vehicle repairs=misc_store
+ultrabomb_silencer=70=a device used to remove the noticeable buzzing from an active ultrabomb=misc_store
+team_member_booster=5000=These devices will open 1 slot for a member in your team=misc_store
+mini_antibiotic_pack=20=A pack of 5 antibiotics=medical_store
+antibiotic_pack=120=A normal pack of 20 antibiotics=medical_store
+ultra_antibiotic_pack=800=A pack of antibiotics containing 50 antibiotics=medical_store
+wirebomb=300=A bomb with wires sticking out of them. Good for trapping!=explosive_store
+timebomb=15=a bomb with a beeping timer on it.=explosive_store
+mine=75=A bomb that activates if a player steps on it=explosive_store
+remote_timebomb=30=a remote controlled timebomb that can be detinated from anywhere with a keystroke. Packs a decent range and damage, as well as a very short time pre explosion.=explosive_store
+security_bomb=450=A bomb that detects players and vehicles and can inflict some serious damage. Good for shelter protection!=explosive_store
+motion_bomb=100=A powerful bomb that detects motion=explosive_store
+grenade_pack=200=a pack of 10 grenades=explosive_store
+impact_bomb=75=a bomb that will explode if hit enough, great in chains!=explosive_store
+ultrabomb=350=A very powerfull bomb that can be detenated with coins. Packs lots of range=explosive_store
