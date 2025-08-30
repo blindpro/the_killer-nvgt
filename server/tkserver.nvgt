@@ -59,6 +59,7 @@ netsetup=n.setup_server(19932, 20, 500);
 else
 netsetup=n.setup_server(port, 200, 500);
 init_mapsystem();
+data_read();
 load_sell();
 load_compids();
 load_store_registers();
@@ -1831,6 +1832,7 @@ for(uint i=0; i<teams.length(); i++)
 teams[i].team_save();
 }
 saveshelters();
+data_save();
 }
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {

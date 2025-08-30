@@ -12,7 +12,6 @@
 #include "map.nvgt"
 #include "moving_sound_serverside_handler.nvgt"
 #include "vehicle.nvgt"
-#include "settings.nvgt"
 #include "bodyfall.nvgt"
 #include "timepacket.nvgt"
 #include "object.nvgt"
@@ -28,3 +27,4 @@
 
 #include "team.nvgt"
 #include "fire.nvgt"
+#include "data_save.nvgt"
