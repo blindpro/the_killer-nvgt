@@ -1,5 +1,6 @@
 2025年8月31日
 1·增加版本控制功能，restart nvda函数和/changes命令。
+2·修复攻击庇护所没有音效的问题。
 2025年8月30日
 1·修复了FRNTAssaultRifle、FlameThrower不播放的问题。
 2·增加fire功能，/fireoutall命令和/spawn_fire命令支持。

@@ -197,7 +197,7 @@ void play_outside(string soundname, int x, int y, int z, string map)
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].map==sheltername) continue;
-send_reliable(players[i].peer_id,soundname+" "+x+" "+y+" "+z+" "+map,3);
+send_reliable(players[i].peer_id,soundname+"|"+x+"|"+y+"|"+z+"|"+map,3);
 }
 }
 void playsound(string snd)
@@ -206,7 +206,7 @@ for(uint i=0; i<players.length(); i++)
 {
 if(players[i].map==sheltername)
 {
-send_reliable(players[i].peer_id,"play_s "+snd+".ogg",0);
+send_reliable(players[i].peer_id,"play_s|"+snd+".ogg",0);
 }
 }
 }
