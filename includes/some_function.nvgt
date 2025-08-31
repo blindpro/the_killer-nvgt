@@ -126,11 +126,6 @@ return false;
 }
 void set_hrtf()
 {
+set_sound_global_hrtf(global_hrtf);
 distpool.hrtf = false;
-sourcepool.hrtf = global_hrtf;
-p.hrtf = global_hrtf;
-mpool.hrtf = global_hrtf;
-shdistpool.hrtf = global_hrtf;
-objpool.hrtf = global_hrtf;
-tp.hrtf = global_hrtf;
 }
