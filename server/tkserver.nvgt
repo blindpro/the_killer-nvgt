@@ -1,5 +1,4 @@
 #include "includes\include.nvgt"
-string version = "0.0";
 network n;
 network_event e;
 uint64 port = 10000;
@@ -26,6 +25,16 @@ int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=0;
 timer gifttimer;
 int gifting = 1;
 string[] gifts;
+int auctiontime=30000;
+string auctionwho,auctionwho2,auctionwhotemp;
+bool auctionbidder;
+bool auction;
+string auctionitem;
+int auctionamount;
+int auctionbid,auctionbidtemp;
+timer updatingtimer, auctiontimer;
+bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
+string minverstring="1.93.0";
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -65,6 +74,7 @@ load_compids();
 load_store_registers();
 load_stores ();
 load_all_teams();
+load_changes();
 string[] stuff=find_files("shelters/*.shelter");
 if(stuff.length () >0)
 for(uint i=0; i<stuff.length(); i++)
@@ -1765,6 +1775,24 @@ map.is_empty()?spawn_fire(x, y, z, players[index].map, damage):spawn_fire(x, y, 
 send_reliable(players[index].peer_id,"done",0);
 }
 }
+else if(parsed[0]=="/changes")
+{
+if (changes.is_empty())
+{
+send_reliable(e.peer_id,"There is no changelog.",0);
+return;
+}
+string[] change;
+change=string_split(changes,"\r\n",false);
+string l;
+for(uint i=0; i<change.length(); i++)
+{
+if(change[i][0]=="#" or (string_contains(change[i], "beta:", 1)==0 and !beta)) continue;
+if(string_left(change[i], 6)=="beta: ") change[i]=string_trim_left(change[i], 6);
+l+=change[i]+":change[]";
+}
+send_menu(e.peer_id,"Recent changes. Last updated on "+lastupdate,"schanges",l);
+}
 else if(parsed[0]=="/sell")
 {
 //players[index].usestoretimer.restart();
@@ -1927,13 +1955,13 @@ void login(string u, string p, string yv, uint id, string compid)
 {
 bool can_login=true;
 string ip=n.get_peer_address(id);
-/*
+multiversion yver(yv);
+multiversion minver(minverstring);
 if(yver<minver)
 {
 send_reliable(id,"block your client is out of date. Your version: "+yv+". Minimum required version is "+minverstring,0);
 can_login=false;
 }
-*/
 if(can_login==true)
 {
 if(!compid_handlercheck(compid))

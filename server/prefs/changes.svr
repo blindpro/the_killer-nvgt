@@ -1,0 +1,833 @@
+New in 1.9.2:
+Improves checks of killing shelters for teams to make sure that the player who created it isn't in that team, not just that it's team wasn't set. TO prevent abuse.
+When the guess the number game ends, it will tell you the numbers entered.
+Ads a new system that can be used to save the active status of objects on the server, currently employed for mines, motion bombs, security bombs and wirebombs. This saving will only occur when the server updates, not every little bit the data gets saved. This can be used to preserve your defenses even if I, with my rather small and frequent updates, end up rebooting the server with one.
+Disabled /clearstats for now since people were just using it to clear their deaths.
+When using /stats on a player and they are part of a team, a space is inserted where it should go.
+Teams will get 5000 extra points automatically for killing somebody else's shelter.
+Motion bombs are dodgeable now.
+removed the paid player restrictions since the game itself is paid.
+fixed some bomb placing related stuff
+As suggested by a couple players, if you are hit while affected by an antibiotic, it will take twice as much damage as whatever you would normally take.
+Due to the fact that I had to change code in a lot of places to make this new hit system work, I realized that some bombs were basically useless. Remote timebombs, motion bombs, timebombs, and the aircraft laser, missed that when I was ramping everything else, have been upped a little. Which means you don't have to place as much!
+new in 1.9.1:
+In light of other damage ramps, police car's laser is twice as powerful. You should still be able to dodge it though, but barely.
+Tries to fix the bug where a member with a blank name would be in a team.
+Killed stun darts completely.
+Vehicles will now tell you which direction they are facing in light of the 45 degree allowing, and their turn sound plays on the outside now.
+The tank is a little more powerful.
+Fixes the speed of antibiotics and health orbs, there was an extra 0 somewhere.
+Removes voicechat code.
+If your account wasn't paid before, it is now.
+Removes old message when viewing characters on the server.
+Antibiotics should heal you a bit quicker now.
+By request, vehicles can turn at 45 degree angles now.
+Adds support for interacting with the new licensing server.
+Aircrafts now protect themselves from falling into the negatives. If they catch they are falling into the negatives, they will bounce back up to z 10.
+Mines will now time out after an hour of being active. Hopefully this means we don't need to clear them as much. Also decreases the mines per square limit from 10 to 5.
+Fixes a bug with the reload alert playing for weapons that didn't take ammo.
+made it so when the server is updating and an event is going on you will automatically leave it.
+The little voice prompts the game plays such as back on your feet and out of ammo are localized to only the player, not anybody around you now.
+The reload alert for when your weapon first runs out of ammo while firing is now actually played.
+made the weapons so you can shoot someone from the tower. so have fun sniping.
+New in 1.9.0
+Updates logger to log more things.
+Tanks should actually fire now, oops?
+Impact bomb placing has a timer now, too bad for you people who stun and put down a fuck ton to get a kill!
+The sniper is no longer useless.
+fixed the shelter inserting coins when you press escape.
+Disallows some items to be placed in the store.
+Fixes a bug where you would fall below 0 (thanks Silak)
+Disallows shelters to be named main.
+Fixes the player menu. It will now tell you what its doing and will no longer copy the word \"back\" if you press escape.
+Fixes a shitload of lag! Like...its not even funny. God damn did we have some really bad coding practices.
+new in 1.8.3
+Restricted the /newmap command to masters and developers only, as it was just spamming the server maps.
+fixed the massive bug where you could draw another weapon while reloading.
+fixed the tiles in shelter.
+Kills PM character limit.
+made it so when you press r and you have no weapon equipped it will let you know about that instead of saying no ammo left for!
+Adds a new item, health orbs! A health orb is similar to an antibiotic except it can affect multiple players, such as a team, if they are within 5 squares of it. It also lasts 10 seconds longer than an antibiotic. However, if it is shot it will be disabled!
+Slightly increases grenade throwing timer.
+The fists should have a hit sound for vehicles and shelters now, and vehicles will make their ping if hit by a crossbow.
+new in 1.8.2
+The laser power-up sound for police cars won't be out of sync anymore.
+Added some new achievements.
+You won't get coins for killing somebody with bombs anymore. Grenades still count though.
+new in 1.8.1
+Fixed the runtime error if you activated an empty shipment.
+Your team shouldn't gain points if you kill a team mate.
+Fixed weapons mistakenly bouncing at the edges of the map even if they weren't facing towards that edge.
+New in 1.8
+Added /minversion to check the minimum required version to log in.
+made it so you can't drop ultrabomb locators to get ultrabombs.
+Attempts to fix min version checks.
+Major change. Teams no longer protect you from being hit. Remote guns will still avoid targetting team members, and bomb detectors will still ignore team members, but bullets and vehicle laser blasts will now hit team mates as well. This was done as a balancing act due to certain players ganging up on players without a chance for them to fight back. You will here an alternate weapon ping when you hit a team member
+Fixes inconsistencies with alternate weapon ping.
+You should no longer lose a paid item if you die.
+you shouldn't lose items for dying via ultrabombs or impact bombs
+darting a warp box hopefully won't freeze you permanently anymore
+attempts to fix a runtime error that could be produced by ordering shipments in strange ways
+you should no longer gain an epty_pack, just an empty_pack
+fixed a nasty bug related to shipment quantity.
+removes /deleteme
+Packs should properly display ammo.
+Fixes inconsistencies with packs inside packs.
+new in 1.7.8
+Fixed a rather strange bug that if you ran out of fuel in a tank it would shut down over and over again. Thanks again silak.
+Fixed a bug caused by the redesign of shelters that allowed you to create a shelter with a name that was already taken. Thanks silak for spotting this.
+made the shopping cart menu to show you price for each item individually. note the price is calculated by how much of the item you bought.
+the empty packs aren't taken away if you don't pack anything and cancel.
+no more loading more ammo than you're supposed to!
+fixed a bug where you could spawn mines over the limit with carier missiles. thanks silak for reporting this bug.
+fixed the bug when player respawn they wouldn't hear what's going on outside the store.
+finally, fixed the events.
+added a new admin command
+new in 1.7.7
+Adds a way for admins to have better communication.
+when you unpack an item you will get an empty pack.
+no more adding cncel amount of an item to the shelter's shopping cart.
+No more ading 11111111111111 wood to a shelter to get like 130000 wood.
+Updates instant server notifier.
+Adds 2 new admin commands.
+Updated /help and /adminhelp as it was talking about features that are no longer available.
+updated the /help command.
+added a /events command.
+new in 1.7.6
+tried to improve a little the event code.
+some changes to the players menu.
+since this was supposed to happen, you will automatically get out of the vehicle if you don't have it in your inventory after an event or something like that.
+made the serverside inventory position to sinc with the client one. in order for you to see this it will require you to wait for a new  client update
+New in 1.7.51
+Attempted to fix a loophole people were using to get a default inventory.
+new in 1.7.5:
+Fixes a small bug with building shelters.
+If you take money out of a computer you will no longer have to pick it up.
+new in 1.7.4:
+You can now use tk dollars in the normal store!
+Stores tell you how much you can spend of an item, just like old times.
+new in 1.7.3:
+fixed the error when you pressed escape on languages menu.
+fixed the shelter storage close sound
+made so if you already have an ultra bomb locator you will get an ultra bomb instead.
+added an easier way to add coins in shelters and vending machines.
+Makes cheatercheck detect if ultrabombs are close enough. Don't go offline before an ultrabomb explosion to avoid it!
+new in 1.7.2:
+fixed the developer/admin flag.
+fixed the events now for sure.
+Hopefully fixes the bug where you would lose ammo loaded into your weapons if you went offline.
+Ads a facility for devs to reload the stores without rebooting the server since we switched to storing them in files. This means we can add, remove, or change prices of items on the fly.
+Grenades are a little more dodgeable now, for a bit there if you were trying to attack somebody and they were just throwing grenades at you you couldn't dodge any of them if they hit you mid-jump.
+fixed some event stuff
+fixed the fast inv cycling.
+New in 1.7.1:
+Fixed a runtime error.
+fixed the store prices, thanks silak.
+fixed the /teamremove command
+fixed the shipments on server restarts, thanks silak.
+The notification telling you a player is part of a team will now drop in your misc buffer rather than just speaking.
+temp bans system is fully functional across server restarts.
+You now get wirebombs, mines, motion bombs, and missile interceptors with the deluxe pack.
+new in 1.7.0
+Changed attributes of the FRNT Assault Rifle. It now holds much more ammo, but as a sacrifice it is no longer fully automatic, however if you hammer enough you can actually fire faster!
+In light of the ramped up damage and patterns observed from players, limited the maximum amount of mines you can place on one square to 10. With the new ramped damage, that's up to 50000 health. Place some on some nearby squares to kill a fully maxed out player. Most people place these things on the sky beams anyway, so you should still get a kill if somebody you don't like tries to come up there.
+Ramped up the damage of mines, you don't need to place so many to get a kill now!
+Ramped up the damage of remote guns a little since players and vehicles all recently got health upgrades.
+Added remote gun controllers!
+Redid a lot of the remgun UI code and it is now completely serverside!
+temp bans will now save, so no more taking advantage of a server reboot!
+Vehicles max health has been ramped slightly, a tank now has 50000 and an aircraft has 25000.
+You should no longer hear distant sounds for actions started by you, for example firing things or using a missile interceptor.
+If you get a pm it will now show you the player name after the nickname.
+Vehicles will no longer reset your hit timer if you exit them.
+Grenades should be harder to dodge now. I didn't realize how actually easy they were. Apparently we had a range set but it was being ignored in favor of an explicit number which was tiny. Now you better move quick!
+You can no longer press enter when vehicles aren't idling to cause them to immediately turn off. Also the fuel low beep begins at 2.5%, not 5.
+fixed the bug where you couldn't fire machineguns in the shelter
+Adds new admin command available in the help command for admins.
+You can now tell what version a client is using if you type /version <playername>
+Fixes a bug with shelter storage.
+fixed the bug where the shipment was switching modes and never played the switch sound.
+Store system redesigned!
+new in 1.6.41
+Fixes a few bugs in the shelters computer.
+fixed the mines, thanks silak for pointing that out.
+added the ability to copy the shelter's ID from the money command menu
+changed a little the chat, no more weird spaces if there's not title or team name!
+Experimental code updates for new features.
+fixed the ultra bombs going on during the owner's warping process
+added the packets to copy a player's name without being on the same map. in order for this to work you need to wait for a cliend update
+New in 1.6.4
+Added a /mutelist command to check your mute list.
+made it so you can remove team members even if they are offline
+made the /members  show the whole team, including offline players!
+made the shelter zones trackable again!
+fixed the uncharted area in the shelters, thanks silak for reporting.
+New in 1.6.3
+Fixes coins not inserting in shelters.
+Security bombs can now be placed in a shelter.
+fixed the spawning in shelter when you come back  online
+fixed the shelter computer sound
+fixed the withdrawing shelter money, now it won't spawn anymore out of the map range.
+Fixes can not spawn items messages if you were in shelters.
+You can now add 10 coins into a vending machine or shelter computer. If you do not have 10 coins you will just add one.
+You can no longer drop items you don't have. Who knew one line of code made a difference!
+The killing percentage is now rounded in the stats list.
+Fixes timeitems.
+Fixes wrong message being sent if you attempted to reload the sword.
+Fixes activation key server.
+Fixed store distant sound syncing.
+Fixed shelter computer sounds playing in the wrong place, and added zones back so you can know where everything is.
+Stops shelters from writing to .map files.
+Standing up is much more realistic.
+New in 1.6.2
+Players should no longer be able to get a newbie inventory back over and over without really losing all of theirs.
+Bikes and bike helmets no longer multiply when used in your inventory.
+Bombs that take time to place  will no longer continue their countdown after the placer's death. This means security bombs can no longer be placed in the store.
+Ultrabombs can no longer be placed in the air.
+When entering a shelter, you now spawn at 5, 5 which is where the exit is.
+For a period of 2 seconds after a stun dart's effect has faded, as well as during the time the stun dart is active, the target cannot be stunned again.
+Adds more achievements for kills.
+Since shelters can no longer be built in by default, they are now 15 by 15 instead of 50 by 50 when they are created. Old shelters will still be 50 by 50.
+Players who were in a fight and then disconnected should now persist for 1 minute.
+You can now hit team members with health darts.
+Fixed a bug with team maximum members not being loaded correctly.
+Fixed a command not being listed with the shelter computer.
+The guess the number game now requires 4 paid players online instead of just 4 players, since only paid players can play.
+Teams should run out of points a shit ton slower now.
+Fixes distance calculation from displaying really long decimals.
+Guess the number should automatically finish now if everybody who can has submitted.
+Fixes health darts?
+Fixes a bug where a newbie notification wasn't being sent correctly.
+New in 1.6.1-B
+Makes the falling system work a little different in attempt to reduce lag.
+Makes /chars will now show how many paid accounts are on the server.
+Switched distance calculation to correct mode, pythagorean style.
+Adds /tempbans command for admins.
+Mines detect vehicles now.
+Makes it so you can only place one remgun per square.
+Adds /tempban <playername> <minutes> bans a player for a certain amount of minutes.
+Makes your chats screw up if you're drunk.
+Fixes auto-updater.
+Enabled builder menu for beta testers.
+/chars now sorts by last login time.
+Makes building commands work for beta members.
+Makes the beta server automaticly upgrade your account if beta flag is set to true.
+New in 1.6
+Edits teampoints formula.
+we are 70% sure that the reloading bug is fixed!
+Added Team points! Keep a team alive by gaining points for your team! Kill, and make sure you dont' get killed, because the team will lose points if you do!
+Added team_member_boosters. These can be bought in the store. These, if used by a team leader, will add one more slot for another team member. You can only have 3 boosters installed in a team.
+new in 1.532
+Fixes runtime error with broken inventory items.
+Adds health darts!
+Fixing a lot of server lag(thanks to Sam).
+Added the /alist command that will list all unlocked achievements.
+By request, added a /shelters command.
+redesigned the store! we made it completely serverside. now you can't type anything else besides numbers in the amount field!
+a new attempt to fix the reloading bugs. hope we made it this time.
+new in 1.531
+added some new drunk messages
+working on fixing the ammo system.
+Added server anouncements for player events(new client update)
+fixed the reloading bug
+New in 1.53
+Changed the reloding code to fix that reloading problem where it wouldn't actually reload the weapon.
+Makes missiles move a little faster.
+Makes server automaticly detect spam and disables the player's chat feature if detected.
+No more sending carrier missiles with mines and stunning items to places where they are disabled via the map.
+Antibiotics should now work with the new health cap.
+Changed max health to 80000.
+Changed the tk ultra health potions to reflect this change.
+Added /pmreceive toggles receiving private messages sent with the /pm command.
+Added a limit of 5 members per team.
+New in 1.52
+Removed inventory loss after death.
+Fixes not found error with admin command.
+It is now very very very hard to unstun yourself!
+Fixes store spawning bug.
+You can only be in the store for 5 minutes at a time now.
+Guess the number can only be started if there are at least 4 players connected.
+Default inventory is now updatable.
+Disables locker packs.
+Death free cards remove from your inventory after one is actually used in a death.
+Disallows mines from being placed near the store.
+Death free cards can't be used while you're in a fight.
+Added death free cards! These cards are only *optional*.
+Disables lockers for the time being.
+You are now able to change your locker's code.
+Fixes admin bug.
+Added the /changemymap for admins.
+Added the /lockerfind command to find your lockers and their codes.
+Blueboxes and security boosters can now be purchased through the store.
+Added the bluebox item. This item will try to hack a locker, but soon there will be items that will prevent this item from working at all. Careful when using these.
+Recoded the /chars command. It now displays a much nicer menu.
+Imported new server menu code from new 3dp online.
+Fixes canisters that give you health affecting the hit timer, making you a (cheater) if you logged off after using one.
+Free accounts can now bid in auctions, however they can not start them.
+New in 1.51
+Fixes server creating character bug.
+Massive event improvements.
+Adds /activeadmins, type this command to see who's an admin on the server!
+Fixes a bug used to fire very fast.
+Fixes stupid runtime error! One variable can really help the server!.
+If you log off and you have loaded ammo in your weapons, you will no longer lose that ammo.
+Prepares for new weapon system.
+Fixes admin commands.
+Added a new command: /clearstats. Only use this if you want to clear your player stats!
+Added a kill counter to teams. To see their kils, check with /teams.
+Added bikes to TK! Just grab a bike, put on a bike helmet and turn where you want to go and press enter. If you crash your bike you will fall and lose health.
+Fixes a bug where you could double your inventory through a shelter.
+Added the ability for admins to turn off chats.
+New in 1.5
+Runtime error fixes.
+Added the antibiotic canister!
+Added a new system for cheaters that go offline in the middle of a fight!
+New in 1.41
+Carrier missiles are now a lot more useful, as they will now return to you after they have dropped their item off. That is, as long as you're online and on the same map, otherwise they just drop to the ground, and if they haven't deposited their item yet, they drop it too.
+Now usage of a shield depends on the same timer that antibiotics do, so people can't just use a fuckload of shields in the middle of a fight to infinitely block shots.
+Increases efficiency of move player code, now it can detect if you are leaving or entering things that would be considered a shelter for distant sound control and send you the appropriate control commands.
+More lag reducing attempts, sounds like player beacons, motion bomb/timebomb beeps, and impact bomb explosions may be a bit quirky, I.E. not always play. This is due to switching them to unreliable to try to keep the packet stream stable.
+Attempts to alter the curve of antibiotic healing, to make it harder for you to bounce from rather low health back to over default again by just running away for a sec.
+Internal code changes related to offline conditions.
+Fixes some issues with the bleading sounds that players would have when they had low health.
+Recalibrates most weapons' impact values that weren't recalibrated when we made the health change. Also slightly decreases power of assault rifle.
+Majorly reduces price of FRNT Assault Rifle ammo packs!
+Since many people were confused on returns, makes the sell menu account for the 25% deduction on totals when displaying an item's worth.
+If you collect a gas mask and you have one in your inventory, it will give you an air tank instead.
+Fixes a bug that could be abused in shelters to get free wood. This is done via restriction of wood usage.
+Adds a new functionality to missiles called the send back feature, this will allow them to return to the player that launched them when their target goes offline or switches maps. It will switch into this special mode and come at you making the carrier missile sound and not adjusting its speed due to distance, and when it reaches you it will click and give your missile back.
+Fixes strange item usage inconsistencies involving the store and certain items outside it.
+Fixed a bug that if you were to use an ultrabomb silencer before the buzz was on it would be stuck audible. Silencers won't activate on non-started ultrabombs.
+Increased value of ultrabomb locator for selling, you only need the one and you can get some easy coins out of selling shit you've collected.
+Fixes char spam collector, and adds a feature for outdated chars.
+Fixed a paid account bug.
+Ads a command for teams to list all the shelters they own. Type /teamshelters to get this info.
+Adds a new command if you are inside a shelter. type /shchat and everyone in that shelter will get that message.
+Map declared i spawns can now specify what items will be spawned again. If this is not specified, however, it will use the default internal list.
+Finally finally fixes that stupid bug where the p key would report vehicles with completely wrong information!
+Attempts to fix large lag spikes when someone logs in or out.
+Shelter packs now give you some fuel tanks, and only will give you the remote timebomb controller if you don't already have it.
+Changes up /storehint system to try and not report a direction when it isn't supposed to.
+Fixes some runtime errors.
+Fixed a bug that, due to the new vehicle death feature, you couldn't get achievements involving vehicle kills.
+Adds a paid mode to the game!
+New in 1.40
+Attempts a new way to try and reduce lag while other players are near you.
+Disallows building shelters in the store.
+Brings back that fast and efficient move speed when a player is moved to the map they are already on, since it really doesn't need to reload.
+Fixes team com sounds doubling.
+Added 2 new commands, /mute and /unmute. These commands both take a playername.
+Since vehicles don't kil you instantly now, reworked killmsgs to send when the vehicle dies, and also there is an internal one if the player dies in the explosion.
+If all your remguns have lost connection, your remote will automatically disconnect now. Also fixes that weird bug where a remgun wouldn't check for expiration until you fired it.
+Disallows building shelters on staircases. This is because when they're on staircases you really can't hit them.
+Very slightly lowered damage of FRNT Assault Rifle. Shouldn't be too noticeable though.
+Put the glock back on weapon 4, now the assault rifle and the machinegun are next to each other.
+Fixes machinegun firing bursts.
+Prevents players from inappropriately losing a fuel tank and alerts them of it.
+Adds /storetime to tell you when the store will move next.
+The store will now make a noise when it teleports!
+Fixes a bug with store hint.
+Fixes wirebombs not being deployed properly by carrier missiles.
+Trys to reduce lag, thanks Sam!
+Now if you hit something with a tank it should tell you what you hit! This is done via packets being dropped in your misc buffer.
+Your weapon will also now ping if you hit a remote gun.
+Updates some weapon damages and such due to the default health change.
+Puts in a check that should make warp boxes less useless, now even if the loops are clogged, if you haven't used your total moveable distance by the time it gets around to make you reappear, it will very quickly do the rest of it. Hopefully this doesn't cause lag spikes, the hope that it wouldn't spike is why I did it the original way in the first place.
+Changes default health from 5k to 10k, now it's a bit tougher to kill people!
+Makes it able to break into shelters! Just hit the shelter enough, and it should break the door eventually.
+New in 1.30
+Fixes canceling of teams.
+Hopefully fixes transfer!
+Removes the random goodhealth and lowhealth packets that you are seeing by accident.
+Adds the /submit command.
+If a player gets dropped off and is able to sign in on top of themselves before they lose connection, team status should stay intact and you will get a message about how they were overwritten.
+Adds experimental code to deal with what we call buffer members in teams, members that are offline but are still in the team. Hopefully this will fix their bombs exploding if they lose connection, and will allow teams to stay up even if all their players are off temporarily.
+Mines should lag a hell of a lot less!
+Changes max shields to 200.
+Adds the newbie flag to avoid getting killed. This flag is mainly used for you to collect items when you first create an account with out getting killed. Please note that once you disable this flag, you can no longer get it back. Type /newbie to disable this flag when you're ready to play. This flag has a time limit of 20 minutes though.
+Now the server will give update errors for bad syntax on maps as well as the restriction errors. These error reports include the line number, correct syntax, and what it got instead.
+Restricts the use of map application on main. The b menu is completely disallowed, and you must be a dev to use rawdata on it. Rawmap will still work though, for the use of main_builder.
+Improves object spawning logic to detect blank air and walls and work around them.
+Adds the online TK store!
+New in 1.21
+Hopefully fixed the bug where when you first signed on you couldn't use an antibiotic or invis shield.
+Fixed a bug involving fires.
+When impact bombs explode into other impact bombs, the other hit sounds are not played. This should majorly reduce lag when you are near an impact bomb chain.
+Security bombs should be a bit harder to dodge, it was laughable for a bit how easy it was.
+Missiles now will hit impact bombs upon explosion, however the missile hit report does not cover these.
+Adds some more achievements.
+Attempts to fix a random runtime error that's been killing this thing for a while. The thing didn't make any sense!
+Alters ban system for more flexibility, and updates some procedures to do with initial connections.
+New in 1.2
+The welcome message now will tell you the last revision of the rules just before the MOTD. The revision scheme we are using is yyyy-mm-dd.s, where s is the subversion of the day, just in case we make more than one revision in a day. Normally s is 0. Days are observed in coordination with central time.
+Overdue and by request, now you can take a shelter's entire storage into your inventory just like you can put your entire inventory into the storage!
+Security bombs now scan very slightly slower, and the beep pattern no longer speeds up like a timebomb, but rather just buzzes at you every half second. This means you have 6 buzzes before it explodes. Also the price has been dropped a little and you can now sell them!
+Security bombs will no longer remove themselves when a player logs off.
+adds new bomb! Security bombs are good for shelters. Place one. If someone gets close to it, it will count down 3 seconds. If they don't move out of the way, it will explode!
+Tries to fix a strange new bug that would cause warp boxes to be useless and move you like 30 squares.
+Movement is ignored on the server while you are stunned.
+Fixes a bug involving vehicles and player movement.
+Massively updates shelters!
+Added item cabinets at 10 10 0 to shelters.
+Adds a shelter computer at 7,7,0 to shelters.
+Removes the store located at 10, 20, 0 in shelters.
+Adds the PNB alarm to the shelters. This alarm will announce players that are not allowed to access the shelter if they are near by.
+New in 1.11
+Now you will hear a player's nickname when they chat through team coms or are in a pm exchange with you.
+The P key will now announce a player's team flag if they are in one.
+The M key will now report the amount of remaining shots on nearby remguns. They start out with 50.
+Increases stun dart throw delay.
+Makes shelters require only 500 wood.
+Fixed a long undetected bug with the crossover of the weapon system that was allowing people to fire without any delay timing. Now you have to draw a weapon for it to let you fire at all.
+We now have an official rules set! Type /rules.
+The adminhelp, help, and rawmap commands now will copy the text to your clipboard.
+Now if you pick up an extra health pack but already have max health, you get an antibiotic instead. Also extra health packs are a bit more valuable.
+Added a load of achievements for higher kill counts and different ways of killing a player.
+Now your coordinates are randomized as soon as you die, rather than after your respawn. This will fix the respawning in the same place after death bug.
+Removes the main store. Now shelters have an access to it. Due to this change, you no longer need a toolbox to build a shelter.
+New in 1.1
+Makes remote timebomb controllers actually work, no more pressing shift+T to blow them up!
+Removes the percentage of health, and fixes the vehicle last hit by. Bug.
+By request, antibiotic usage now will depend on the same hit timer that warp boxes and such do.
+Adds ultrabomb locators!
+Does work on PM code.
+Fixes cridical bug where you could use a warpbox while in a vehicle and turn on map ambiences for tanks and aircrafts.
+Added /deleteme command.
+Due to internal changes the minimum required version of the client is now 1.61.
+The server will now treat entering the store as entering a shelter to clients, meaning the distant sounds from main are audible and synced with the store door!
+Aded a new item, warp boxes! These smart little things can be used to catch somebody who hits and runs, by allowing you to jump ahead between 100 and 150 squares in the direction you're facing! It won't make a good run in the middle of a fight element though, because it relies on the not being hit for a while timer. Fuck cowards!
+New in 1.092
+By request, ultrabombs have been edited a little. The immediate explode on death feature has been removed, invisibility shields no longer count as out of range, and if you put coins in an ultrabomb, it's yours. This means if you kill somebody who was putting coins in an ultrabomb, if you can find it fast enough and put a coin of your own in it, it's now yours to explode!
+Modifies the player beacon code in an attempt to reduce lag. Due to this modification all player beacons will no longer be in sync, so you can hear players apart easier.
+Extends the behavior of /nickfind to do a string search operation rather than a simple equal check. Still is not case sensative.
+New in 1.091
+Attempts to fix some weird map bugs. 
+Rids shelters of that beginning underscore bug.
+Disabled character filter on received chats/commands. It was breaking the purpose of pm in your own language anyways.
+You should no longer have any negative amounts of items in your inventory.
+If you have exhausted ammo for your weapons and you are killed, you should get some starting ammo back to avoid being stuck with no ammo.
+Some of the knife's godly ability has been removed, it now must go through a shield to reach a player, and the damage has been slightly decreased. This is to help those players who are being stunned and knifed for an easy kill. That stun dart should time out quick enough for you to fight back.
+Warnings will now have to be read and excepted by the receiving player. This is a measure to make sure they understood what they were warned about. This saves across logins and will alert them every time they log in until they except it. This can be done via /warned.
+Slight lag reducing attempt.
+Fixed a random runtime error.
+Achievements will not lag the server as much as they used to hopefully.
+Now ammo items will tell you how much you got. You can also get slightly more from them.
+Players can now buy ultrabomb silencers! These can just be used on an ultrabomb making its humming noise and that noise will go away. Great for traps!
+If you drive a tank out of the sky, it should no longer stay floating in nothingness. It will fall like everything else that doesn't already fly. And when it lands, it will hurt!
+Ammo should spawn a little more frequently now.
+Ammo items should no longer show up in your inv via the i menu. Also using them no longer causes you to lose them.
+Impact bombs are now available to players! Apparently they weren't on the main update, woops? Pick them up or buy some.
+New in 1.09
+You can no longer trap the store with mines, motion bombs, or ultrabombs!
+Fixes lagging things with travelpoints.
+Adds ammo system.
+Fixes various broken things with teams and signing off.
+New in 1.081
+You now get to see what weapon a shelter has been killed with!
+Added achievements!
+New in 1.08
+Some bugfixes.
+Fixes a bug with antibiotics that wasn't allowing you to enter the store because of health difference.
+You can no longer go invis while you're in a fight, this may be buggy. If it is, I'll fix it
+If a player is banned, they should be kicked properly, and also they will be removed from the flagged players list if they had a flag since you acted on it. A backup is made to banflag.usr just in case you need to see later why they were banned.
+You are no longer able to build shelters on travelpoints(Thanks Sam).
+Attempts to correct yet another regexp error for the crash detector.
+Aircrafts should eat fuel a bit slower now.
+Repairs take a bit less time, previously it was accounting for some silence in the sound.
+By request, shelters can now be modified by anyone in their allowed list, not just their owner.
+You can no longer build shelters on walls where they cannot be shot.
+Reduces mines' explosive impact range to 10. This means once a player steps on it, only things 10 squares away or less will be effected. Previously it was 30.
+Adds the requested /help command. This command is a nice list, you might wanna copy it from your misc buffer with shift c to review it in notepad.
+Majorly updates adminhelp.
+Fixed some pm things.
+Edited a regexp that was causing people to get eloquence crash detections when they shouldn't.
+Fixed enforcing of the length limit.
+Fixes to playtimers.
+Puts a length limit on chat messages.
+Now if you view someone's flag, you can view what all players that may have flagged them have to say, and who said what. You might want to copy this to notepad, it uses line breaks as a seperator.
+Adds /flagged for admins and /clearflag.
+Adds a new /flag command that takes a player's name and will report them. Admins will be able to view these flagged players and the main developer will get instantly notified when you flag someone.
+Adds a new /stats command that takes any player's name and will report stats.
+A new command has been added to reverse the nickname process. /nickfind nickname, will tell you what players match this nickname, search is case insensative. Sorry for the possibly ugly way it presents this match list, it is possible for multiple players to match the same nickname.
+Wood packs have been added to the store!
+Made the uptimer have a little bit more readable info.
+If you log in and your char is still on the server, you will still be able to log in.
+Deaths reload when you sign in.
+Good-bye leveling system, it was so useless.
+Puts in a safeguard to prevent people who got their data corrupted from receiving runtime errors upon login.
+Makes antibiotics effectiveness depend on how much health you have during use.
+Tries to fix some broken things involving teams.
+When you die, you might lose some items now. This was done in order to prevent over-powered players on the game, and so there is a point in dieing.
+Fixes a runtime error.
+If your inv file is blank, it will be replaced with the default inv to prevent crashes.
+Ultrabombs now consider you going invisible as out of range, and act accordingly.
+You can no longer put coins in an ultrabomb that already has its entire deposit. This prevents people from wasting coins, especially in lag bursts that may occur when flooding the object use key.
+Tank shells are more likely to hit shields now, but they still pack quite a punch.
+Fixes a bug with the remote timebomb input box.
+Makes wood more effective when repairing shelters. Also attempts to put in a system where if you put too much wood into it where it would go over the max, it will give you that overflow back.
+Adds a range based give item system for people who were requesting it! To prevent a client update, it is currently as follows. Use the command /transfer playername item, and if they are within 5 tiles of you, it will give them that item and subtract it from you.
+New in 1.07
+Since people were being childish, implements some features for us devs to control the flow of missiles. We can set a max allowed on the game at once, and also the time between successive usages allowed. Some experimentation may take place as a result to find the optimum balance.
+Edits some prices.
+Locks down on travelpoints in shelters for real. Not even rawdata will make it through!
+Remguns now actually expire due to shots.
+Server will now save all it's data every 20 seconds. Hopefully this doesn't produce too much lag.
+You can now hit aircrafts with tanks again.
+Edits the shelter building input box a bit. Now you can type whatever characters you want on the client, since otherwise you could only type letters and numbers, but puts some server based checks. Spaces can be typed, but they will be replaced with underscores, and apostrophes are valid, so you can say something like superman's_house.
+Adds back the /admins command.
+Fixes building menu.
+You can now build in shelters if you are the owner!
+Map data no longer sends twice when logging in.
+Missiles will now play the weapon hit beep when they explode, however they still produce no sound if they are intercepted. Also fixes up the missile hit message to support nicknames, and remove stray comma space combos at the end.
+Nicknames are also now present in things involving shelters and the look around features.
+Edits kill messages to support internal features, currently used only for remgun conditions.
+A remgun will now expire after 50 shots have been fired, or the already present 5 minutes, whichever comes first.
+The kill messages for a self destructing remgun and an expired one are now using the internal system, so they don't get beaten by self destruct mode etc.
+Fixes a strange bug introduced in the new kill messages that caused blanks to be used for %2 under certain circumstances.
+Fixes a bug that wouldn't alert you when somebody went offline.
+Slows the beacon sound down.
+Fixes online message.
+Ultrabombs now require at least 5 coins to be inserted for the explode on death feature to work.
+Redoes bullets hitting vehicles a little in light of the change that makes aircrafts go 10 squares above their launch point.
+Kill messages will now honor nicknames and say if the killed player was in a vehicle! This should also work if a vehicle kills another vehicle.
+Cracks down on username creation. Now the only characters permitted in usernames are letters of either case, numbers, dash and underscore. This prevents people from creating usernames that admins cannot act on due to the chat restrictions, and also prevents people from breaking the server by putting invalid characters in their usernames.
+New in 1.06
+Grenades now hit remguns and items when they explode. Flying grenades will also impact on remguns and actually spawn the grenade.
+Timebomb placing now relies on the same timer that motion bombs do, so you can't place either of them before 1.5 seconds have elapsed! This should fix lag and spammy things with jerk players and bombs.
+You are no longer able to place ultrabombs on top of other ultrabombs.
+Coins will no longer be subtracted if you are not standing on an ultrabomb.
+Ultrabombs now work as follows. After you put your coins in them, they will be ready but won't actually start counting down until you get out of range. When you do, they will beep and let you know that they started. You do have this time to go back in range if you're going for suicide. If you are killed or on a different map, this also counts as out of range.
+Ultrabombs will also activate if you are killed, regardless if they were ready to explode. This allows them to own the player who killed you while trying to load them up with coins.
+Redoes password saving system.
+New in 1.052
+Readjusts prices of some items and other numbers related to selling.
+Since people wouldn't stop being abusive, missiles and motion bombs now have activation timers. Motion bombs can only be activated every 1.5 seconds, while missiles can only be activated 4 seconds after a launch.
+Auctions should now revert when a bid is canceled, making people unable to jam up an auction by bidding a high amount and then canceling it.
+You can no longer use items while invinsible and/or stunned.
+Makes vehicles only be removed from your inventory if they die, no longer just when you activate them. This should prevent people losing vehicles due to unexpected disconnections.
+Attempts to fix a runtime error with /kick.
+Adds a command for admins to save server data in case something they might do would possibly crash. This will save all characters, shelters, and server state parameters.
+Makes the missile tracking menu work like the f5 tracking menu, where the players are sorted by distance and only shown if they are on your map.
+Adds a timer to throwing grenades so you can't spam them anymore, the time value may be changed though. Currently it is 1 second.
+You can now sell items to the store! To do this, go inside the store and type /sell, the prompts will guide you through the rest. You can even sell items you don't normally buy but pick up! Please note there is a 50 percent deduction off all returns, so you will only get 50 percent of the full payoff.
+Thrown grenades will not stop at objects, just like tank shells.
+Makes it so you can hear if a knife hits a vehicle.
+Modifies weapons hitting shields a little.
+Fixes mines  wouldn't spawn on the map.
+Finally fixes the problem where the server would lag and even sometimes randomly crash when a player logged off.
+New in 1.051
+Changes prices of items in the store to make things a bit more affordable.
+Added grenade packs! They do exactly what you think they'd do. And they spawn on the map!
+Makes missile interceptors spawn on the map.
+Tries to fix up grenades some more, now they will hit shelters and vehicles while flying, and also hit them when they explode.
+Adds the ability for bullets to not only have a type dependent shield damage, but have a possibility of going through the shield!
+Makes the knife actually worth something.
+Removes the minigun.
+Makes grenades explode if you launch them and they hit the end of the map! All weapons do for that matter, bounce back.
+grenades are better now!
+Removes /where.
+Fixed a bug where your kills weren't saving when you logged off.
+Fixes admin menu.
+/adminhelp for admins displays menu now.
+Added levels!
+Completely changed the antibiotic code, nothing noticeable.
+Adds looking code to allow players to look at other players.
+New in 1.05
+No more getting kills and gaining coins by killing yourself! (Thanks  Aarush.)
+Timebombs now have countdown timers, removing programming of bombs per popular request.
+Makes the sniper go through shields.
+New in 1.04
+Changes to death code.
+Tries to make it so you get rewarded with coins if you kill players with timebombs, etc.
+New in 1.03
+Fixes a bug with mines crashing the server.
+No more /uploadsound.
+Removes /spawn_obj as people were overusing this command to give themselves items.
+New in 1.02
+Fixes to invinsibility timers.
+New in 1.0
+Your playing timer now pauses when going invinsible. This flag is mainly used for situations like AFK, etc.
+Added a timer for going invinsible!
+Some changes to the super natural mode. You can no longer track people with missiles who have this flag enabled, players can't pick up items, and you no longer die when you fire.
+New in 0.98
+Added accumulated uptime.
+Readded ispawn in the maps again. This time however, you can only go as far as controlling the map's spawning values, that is, anything but the items.
+New in 0.97
+Attempting to fix /playtime
+Slightly reworks the grenades a little bit.
+Items spawn on the entire map now, no matter how big it is.
+New in 0.96
+Guided missiles spawna menu rather than you typing the name in.
+Addresses the minigun's damage a little bit.
+New in 0.95
+Adds support for the new minigun.
+New in 0.94
+Items spawn faster.
+Now, when a player goes invinsible the server  announces it.
+New in 0.93
+Disables /give.
+New in 0.92
+Redoes the beacon system completely.
+Removes registered check when spawning on the server.
+New in 0.91
+Fixes auto updater.
+Fixes a few random bugs.
+Fixes so you only get required amount of uptime. No more 0 days, 0 hours, 0 minutes and 32 seconds. Now it just says 32 seconds.
+Makes items spawn through an array in the actual code itself, no more control with the ispawn value in a map.
+New in 0.9
+Made server selft-hosted.
+New in 0.8.1
+When you leave the store, you are moved to a random location.
+Changes to antibiotic system.
+Improves logger.
+Addes server support for upcoming client updates.
+When you move or you are moved via a travelpoint or or /move, the server will no longer send you the entire map again unless you are changing maps. This fixes bugs with sounds chopping off when moving.
+New in 0.8.0
+Fixes a bug where users would have to log out of the game to auction new items they did not have before.
+Fixes inventory bugs.
+Stops people from creating codes by pressing escape.
+Modifies the coin system a little bit. You getmore coins per kills and the packs have a little more coins in them!
+Added shields! These extra layers of protection can protect you. Each shield can protect 3 to 15 shots, but big explosives still go through you, and fires just melt them.
+Motion bombs will now detect tanks and aircrafts.
+Added protection for crash codes that crash the eloquence speech Synthesizer.
+Added mines!
+Other fixes/additions I forgot about.
+New in 0.7.9
+Fixes a bug that I found where the store was checking the wrong place for your coins.
+Added support for robots.
+New in 0.7.84
+Fixes a stupid inventory bug with missile interceptors.
+Makes the server a lot less laggy!
+Fixes missiles thanks to Colton.
+Adds an updater to the server!
+Attempted to add travelpoints.
+Added a limit of 100000 health to shelters.
+Added a much more easier way to fix shelters when you use wood inside one.
+new in 0.7.83
+Fixes the weapon code to fix some important bugs.
+Fixes a bug in the code that would make the aircraft hit team members.
+Adds a new team command: /teampass NewPW.
+new in 0.7.82
+Does away with those stupid time commands and the time system itself. It never worked like I wanted it to work.
+Adds support for new upcoming client updates.
+Makes a few changes to the respawning/moving code.
+new in 0.7.81
+fixed the rico system finally!
+fixed the fists.
+Modified the teaming system. Read message of the day for instructions.
+Fixed a minor runtime error.
+New in 0.7.80
+Fixes a bunch of server crashes.
+Modifies the code for teams slightly.
+Modifies server stats message.
+new in 0.7.74
+fixed the missiles. now, when you set it to track a player and the player moves the target should update.
+new in 0.7.73
+Made it so when the server updates, the settings and data of the server is saved once more.
+New in 0.7.72
+Fixes fire related stuff.
+New in 0.7.71
+Weapons do not kill players in your team anymore.
+RTE fixes.
+New in 0.7.70
+RTE (Runtime error) fixes.
+Updated the guided missiles to support targeting players themselves.
+New in 0.7.63
+Does more work with drones.
+Makes it so you can't fire in a shelter do to request.
+New in 0.7.62
+Makes it so you can fix up shelters now! While you're in a shelter, use wood and it should work.
+Makes the server a lot more stable!
+New in 0.7.61
+Adds support for new drones!
+Made server stats more detailed.
+Updated the version system.
+Fixes a bug that would crash the entire server when sending an empty array.
+New in 0.7583
+Runtime error fixes.
+Finally, O finally I have fixed that runtime error that kept crashing us for so many weeks!
+New in 0.7582
+Made it so when a player tries to log in with an older version of the client, the server will disconnect them.
+New in 0.7581
+Makes the server way less laggy when using items.
+New in 0.7580
+Made the inventory completely server side.
+Fires will no longer hurt players that are not in range.
+New in 0.57
+Added fires!
+Timebombs can spawn fires now.
+New in 0.756
+Added code for players that are in jail.
+Makes it so when you're in the store and you get a bunch of players firing a gun, it doesn't send that annoying message about not firing in the store!
+New in 0.755
+No more spawning missiles in the store!
+Updates admin commands.
+Updated the store code to move you to the door of the store when you exit, not a random location on the map.
+New in 0.754
+Fixes to buggy things with nicknames.
+New in 0.753
+Added a /time command.
+Added nicknames.
+New in 0.752
+Makes the store have opening hours. It will open at 7 in the morning and close at 10 at night.
+Added a time system.
+New in 0.751
+Added a command for admins.
+New in 0.75
+Added guided missiles!
+Newin 0.744
+Fixes to lag when respawning or spawning players.
+Adds a limit of remote timebombs for player.
+Makes it so whenever you log out of the game, your remote timebombs get cleared from the server.
+New in 0.743
+Makes it so you can only fire your vehicle if it is started.
+Adds a new banning system.
+New in 0.742
+Modified /teamadd, no longer adding people to teams multiple times!
+Fixes stuff with teams.
+Adds a /members command if you are in a team.
+Newin 0.741
+Fixes to buggy things with weapons.
+new in 0.74
+made so you can't build anymore empty  shelter names, so we prevent the server from crashing
+New in 0.73
+fixed the /admins commands. now it will show you the proper number and who they are.
+makes it so motion bombs won't hurt you or your team.
+Adds 2 new team commands, /teamleave and /teamremove.
+Does a few thingies with shelters.
+New in 0.72
+Stops people from creating useless shelters like $ or ! or special simbles.
+Makes motion bombs able to detect vehicles now.
+Fixes a bug where if you fell and died it wouldn't update your last hit and it would be like a player owned you. Now it says the laws of gravity.
+Attempts to patch the overflow error that was letting you get ridiculous amounts of items in the store. If you manage to break it, you will actually get an error now.
+Makes falling take health now.
+New in 0.71
+Edits repairs a little.
+fixes a bug with shelter creation and the way the map was layed out using zones.
+Attempts to fix toolbox related bugs with shelters and now vehicle repairs.
+Adds metal for repairing vehicles, and associated metal packs.
+Adds the /reply command for private messages.
+Makes it so you can repair vehicles now.
+New in0.7
+Makes it so you can not build shelters in the store.
+Fixes a few admin commands.
+Begins to a team system.
+New in 0.69
+Makes it so you're weapons don't hurt your shelter, so you can fight off the people who attack it.
+New in 0.68
+fixed a ridiculous bug that caused players to falsely be reported in shelters, due to me not being able to code. My apologies.
+removed the notification if a player goes invisible.
+puts a timelimit on using an invisibility shield, twice that of the shield's lasting time.
+New in 0.67
+caps your maximum health at 50000, to avoid invinsible players. They will still take a while to kill though.
+Decreases the price of the toolbox considerably.
+New in 0.66
+makes a shelter's death be sent as a kill message, sound included.
+makes a shelter's death send notice to it's owner, including which shelter it was if you have multiple.
+makes the health check report a shelter's health if you're inside one.
+reworks the entering shelter packet to send the coordinates of the shelter, used in the newest client for distant sound control.
+makes it so you can't build a shelter on top of another shelter, or any other spot you are required to press enter, such as store points.
+New in 0.65
+fixes a map bug where if a player logged on on a nonexistent map, they would be stuck there. Now you're warped at main.
+Makes shelters save immediately when created. This should fix some bugs with entering into an empty map.
+Adds an allowed players system for shelters! /shadd will add somebody to the allowed list, /shremove removes somebody, /shremoveall removes everybody but you, and /shallowed will check what players are allowed to enter. Do note that this command only works within a shelter you own, and that you cannot remove yourself from the allowed players list of your own shelter.
+New in 0.64
+Adds server side menus to the game.
+Makes it so you can hear the shelters being hit if you created them, including shelter hit sounds.
+New in 0.63
+Makes it so you can't do weird things with shelters anymore.
+New in 0.62
+Adds the kills counter back in to the game.
+Modifies the online message, reporting how many players are in the store, or in shelters.
+New in 0.61
+Fixes the wrong packet being sent when updating the server.
+Fixes the shelters must not include spaces bug.
+New in 0.60
+Finishes the shelter code.
+Newin 0.55
+Made your fists a bit more powerful.
+fixes the get nearest player function to not only look for players that are dead. This in turn will fix poisonstars.
+updates some commands to accept admins, and updates the admin help.
+tampers a little with motion bombs and mines. This will have to undergo further testing.
+New in 0.54
+Fixed up the admin code a bit.
+New in 0.53
+Added code for shelters.
+Stops people from killing themselves with the suicide command every 15 seconds.
+New in 0.52
+attempts at fixing motion bombs again.
+Adds most items to the store.
+Makes the store tell you how many coins you need and how many you have when failing to purchase an item.
+Stops the store from accepting amounts less than or equal to 0.
+Removes the store jumping you out of it if a purchase error occured.
+New in 0.51
+changes some weapon's damages, such as machine gun.
+fixed bugs with reporting aircraft hits involving vehicles
+players on different maps will not show up in the tracking menu anymore.
+New in 0.50
+Made it so you can throw stun darts every 10 seconds now.
+New in 0.49
+Adds the amount attribute to the spawn_obj command for admins.
+Adds /beacon to toggle your beacon beeps. By default they're on.
+Makes an aircraft's laser able to hit other vehicles, fight in the air!
+Makes a beacon die when a player does.
+New in 0.48
+fixed up distant sounds code for client side panning and such (new client required)
+Increases range of the aircraft's laser.
+attempts at fixing tracking menu, entirely new system in place, so let's see if it works.
+New in 0.47
+Fixes a runtime error with motion bombs.
+Made it so when you fire and stuff, you hear distant sounds.
+New in 0.45
+Added motion bombs!
+New in 0.44
+Modifies vehicles to support their own initial speeds.
+Makes fuel get eaten faster depending on your speed and what vehicle you are operating.
+fixes a bug that would prevent the store from subtracting your coins when you bought something.
+fixes a bug that allowed vehicles to go past the maximum coordinates on the map.
+New in 0.43
+adds the saving of vehicle health and fuel, type dependent, across multiple usages of a vehicle. Better yet, saves these values so you can't cheat by flashing to get back your fuel!
+fixes bugs with the moving sound handler that would cause vehicles to be inaudible due to subsonic pitches. Now you can hear it's engine, and it even reflects it's speed!
+Fixes a bug that was preventing people in the air from shooting an aircraft.
+Allows artillery shells from the tank to hit the aircraft, even though they're on the ground. Reason being they have a massive spread range on explosion.
+Fixes a bug that would cause an aircraft's laser to go through a tank and kil you. As a drawback, tanks currently cannot be hit by aircraft lasers.
+New in 0.42
+Modified the tracking menu.
+New in 0.41
+Added a working store.
+Updates admin help.
+New in 0.4
+Added server support for vehicles, currently tanks and aircraft.
+New in 0.3
+Fixes up poisonstars and their hovering bug.
+New in 0.21
+Totally overloads the shotgun's damage, but hugely decreases the range because of it.
+Stops the server from giving you one coin when giving a gift.
+Fixes a bug where if you were stunned and died, you would remain stunned.
+fixes beacons, completely serverside, no need for f4.
+New in 0.2
+Adds server code for a store.
+Made the shotgun a bit more powerful.
+New in 0.15
+fixes a bug where you wouldn't know what you had been given if you were given a gift by the server.
+slows down the object dings a little to try to reduce lag on the server.
+Fixes remguns could hit invinsible or dead players.
+makes disappearing objects not make a break sound as if they had been shot.
+changes the minimum version to require the latest.
+fixes abnormal behavior with player beacons.
+makes player beacons not beep on invisible players, invisibility shields are worth something!
+New in 0.14
+Prevents normal players from rebooting the server.
+Completely removed ultrabombs from the server.
+Added a command to reset or change your password. Type /changepassowrd followed by your current password, and a new password followed by that same password again to confirm.
+Added server support for remote timebombs!
+integrated the serverside moving sound handler to be used in the future with the client side handler.
+New in 0.13
+Adds a /serverstats command.
+Fixed Poisonstars hopefully.
+New in 0.12
+Starts requiring newer version of the game to connect.
+Fixes server crashing when trying to login.
+New in 0.1
+Started server version system.
+Completely removed enemies from the server.

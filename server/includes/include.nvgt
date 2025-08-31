@@ -28,3 +28,6 @@
 #include "team.nvgt"
 #include "fire.nvgt"
 #include "data_save.nvgt"
+#include "extrafunctions.nvgt"
+#include "restart_nvda.nvgt"
+#include "changes.nvgt"
