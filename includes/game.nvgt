@@ -473,7 +473,7 @@ if(importbufferlogs==1) export_all_buffers();
 frozen=false;
 can_move=true;
 //if(net_debug) file_put_contents("packets.log",packetlog,255);
-fade_all(p,distpool,shdistpool,mpool,sourcepool);
+fade_all(p,distpool,shdistpool,mpool,sourcepool,objpool,tp);
 destroy_all_msounds();
 //destroy_all_sirens();
 p.destroy_all();

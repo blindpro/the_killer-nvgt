@@ -108,13 +108,12 @@ rcontrol = 0;
 if (f_audio.is_checked(HRTF)==true)
 {
 global_hrtf = true;
-set_sound_global_hrtf(global_hrtf);
 }
 else
 {
 global_hrtf = false;
-set_sound_global_hrtf(global_hrtf);
 }
+set_hrtf();
 musictrack="menumus"+string_to_number (sl + 1)+".ogg";
 menu_sound.pause ();
 currently_input_device = input_device_temp;

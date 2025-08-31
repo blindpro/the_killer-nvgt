@@ -15,7 +15,7 @@ wait(5);
 }
 handle.destroy_all();
 }
-void fade_all(sound_pool@ handle, sound_pool@ handle2, sound_pool@ handle3, sound_pool@ handle4, sound_pool@handle5,double time=0.25, double minvol=-40)
+void fade_all(sound_pool@ handle, sound_pool@ handle2, sound_pool@ handle3, sound_pool@ handle4, sound_pool@handle5, sound_pool@ handle6, sound_pool@ handle7,double time=0.25, double minvol=-40)
 {
 for(double current=0;current>minvol;current-=time)
 {
@@ -59,7 +59,22 @@ if(handle5.items[sourcesounds].handle.playing==false)
 continue;
 handle5.items[sourcesounds].handle.volume=handle5.items[sourcesounds].handle.volume-time;
 }
-
+for(uint objsnd=0;objsnd<handle6.items.length();objsnd++)
+{
+if(@handle6.items[objsnd].handle==null)
+continue;
+if(handle6.items[objsnd].handle.playing==false)
+continue;
+handle6.items[objsnd].handle.volume=handle6.items[objsnd].handle.volume-time;
+}
+for(uint tpsnd=0;tpsnd<handle7.items.length();tpsnd++)
+{
+if(@handle7.items[tpsnd].handle==null)
+continue;
+if(handle7.items[tpsnd].handle.playing==false)
+continue;
+handle7.items[tpsnd].handle.volume=handle7.items[tpsnd].handle.volume-time;
+}
 wait(5);
 }
 handle.destroy_all();
@@ -67,4 +82,6 @@ handle2.destroy_all();
 handle3.destroy_all();
 handle4.destroy_all();
 handle5.destroy_all();
+handle6.destroy_all();
+handle7.destroy_all();
 }
