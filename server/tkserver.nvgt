@@ -1,6 +1,7 @@
 #include "includes\include.nvgt"
 network n;
 network_event e;
+mutex t_net_loop_mutex;
 uint64 port = 10000;
 bool netsetup;
 dictionary sellitems,wdata;
@@ -34,7 +35,7 @@ int auctionamount;
 int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
-string minverstring="1.93.0";
+string minverstring="1.93.5";
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -85,7 +86,7 @@ setupserver();
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");
-async<void> call (loops);
+async<void> call (net_loop);
 while(true)
 {
 if(savetimer.elapsed>=10000&&writeprefs==1)
@@ -94,7 +95,7 @@ savetimer.restart();
 saveloop();
 }
 refresh_window ();
-//loops();
+loops();
 if(key_pressed(KEY_ESCAPE) || s_quit)
 {
 server_quit ();
@@ -108,11 +109,14 @@ speak(objspawns+","+objgrabs + "," + players.length ());
 
 void net_loop ()
 {
+while (true)
+{
 network_event e = n.request();
+mutex_lock(t_net_loop_mutex);
 string s;
 if(e.type==event_connect)
 {
-return;
+continue;
 }
 if(e.type==event_receive)
 {
@@ -121,12 +125,12 @@ if(e.channel==0)
 s = get_event_message(e.message);
 if (s=="")
 {
-return;
+continue;
 }
 string[] parsed = s.split("|");
 if (parsed.length()<1)
 {
-return;
+continue;
 }
 if (parsed[0]=="get_map" && parsed.length() ==2)
 {
@@ -160,27 +164,27 @@ if(index>-1)
 if(players[index].newb==1)
 {
 send_reliable(players[index].peer_id,"You can't fire if you are a newbie!",0);
-return;
+continue;
 }
 if(players[index].reloading and hasammo(parsed[1]))
 {
 send_reliable(players[index].peer_id,"You need to wait for your weapon to reload itself! You might jam it!",0);
-return;
+continue;
 }
 int mapindex=get_map_index(players[index].map);
 if(mapindex<0 and get_shelter_index(players[index].map)<0)
 {
 send_reliable(players[index].peer_id,"Can not fire in this map. Error with index",0);
-return;
+continue;
 }
 if(players[index].is_dead or players[index].invinsible or players[index].stunned or players[index].weapon=="" or (mapindex>-1 and maps[mapindex].fighting==0) or (players[index].map=="store" and storefight==0))
-return;
+continue;
 string wname=parsed[1];
 if(players[index].get_ammo_count(wname)>0 or hasammo(wname)==false)
 {
 if(players[index].map=="jail")
 {
-return;
+continue;
 }
 players[index].fire_auto();
 }
@@ -199,22 +203,22 @@ if(index>-1)
 if(players[index].newb==1)
 {
 send_reliable(players[index].peer_id,"You can't fire if you are a newbie!",0);
-return;
+continue;
 }
 int mapindex=get_map_index(players[index].map);
 if(players[index].is_dead or players[index].invinsible or players[index].stunned or players[index].weapon=="" or (mapindex>-1 and maps[mapindex].fighting==0) or (players[index].map=="store" and storefight==0))
-return;
+continue;
 string wname=players[index].weapon;
 if(players[index].reloading and hasammo(wname))
 {
 send_reliable(players[index].peer_id,"You need to wait for your weapon to reload itself! You might jam it!",0);
-return;
+continue;
 }
 if(players[index].get_ammo_count(wname)>0 or hasammo(wname)==false)
 {
 if(players[index].map=="jail")
 {
-return;
+continue;
 }
 spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
 play(wname, players[index].x, players[index].y, players[index].z, players[index].map);
@@ -225,7 +229,7 @@ players[index].ammo_give(wname,-1);
 if(players[index].get_ammo_count(wname)<=0)
 {
 players[index].vo("reload");
-return;
+continue;
 }
 }
 }
@@ -279,7 +283,7 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 if(players[index].map=="jail" or players[index].is_dead)
-return;
+continue;
 players[index].stun(404,false,false);
 play(parsed[1]+"draw", players[index].x, players[index].y, players[index].z, players[index].map);
 send_reliable(players[index].peer_id,"weapondata|"+dget_string(wdata,parsed[1]),0);
@@ -295,7 +299,7 @@ if(index>-1)
 {
 if(players[index].map=="jail" or players[index].invinsible or players[index].stunned or players[index].is_dead or players[index].warping or players[index].newb==1 and !players[index].newbuseable(parsed[1]) and players[index].is_food(parsed[1])==false)
 {
-return;
+continue;
 }
 if (players[index].inventory.get_keys().length()>0 and players[index].get_item_count(parsed[1])>0 and players[index].using1==false)
 {
@@ -321,7 +325,10 @@ send_reliable(players[index].peer_id,"The pack contained "+h+" "+p[0]+" ammo!",2
 players[index].give("ammo_"+p[0],h);
 players[index].give("empty_pack", 1);
 }
-if(string_left(wname,5)=="ammo_") return;
+if(string_left(wname,5)=="ammo_")
+{
+continue;
+}
 if(string_contains(wname,"\"",1)>-1)
 {
 takeobj=true;
@@ -334,7 +341,7 @@ takeobj=false;
 if(players[index].eattimer.elapsed<10000)
 {
 send_reliable(players[index].peer_id,"Can't eat yet",0);
-return;
+continue;
 }
 else {
 takeobj=true;
@@ -344,19 +351,26 @@ players[index].eat(parsed[1]);
 if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[index].map,wname)==false)
 {
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
-return;
+continue;
+}
+else if(wname=="tk_ultra_health_potion")
+{
+if(players[index].statchangetimer.elapsed<60000) return;
+players[index].playsound("ultrapotion");
+players[index].health=80000;
+send_reliable(players[index].peer_id,"your health has been restored!",0);
 }
 else if(wname=="shield")
 {
 if(players[index].shieldshots>=players[index].maxshields)
 {
 send_reliable(players[index].peer_id,"I think you'll be ok for now",0);
-return;
+continue;
 }
 if(players[index].statchangetimer.elapsed<15000)
 {
 send_reliable(players[index].peer_id,"speak|You can't use this yet!",0);
-return;
+continue;
 }
 else
 {
@@ -380,19 +394,19 @@ vector max=get_max_values(players[index].map);
 if(players[index].statchangetimer.elapsed<20000)
 {
 send_reliable(players[index].peer_id,"you can't use this yet",0);
-return;
+continue;
 }
 /*
 if(in_vehicle(players[index].name)>-1)
 {
 send_reliable(players[index].peer_id,"Not in a "+vs[in_vehicle(players[index].name)].type+"!",2);
-return;
+continue;
 }
 */
 if(((max.x-players[index].x) <=100 and players[index].facing==90) or ((max.y-players[index].y) <= 100 and players[index].facing==0) or ((players[index].x-0) <= 100 and players[index].facing==270) or ((players[index].y-0) <= 100 and players[index].facing==180)) 
 {
 send_reliable(players[index].peer_id, "you can't use the warp_box here, because you are near edges ", 2);
-return;
+continue;
 }
 takeobj = true;
 send_reliable(players[index].peer_id,"stopmoving",0);
@@ -417,13 +431,13 @@ if(players[index].antibioticed==true)
 {
 takeobj=false;
 send_reliable(players[index].peer_id,"Wait until your antibiotic ware's off!",0);
-return;
+continue;
 }
 else if(players[index].statchangetimer.elapsed<20000)
 {
 takeobj=false;
 send_reliable(players[index].peer_id,"speak|You can't use this yet!",0);
-return;
+continue;
 }
 else
 {
@@ -534,6 +548,32 @@ players[index].give("antibiotic",50);
 play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
 players[index].give("empty_pack", 1);
 }
+else if(wname=="gas_mask")
+{
+takeobj=false;
+if(players[index].air>0)
+players[index].airlifetimer.restart();
+players[index].airtimer.restart();
+players[index].mask=toggle(players[index].mask);
+string action=(players[index].mask==1 ? "on" : "off");
+players[index].playsound("gas_mask"+action);
+send_reliable(players[index].peer_id,"mask "+action,2);
+}
+else if(wname=="air_canister")
+{
+spawn_canister(players[index].x,players[index].y,players[index].z,players[index].map,"air");
+takeobj = true;
+}
+else if(wname=="antibiotic_canister")
+{
+if(players[index].statchangetimer.elapsed<10000)
+{
+send_reliable(players[index].peer_id,"Sorry...can't be gaining or losing health to do this",0);
+return;
+}
+spawn_canister(players[index].x,players[index].y,players[index].z,players[index].map,"antibiotic");
+takeobj = true;
+}
 else if(wname=="wood")
 {
 takeobj=false;
@@ -541,7 +581,7 @@ string items=players[index].get_inv();
 int s=in_shelter(players[index].name);
 if(s>-1)
 {
-if(shelters[s].health>800000) return;
+if(shelters[s].health>800000) continue;
 send_serverbox(players[index].peer_id,2,2,1,-1,"shelterfix","How much wood would you like to add to this shelter?");
 }
 else
@@ -549,7 +589,7 @@ else
 if(inv_item_number(items,"wood")<500)
 {
 send_reliable(players[index].peer_id,"not enough wood!",2);
-return;
+continue;
 }
 send_serverbox(players[index].peer_id,0,-1,0,-1,"build_shelter ","Enter the name of your shelter. Note: your name must not include spaces!");
 }
@@ -592,21 +632,21 @@ if(players[index].stunned==false and players[index].firing==false and players[in
 if(players[index].weapon=="knife" or players[index].weapon=="fists" or players[index].weapon=="sword")
 {
 send_reliable(players[index].peer_id,"This weapon does not take ammo",0);
-return;
+continue;
 }
 else if(players[index].weapon=="")
 {
 send_reliable(players[index].peer_id, "you have no weapon equipped", 0);
-return;
+continue;
 }
 if(players[index].get_ammo_count_from(players[index].weapon)>0)
 {
-return;
+continue;
 }
 if(players[index].get_item_count("ammo_"+players[index].weapon)<=0)
 {
 send_reliable(players[index].peer_id,"no ammo left for "+players[index].weapon+"!",0);
-return;
+continue;
 }
 else
 {
@@ -892,7 +932,7 @@ else
 send_reliable(0,players[index].name+" is an impersonator",2);
 instant_notify(players[index].name+" has sent the developer packet. They have been kicked, since they are not Ivan or lucas or Vlad or x0","dev packet protection");
 remove_player(players[index].name,true);
-return;
+continue;
 }
 */
 }
@@ -1057,7 +1097,7 @@ else if(parsed[0]=="hardland")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(players[index].hidden>0) return;
+if(players[index].hidden>0) continue;
 int falld=stn(parsed[1]);
 players[index].health-=falld*50;
 players[index].should_subtract=false;
@@ -1130,8 +1170,7 @@ else if(parsed[0]=="move_to" and parsed.length() > 3)
 int index=get_player_index(e.peer_id);
 if(index > -1)
 {
-//if(players[index].stunned||in_vehicle(players[index].name)>-1||players[index].warping||(players[index].is_dead&&players[index].hidden==0)) return;
-if(players[index].stunned||players[index].warping||(players[index].is_dead&&players[index].hidden==0)) return;
+if(players[index].stunned||in_vehicle(players[index].name)>-1||players[index].warping||(players[index].is_dead&&players[index].hidden==0)) continue;
 string name=players[index].name;
 players[index].x=string_to_number(parsed[1]);
 players[index].y=string_to_number(parsed[2]);
@@ -1217,14 +1256,14 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing)
-return;
+continue;
 if(round(players[index].x,0)==0 and round(players[index].y,0)==4 and players[index].z==0 and in_shelter(players[index].name)>-1)
 {
 int s=in_shelter(players[index].name);
 if(shelters[s].on==false)
 {
 send_reliable(players[index].peer_id,"The computer is off",0);
-return;
+continue;
 }
 send_serverbox(players[index].peer_id,0,-1,1,1,"shcommand","what would you like to do. Press H to see help");
 }
@@ -1254,12 +1293,12 @@ else if(round(players[index].x,0)==storex and round(players[index].y,0)==storey 
 if(players[index].storestage==0&&players[index].hidden==0)
 {
 send_reliable(players[index].peer_id,"Sorry, you can't enter the store yet",0);
-return;
+continue;
 }
 if(players[index].statchangetimer.elapsed<60000)
 {
 send_reliable(players[index].peer_id,"You can not be losing health or fighting to do this",0);
-return;
+continue;
 }
 if(storeopened==1 and players[index].firing==false)
 {
@@ -1269,12 +1308,12 @@ send_reliable(players[index].peer_id,"You walk into the store .",0);
 send_reliable(players[index].peer_id,"entershelter|0|100|0|main",0);
 players[index].storetimer.restart();
 players[index].storestage=1;
-return;
+continue;
 }
 else
 {
 send_reliable(players[index].peer_id,"You try to open the door...but it doesn't open. You see there's a sign that reads: \"Closed\"",0);
-return;
+continue;
 }
 }
 /*
@@ -1306,7 +1345,7 @@ players[index].newb=0;
 file_delete("chars/"+players[index].name+"/newb.usr");
 move_player(players[index],shelters[stuff].map,shelters[stuff].x,shelters[stuff].y,shelters[stuff].z);
 send_reliable(players[index].peer_id,"exitshelter",0);
-return;
+continue;
 }
 }
 else if(round(players[index].x,0)==10 and round(players[index].y,0)==0 and players[index].z==0 and players[index].map=="store" and storemoving==false)
@@ -1317,7 +1356,7 @@ if(storeopened==1)
 send_reliable(players[index].peer_id,"You walk out of the store",0);
 send_reliable(players[index].peer_id,"exitshelter",0);
 move_player(players[index],"main",random(0,500),random(0,500),0);
-return;
+continue;
 }
 else
 send_reliable(players[index].peer_id,"You try to open the door...but nothing happens. You're locked in!",2);
@@ -1331,7 +1370,7 @@ else
 {
 move_player(players[index],shelters[i].sheltername,2,2,0,true,false,i);
 send_reliable(players[index].peer_id,"entershelter|"+shelters[i].x+"|"+shelters[i].y+"|"+shelters[i].z+"|"+shelters[i].map,0);
-return;
+continue;
 }
 }
 }
@@ -1399,7 +1438,7 @@ else if(parsed[0]=="buysomething" and parsed.length () >1)
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(parsed[1]=="back") return;
+if(parsed[1]=="back") continue;
 send_serverbox(players[index].peer_id, 2, 1, 0, -1, "purchase "+parsed[1], "type the amount you wish to buy");
 }
 }
@@ -1408,10 +1447,10 @@ else if(parsed[0]=="selling" and parsed.length () >1)
 if(parsed[1]=="back")
 {
 send_reliable(e.peer_id,"canceled",0);
-return;
+continue;
 }
 int index=get_player_index(e.peer_id);
-if(index<0) return;
+if(index<0) continue;
 players[index].sellitem=parsed[1];
 //players[index].usestoretimer.restart();
 send_serverbox(e.peer_id,2,-1,0,-1,"sellamount","how many "+parsed[1]+"s do you want to sell? You have "+players[index].get_item_count(parsed[1]));
@@ -1419,14 +1458,14 @@ send_serverbox(e.peer_id,2,-1,0,-1,"sellamount","how many "+parsed[1]+"s do you 
 else if(parsed[0]=="sellamount" and parsed.length () >1)
 {
 int index=get_player_index(e.peer_id);
-if(index<0) return;
+if(index<0) continue;
 string item=players[index].sellitem;
 int amount=stn(parsed[1]);
-if(amount<=0) return;
+if(amount<=0) continue;
 if(players[index].get_item_count(item)<amount)
 {
 send_reliable(players[index].peer_id,"you don't have "+amount+" "+item+"s. You only have "+players[index].get_item_count(item)+".",2);
-return;
+continue;
 }
 int itemprice;
 sellitems.get(item,itemprice);
@@ -1484,65 +1523,65 @@ if(name[0]=="_") name=string_trim_left(name,1);
 if(string_contains(name,".",1)>-1)
 {
 send_reliable(players[index].peer_id,"Invalid shelter name!",2);
-return;
+continue;
 }
 if(name=="" or name=="main" or name=="store")
 {
 send_reliable(players[index].peer_id, "you can't create a no name shelter", 2);
-return;
+continue;
 }
 if(string_contains(name,"[cncel]",1)>-1)
 {
 send_reliable(players[index].peer_id,"speak Canceled",0);
-return;
+continue;
 }
 if(players[index].map=="store")
 {
 send_reliable(players[index].peer_id,"you can't just build a shelter inside a moving store!",2);
-return;
+continue;
 }
 if(is_travelpoint(players[index].x,players[index].y,players[index].z,players[index].map))
 {
 send_reliable(players[index].peer_id,"Building shelters on travelpoints just doesn't work like that!",2);
-return;
+continue;
 }
 if(in_shelter(players[index].name)>-1)
 {
 send_reliable(players[index].peer_id,"I don't think building another shelter inside a shelter's such a good idea...",2);
-return;
+continue;
 }
 if(get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map)=="")
 {
 send_reliable(players[index].peer_id,"You can't exactly build something in mid air, can you?",2);
-return;
+continue;
 }
 if(string_left(get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map),4)=="wall")
 {
 send_reliable(players[index].peer_id,"you may not build a shelter on a wall",2);
-return;
+continue;
 }
 if(is_staircase(players[index].x,players[index].y,players[index].z,players[index].map))
 {
 send_reliable(players[index].peer_id,"you may not build a shelter on a staircase.",2);
-return;
+continue;
 }
 for(uint shi=0; shi<shelters.length (); shi++)
 {
 if(shelters[shi].x==players[index].x&&shelters[shi].y==players[index].y&&shelters[shi].z==players[index].z&&shelters[shi].map==players[index].map)
 {
 send_reliable(players[index].peer_id,"there is already a shelter here.",2);
-return;
+continue;
 }
 }
 if(players[index].x==storex and players[index].y==storey and players[index].z==storez and players[index].map=="main")
 {
 send_reliable(players[index].peer_id,"You can not build a shelter on top of the store!",2);
-return;
+continue;
 }
 if(shelter_exists(name))
 {
 send_reliable(players[index].peer_id,"error! A shelter with this name already exists",2);
-return;
+continue;
 }
 if(!filterchar(name,true,"'"))
 {
@@ -1556,7 +1595,7 @@ send_reliable(players[index].peer_id,"stopmoving",0);
 else
 {
 send_reliable(players[index].peer_id,"Error! Invalid name!",0);
-return;
+continue;
 }
 }
 }
@@ -1572,6 +1611,50 @@ send_reliable(players[index].peer_id,"entershelter|"+shelters[shind].x+"|"+shelt
 }
 }
 }
+else if(parsed[0]=="whoonline")
+{
+int index=get_player_index(e.peer_id);
+if(index > -1)
+{
+string s="";
+string s2;
+string[] outs;
+for (uint i=0; i<players.length(); i++)
+{
+if(players[i].hidden>0)
+{
+continue;
+}
+int t2=is_in_team(players[i].name);
+if(t2>-1)
+{
+outs.insert_last(teams[t2].teamname+" "+players[i].title+" "+players[i].nickname+" ("+players[i].name+") with "+players[i].deaths+" deaths and "+players[i].kills+" kills");
+}
+else
+outs.insert_last(players[i].title+" "+players[i].nickname+" ( "+players[i].name+") with "+players[i].deaths+" deaths and "+players[i].kills+" kills");
+}
+if(players[index].adminable())
+{
+for(uint i=0; i<players.length (); i++)
+{
+if(players[i].hidden>0) outs.insert_last("hidden "+players[i].nickname+" ("+players[i].name+")");
+}
+}
+if(outs.length () >1)
+{
+for(uint i=0; i<outs.length (); i++)
+{
+if(i==(outs.length () -1)) s+="and "+outs[i]+".";
+else s+=outs[i]+", ";
+}
+}
+else
+s="You're the only one online";
+if(outs.length()>1)
+s2="There are currently "+outs.length()+" players online. ";
+send_reliable(players[index].peer_id, s2+s, 2);
+}
+}
 else
 {
 
@@ -1582,7 +1665,7 @@ else if(e.channel==1)
 s=get_event_message(e.message);
 if(s=="")
 {
-return;
+continue;
 }
 string[] parsed = s.split(" ");
 int index=get_player_index(e.peer_id);
@@ -1595,24 +1678,24 @@ send_reliable(e.peer_id,"The server has detected a crash code. The server will p
 send_reliable(0,"play_s|notify.ogg",0);
 send_reliable(0, "warning! The player "+players[index].nickname+" is trying to send crash codes through the chat!", 2);
 remove_player(players[index].name);
-return;
+continue;
 }
 if (string_left(s,1)!="/")
 {
 if(players[index].hidden>0)
 {
 send_reliable(players[index].peer_id,"I don't think you wanna just chat while hidden... There could be a missing slash on a command there! If you'd like to send out a chat, type /chat first. This will omit your name and broadcast on all language channels.",2);
-return;
+continue;
 }
 if(s.length()>5000)
 {
 send_reliable(players[index].peer_id,"Message is too long",0);
-return;
+continue;
 }
 if(players[index].ds.find("chat")>-1)
 {
 send_reliable(players[index].peer_id,"your chats have been disabled",0);
-return;
+continue;
 }
 if(chatting==0)
 {
@@ -1620,7 +1703,7 @@ string message;
 message="Sorry, server chats are currently disabled.";
 if(players[index].adminable()) message+=" If you want to turn them back on, type /varset chatting 1";
 send_reliable(players[index].peer_id,message,2);
-return;
+continue;
 }
 players[index].chats+=1;
 log(players[index].name+"_chats",players[index].nickname+" ("+players[index].name+") said "+s,true,true);
@@ -1637,7 +1720,7 @@ if(players[index].title!="") chatmess+=players[index].title+" ";
 if(players[index].teamname!="") chatmess+=players[index].teamname+" ";
 chatmess+=players[index].nickname+": "+chatmessage;
 players[index].chat(chatmess);
-return;
+continue;
 }
 else
 {
@@ -1732,7 +1815,7 @@ if(parsed.length() >5) map=parsed[5];
 if(!map_exists(map))
 {
 send_reliable(e.peer_id,"this map does not exist",0);
-return;
+continue;
 }
 move_player(players[i],map,stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),(players[i].hidden==0),true, get_shelter_index(map));
 log("move",players[index].name+" has moved "+players[i].name+" to "+players[i].x+", "+players[i].y+", "+players[i].z+" on map "+players[i].map,false,false);
@@ -1768,7 +1851,7 @@ map = parsed[5];
 if(!map_exists(map))
 {
 send_reliable(players[index].peer_id,"this map does not exist",0);
-return;
+continue;
 }
 }
 map.is_empty()?spawn_fire(x, y, z, players[index].map, damage):spawn_fire(x, y, z, map, damage);
@@ -1780,7 +1863,7 @@ else if(parsed[0]=="/changes")
 if (changes.is_empty())
 {
 send_reliable(e.peer_id,"There is no changelog.",0);
-return;
+continue;
 }
 string[] change;
 change=string_split(changes,"\r\n",false);
@@ -1801,6 +1884,7 @@ send_menu(e.peer_id,"Sell menu. What would you like to sell?","selling",sellsend
 else
 {
 
+}
 }
 }
 }
@@ -1830,24 +1914,31 @@ send_reliable(0, sound+"|"+x+"|"+y+"|"+z+"|"+map, channel);
 }
 void loops()
 {
-while (true)
+//net_loop();
+t_net_loop_mutex.lock();
+try
 {
-net_loop();
-playerloop();
 bodyfallloop();
 timepacketloop();
 maploop();
 objloop();
+playerloop();
 weaponloop();
 shelterloop();
 teamloop();
 giftloop();
 fireloop();
+canisterloop ();
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
 }
 }
+catch
+{
+
+}
+t_net_loop_mutex.unlock();
 }
 void saveloop()
 {

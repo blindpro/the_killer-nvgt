@@ -24,10 +24,11 @@
 #include "readable_time.nvgt"
 #include "store.nvgt"
 #include "weaponstuff.nvgt"
-
 #include "team.nvgt"
 #include "fire.nvgt"
 #include "data_save.nvgt"
 #include "extrafunctions.nvgt"
 #include "restart_nvda.nvgt"
 #include "changes.nvgt"
+#include "canister.nvgt"
+#include "settings.nvgt"

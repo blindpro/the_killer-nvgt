@@ -8,6 +8,8 @@ distpool.behind_pitch_decrease = -5;
 distpool.pan_step = 0.2;
 mpool.behind_pitch_decrease = 5;
 objpool.behind_pitch_decrease = 5;
+sourcepool.hrtf = false;
+distpool.hrtf = false;
 //set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
 set_sound_storage("sounds.dat");
 data_read();

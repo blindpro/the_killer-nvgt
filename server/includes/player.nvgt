@@ -1,7 +1,7 @@
 string[] dontlose={"coin","tank","aircraft","police_car","ammo_shotgun","ammo_glock","ammo_sniper","ammo_ML7TinyMG","ammo_FRNTAssaultRifle","ammo_crossbow","ammo_FlameThrower","tk_dollar","tk_ultra_health_potion","tk_donation_pack","tk_warp_box_pack","tk_mini_warp_box_pack","tk_ultra_warp_box_pack","tk_dollar_pack","tk_ultra_health_potion_set","tk_shelter_pack"};
 string[] drunkmsglist={"awwwwwwwwwww","ewwwwwwwww","eeeeeeeeeee","fuck","I feel so fucked up right now","asdfasdfasdfadsfasdfasdf","zzz","lmao","roflflflflflflflflflflflflflflflflflflflflflflflflflf", "i need to puke!"};
 string[] randsounds={"beacon","move","timebombexplodedist","ibombdist","menuenter","codeclick","canisterdrop"};
-player@[] players(0);
+player@[] players();
 class player
 {
 double x,y,z;
