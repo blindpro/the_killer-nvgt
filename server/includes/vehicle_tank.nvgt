@@ -36,7 +36,7 @@ if(cmd=="enter")
 doing=(speed==0 ? "start" : "stop");
 if(doing=="stop"&&speed>1&&!force)
 {
-sendint("speak your "+type+" must be idling before it can be shut off",owner);
+sendint("speak|your "+type+" must be idling before it can be shut off",owner);
 return;
 }
 if(doing=="start") soundtime=tankstart;
@@ -88,7 +88,7 @@ double inc=12.5;
 pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 else if(cmd=="speeddown"&&speed>1)
 {
@@ -99,15 +99,15 @@ double inc=12.5;
 pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 else if(cmd=="turnleft"&&speed>0)
 {
 facing=snapleft(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak|facing "+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 else if(cmd=="turnright"&&speed>0)
@@ -115,8 +115,8 @@ else if(cmd=="turnright"&&speed>0)
 facing=snapright(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak|facing "+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 }
@@ -129,7 +129,7 @@ sendint("vestop",owner);
 sendint("veunspawn",owner);
 int index=get_player_index_from(owner);
 play(type+"_die",x,y,z,map);
-send_plus(index,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(index,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 remove=true;
 string hb=hitby;
 if(string_contains(hb,"'",1)>-1) hb=string_left(hb,string_contains(hb,"'",1));
@@ -141,7 +141,7 @@ players[index].tankfuel=100;
 players[index].tankhealth=50000;
 players[index].give(type,-1);
 string km=killmsg(players[index].name+"'s "+type,hitby,players[index].zone);
-send_reliable(0,"playerdeath "+km,0);
+send_reliable(0,"playerdeath|"+km,0);
 players[index].health-=random(20000, 50000);
 players[index].hitby="internal:vehicle:"+type;
 }
@@ -151,21 +151,21 @@ if(doing!=""&&soundtimer.elapsed>=soundtime)
 if(doing=="repair")
 {
 health=(type=="tank" ? 50000 : 15000);
-sendint("speak your "+type+" has been repaired!",owner);
+sendint("speak|your "+type+" has been repaired!",owner);
 }
 if(doing=="start")
 {
 int pitch=50;
 mid=spawn_moving_sound(type+"_engine_ext.ogg",x,y,z,map,owner,pitch);
 this.pitch=pitch;
-sendint("vestart "+type+"_engine_int.ogg "+pitch,owner);
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("vestart|"+type+"_engine_int.ogg|"+pitch,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
 if(doing=="stop")
 {
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
@@ -173,7 +173,7 @@ if(doing=="prefire")
 {
 firetimer.restart();
 int rand=random(1,4);
-send_plus(get_player_index_from(owner),"distsound tank_artillery_fire_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(get_player_index_from(owner),"distsound|tank_artillery_fire_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 playext("tank_artillery_fire"+rand+"_ext",x,y,z,map,owner);
 playint("tank_artillery_fire"+rand+"_int",owner);
 spawn_weapon(x,y,z,facing,"artillery",map,players[get_player_index_from(owner)]);
@@ -216,7 +216,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 else
@@ -248,7 +248,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 if(fuel>2.5&&lowfuel)

@@ -8,13 +8,13 @@ void playext(string soundname, int x, int y, int z, string map, string noname)
 int index=get_player_index_from(noname);
 for(uint i=0; i<players.length(); i++)
 {
-if(i!=index) send_reliable(players[i].peer_id,soundname+" "+x+" "+y+" "+z+" "+map,3);
+if(i!=index) send_reliable(players[i].peer_id,soundname+"|"+x+"|"+y+"|"+z+"|"+map,3);
 }
 }
 void playint(string soundname, string name)
 {
 int index=get_player_index_from(name);
-if(index>-1) send_reliable(players[index].peer_id,"play_s "+soundname+".ogg",0);
+if(index>-1) send_reliable(players[index].peer_id,"play_s|"+soundname+".ogg",0);
 }
 void sendint(string packet, string name,int channel=0)
 {
@@ -36,18 +36,19 @@ owner=players[pind].name;
 x=players[pind].x;y=players[pind].y;z=players[pind].z;facing=players[pind].facing;map=players[pind].map;
 max=get_max_values(map);
 type=vtype;
-send_reliable(players[pind].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[pind].peer_id,"move|"+x+"|"+y+"|"+z,0);
 play(type+"_spawn",x,y,z,map);
-send_reliable(players[pind].peer_id,"vespawning "+type,0);
+send_reliable(players[pind].peer_id,"vespawning|"+type,0);
 }
 //bgt bitches at you if you don't have something here, even though subclasses define it.
+/*
 void command(string cmd, bool force=false)
 {
 }
+*/
 void loop()
 {
 }
-/*children define this. This is here as a template.
 void command(string cmd,bool force=false)
 {
 int index=get_player_index_from(owner);
@@ -59,10 +60,10 @@ if(cmd=="repair")
 {
 if(speed>0)
 {
-sendint("speak your vehicle must be off to receive repairs.",owner);
+sendint("speak|your vehicle must be off to receive repairs.",owner);
 return;
 }
-sendint("speak just a sec...",owner);
+sendint("speak|just a sec...",owner);
 soundtime=repair;
 soundtimer.restart();
 playext("vehicle_repair",x,y,z,map,owner);
@@ -157,7 +158,7 @@ pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
 int index=get_player_index_from(owner);
-if(index>-1) send_reliable(players[index].peer_id,"vepitch "+pitch,0);
+if(index>-1) send_reliable(players[index].peer_id,"vepitch|"+pitch,0);
 }
 else if(cmd=="speeddown"&&speed>1)
 {
@@ -169,14 +170,14 @@ pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
 int index=get_player_index_from(owner);
-if(index>-1) send_reliable(players[index].peer_id,"vepitch "+pitch,0);
+if(index>-1) send_reliable(players[index].peer_id,"vepitch|"+pitch,0);
 }
 else if(cmd=="turnleft"&&speed>0)
 {
 facing=snapleft(facing,getdir(facing),90);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
+sendint("facing|"+facing,owner);
 playint(type+"_turn",owner);
 }
 else if(cmd=="turnright"&&speed>0)
@@ -184,11 +185,10 @@ else if(cmd=="turnright"&&speed>0)
 facing=snapright(facing,getdir(facing),90);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
+sendint("facing|"+facing,owner);
 playint(type+"_turn",owner);
 }
 }
-*/
 void hit(int damage,string hb,string type="")
 {
 this.health-=damage;
@@ -266,15 +266,15 @@ int pitch=(type=="tank" ? 50 : 100);
 if(type=="aircraft") z+=10;
 mid=spawn_moving_sound(type+"_engine_ext.ogg",x,y,z,map,owner,pitch);
 this.pitch=pitch;
-sendint("vestart "+type+"_engine_int.ogg "+pitch,owner);
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("vestart|"+type+"_engine_int.ogg|"+pitch,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
 if(doing=="stop")
 {
 if(type=="aircraft") z-=10;
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
@@ -399,7 +399,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 else
@@ -431,7 +431,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 if(doing!="stop"&&falling==false&&type=="aircraft"&&speed==0&&tile=="")

@@ -276,6 +276,7 @@ spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 weapons.remove_at(j);
 break;
 }
+*/
 else if(weapons[j].type=="grenade")
 {
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
@@ -283,6 +284,7 @@ spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name
 weapons.remove_at(j);
 break;
 }
+/*
 if(weapons[j].type=="invisibility_shield")
 {
 if(@weapons[j].p!=null)
@@ -330,12 +332,12 @@ spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 weapons.remove_at(j);
 continue;
 }
+*/
 else if(weapons[j].type=="grenade")
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 continue;
-*/
 }
 for(uint x=0; x<players.length(); x++)
 {
@@ -380,11 +382,11 @@ else if(weapons[j].type=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,players[x].name);
 }
+*/
 if(weapons[j].type=="grenade")
 {
 spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-*/
 if(weapons[j].type=="health_dart")
 {
 players[x].playsound("stun_darthit");
@@ -429,7 +431,6 @@ horbs[x].shoot();
 }
 */
 }
-/*
 for(uint x=0; x<remguns.length(); x++)
 {
 if(get_3d_distance(rx, ry, weapons[j].z, remguns[x].x, remguns[x].y, remguns[x].z)<=weapons[j].spread and remguns[x].map==weapons[j].map)
@@ -447,8 +448,6 @@ break;
 }
 }
 }
-*/
-/*
 for(uint x=0; x<impact_bombs.length(); x++)
 {
 if(get_3d_distance(rx, ry, weapons[j].z, impact_bombs[x].x, impact_bombs[x].y, impact_bombs[x].z)<=weapons[j].spread and impact_bombs[x].map==weapons[j].map)
@@ -463,7 +462,6 @@ break;
 }
 }
 }
-*/
 for(uint v=0; v<shelters.length (); v++)
 {
 if(are_teamed(weapons[j].p.name,shelters[v].owner)) continue;
@@ -485,8 +483,7 @@ if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(
 hit=true;
 }
 }
-/*
-for(uint v=0; v<vs.length; v++)
+for(uint v=0; v<vs.length (); v++)
 {
 if(get_2d_distance(weapons[j].x,weapons[j].y,vs[v].x,vs[v].y)<=weapons[j].spread&&vs[v].map==weapons[j].map&&vs[v].owner!=weapons[j].p.name and ((vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+8))&&weapons[j].type!="artillery")||(vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+10))&&weapons[j].type=="artillery")))
 {
@@ -507,7 +504,6 @@ if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(
 hit=true;
 }
 }
-*/
 if(hit) { @weapons[j]=null;
  weapons.remove_at(j);
  break;

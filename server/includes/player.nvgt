@@ -185,6 +185,11 @@ hidden=phid;
 if(hidden>0) is_dead=true;
 }
 float antibiotic_hit_factor=1.5;
+void sendpacket(string packet,int chan=2,bool reliable=true)
+{
+if(reliable) send_reliable(peer_id,packet,chan);
+else send_unreliable(peer_id,packet,chan);
+}
 void hit(int mindamage, int maxdamage)
 {
 playsound("hit"+random(1,3));

@@ -36,7 +36,7 @@ if(cmd=="enter")
 doing=(speed==0 ? "start" : "stop");
 if(doing=="stop"&&speed>1&&!force)
 {
-sendint("speak your "+type+" must be idling before it can be shut off",owner);
+sendint("speak|your "+type+" must be idling before it can be shut off",owner);
 return;
 }
 if(doing=="start" ) soundtime=aircraftstart;
@@ -94,7 +94,7 @@ double inc=25;
 pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 else if(cmd=="speeddown"&&speed>1)
 {
@@ -105,15 +105,15 @@ double inc=25;
 pi+=inc*(speed-1);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 else if(cmd=="turnleft"&&speed>0)
 {
 facing=snapleft(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak facing|"+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 else if(cmd=="turnright"&&speed>0)
@@ -121,8 +121,8 @@ else if(cmd=="turnright"&&speed>0)
 facing=snapright(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak facing|"+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 }
@@ -135,7 +135,7 @@ sendint("vestop",owner);
 sendint("veunspawn",owner);
 int index=get_player_index_from(owner);
 play(type+"_die",x,y,z,map);
-send_plus(index,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(index,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 remove=true;
 string hb=hitby;
 if(string_contains(hb,"'",1)>-1) hb=string_left(hb,string_contains(hb,"'",1));
@@ -150,7 +150,7 @@ players[index].aircrafthealth=25000;
 }
 players[index].give(type,-1);
 string km=killmsg(players[index].name+"'s "+type,hitby,players[index].zone);
-send_reliable(0,"playerdeath "+km,0);
+send_reliable(0,"playerdeath|"+km,0);
 players[index].health-=random(20000, 50000);
 players[index].hitby="internal:vehicle:"+type;
 }
@@ -160,13 +160,13 @@ if(doing!=""&&soundtimer.elapsed>=soundtime)
 if(doing=="repair")
 {
 health=25000;
-sendint("speak your "+type+" has been repaired!",owner);
+sendint("speak|your "+type+" has been repaired!",owner);
 }
 if(doing=="fall")
 {
 remove=true;
 int index=get_player_index_from(owner);
-send_plus(index,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(index,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 sendint("veunspawn",owner);
 if(index>-1)
 {
@@ -183,15 +183,15 @@ int pitch=100;
 z+=10;
 mid=spawn_moving_sound(type+"_engine_ext.ogg",x,y,z,map,owner,pitch);
 this.pitch=pitch;
-sendint("vestart "+type+"_engine_int.ogg "+pitch,owner);
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("vestart|"+type+"_engine_int.ogg|"+pitch,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
 if(doing=="stop")
 {
 z-=10;
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
@@ -200,7 +200,7 @@ if(doing=="prefire")
 firetimer.restart();
 if(type=="aircraft")
 {
-send_plus(get_player_index_from(owner),"distsound aircraft_shot_fire_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(get_player_index_from(owner),"distsound|aircraft_shot_fire_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 playsound("aircraft_shot_fire",true,false);
 int hit=0;
 for(uint i=0; i<players.length (); i++)
@@ -248,12 +248,12 @@ impact_bombs[j].health-=random(2000,4000);
 }
 */
 if(hit==0&&remhit==0&&vhit==0) sendint("speak hit nothing",owner);
-else if(hit>0&&remhit==0&&vhit==0) sendint("speak hit "+hit+" players",owner);
+else if(hit>0&&remhit==0&&vhit==0) sendint("speak|hit "+hit+" players",owner);
 else if(remhit>0&&hit==0&&vhit==0) sendint("speak hit "+remhit+" remote guns",owner);
-else if(remhit>0&&vhit>0&&hit==0) sendint("speak hit "+vhit+" vehicles and "+remhit+" remote guns",owner);
-else if(hit>0&&remhit==0&&vhit>0) sendint("speak hit "+hit+" players and "+vhit+" vehicles",owner);
-else if(vhit>0&&hit==0&&remhit==0) sendint("speak hit "+vhit+" vehicles",owner);
-else sendint("speak hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote guns",owner);
+else if(remhit>0&&vhit>0&&hit==0) sendint("speak|hit "+vhit+" vehicles and "+remhit+" remote guns",owner);
+else if(hit>0&&remhit==0&&vhit>0) sendint("speak|hit "+hit+" players and "+vhit+" vehicles",owner);
+else if(vhit>0&&hit==0&&remhit==0) sendint("speak hit|"+vhit+" vehicles",owner);
+else sendint("speak|hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote guns",owner);
 }
 }
 doing="";
@@ -305,7 +305,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_unreliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_unreliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 else
@@ -331,7 +331,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 if(doing!="stop"&&falling==false&&speed==0&&tile=="")

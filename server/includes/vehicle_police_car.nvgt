@@ -19,7 +19,7 @@ vfueltime=85;
 if(sirenid!="")
 {
 destroy_siren(sirenid);
-sendint("vesiren off", owner);
+sendint("vesiren|off", owner);
 }
 }
 void command(string cmd,bool force=false)
@@ -33,10 +33,10 @@ if(cmd=="repair")
 {
 if(speed>0)
 {
-sendint("speak your vehicle must be off to receive repairs.",owner);
+sendint("speak|your vehicle must be off to receive repairs.",owner);
 return;
 }
-sendint("speak just a sec...",owner);
+sendint("speak|just a sec...",owner);
 soundtime=repair;
 soundtimer.restart();
 playsound("vehicle_repair",true,false);
@@ -47,7 +47,7 @@ else if(cmd=="enter")
 doing=(speed==0 ? "start" : "stop");
 if(doing=="stop"&&speed>1&&!force)
 {
-sendint("speak your "+type+" must be idling before it can be shut off",owner);
+sendint("speak|your "+type+" must be idling before it can be shut off",owner);
 return;
 }
 if(doing=="start") soundtime=pcstart;
@@ -85,28 +85,28 @@ if(sirenmode==0)
 {
 sirenmode=1;
 sirenid=spawn_siren("police_car_siren1",x,y,z,map,owner);
-sendint("vesiren police_car_siren1_int.ogg",owner);
+sendint("vesiren|police_car_siren1_int.ogg",owner);
 }
 else if(sirenmode==1)
 {
 sirenmode=2;
 destroy_siren(sirenid);
 sirenid=spawn_siren("police_car_siren2",x,y,z,map,owner);
-sendint("vesiren police_car_siren2_int.ogg",owner);
+sendint("vesiren|police_car_siren2_int.ogg",owner);
 }
 else
 {
 sirenmode=0;
 destroy_siren(sirenid);
 sirenid="";
-sendint("vesiren off",owner);
+sendint("vesiren|off",owner);
 }
 }
 else if(cmd=="escape")
 {
 if(speed!=0)
 {
-sendint("speak you cannot exit your vehicle until it is completely off", owner);
+sendint("speak|you cannot exit your vehicle until it is completely off", owner);
 return;
 }
 sendint("veunspawn",owner);
@@ -129,7 +129,7 @@ if(speed==2)
 destroy_moving_sound(mid);
 sendint("vestop",owner);
 mid=spawn_moving_sound("police_car_drive_ext.ogg",x,y,z,map,owner);
-sendint("vestart police_car_drive_int.ogg 100",owner);
+sendint("vestart|police_car_drive_int.ogg|100",owner);
 this.pitch=100;
 }
 else if(speed>2)
@@ -139,7 +139,7 @@ double inc=10;
 pi+=inc*(speed-2);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 }
 else if(cmd=="speeddown"&&speed>1)
@@ -152,7 +152,7 @@ if(speed==1)
 destroy_moving_sound(mid);
 sendint("vestop",owner);
 mid=spawn_moving_sound("police_car_idle_ext.ogg",x,y,z,map,owner);
-sendint("vestart police_car_idle_int.ogg 100",owner);
+sendint("vestart|police_car_idle_int.ogg|100",owner);
 this.pitch=100;
 }
 else
@@ -162,7 +162,7 @@ double inc=10;
 pi+=inc*(speed-2);
 update_moving_sound(mid,x,y,z,pi);
 this.pitch=pi;
-sendint("vepitch "+pitch,owner);
+sendint("vepitch|"+pitch,owner);
 }
 }
 else if(cmd=="turnleft"&&speed>0)
@@ -170,8 +170,8 @@ else if(cmd=="turnleft"&&speed>0)
 facing=snapleft(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak|facing "+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 else if(cmd=="turnright"&&speed>0)
@@ -179,8 +179,8 @@ else if(cmd=="turnright"&&speed>0)
 facing=snapright(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
-sendint("facing "+facing,owner);
-sendint("speak facing "+dir_to_string(getdir(facing)),owner);
+sendint("facing|"+facing,owner);
+sendint("speak|facing "+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 }
@@ -196,7 +196,7 @@ if(sirenmode!=0 or sirenid!="")
 destroy_siren(sirenid);
 sirenid="";
 sirenmode=0;
-sendint("vesiren off",owner);
+sendint("vesiren|off",owner);
 }
 sendint("veunspawn",owner);
 int index=get_player_index_from(owner);
@@ -223,27 +223,27 @@ if(doing!=""&&soundtimer.elapsed>=soundtime)
 if(doing=="repair")
 {
 health=40000;
-sendint("speak your "+type+" has been repaired!",owner);
+sendint("speak|your "+type+" has been repaired!",owner);
 }
 if(doing=="start")
 {
 mid=spawn_moving_sound("police_car_idle_ext.ogg",x,y,z,map,owner);
 this.pitch=100;
-sendint("vestart police_car_idle_int.ogg 100",owner);
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("vestart|police_car_idle_int.ogg|100",owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
 if(doing=="stop")
 {
-sendint("move "+x+" "+y+" "+z,owner);
+sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
 if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
 }
 if(doing=="prefire")
 {
 playsound("police_car_weapon_fire");
-send_plus(players[get_player_index_from(owner)].peer_id,"distsound police_car_weapon_fire_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(players[get_player_index_from(owner)].peer_id,"distsound|police_car_weapon_fire_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 int hit=0;
 for(uint i=0; i<players.length (); i++)
 {
@@ -290,13 +290,13 @@ impact_bombs[j].health-=random(4000,6000);
 }
 }
 */
-if(hit==0&&remhit==0&&vhit==0) sendint("speak hit nothing",owner);
-else if(hit>0&&remhit==0&&vhit==0) sendint("speak hit "+hit+" players",owner);
-else if(remhit>0&&hit==0&&vhit==0) sendint("speak hit "+remhit+" remote guns",owner);
-else if(remhit>0&&vhit>0&&hit==0) sendint("speak hit "+vhit+" vehicles and "+remhit+" remote guns",owner);
-else if(hit>0&&remhit==0&&vhit>0) sendint("speak hit "+hit+" players and "+vhit+" vehicles",owner);
-else if(vhit>0&&hit==0&&remhit==0) sendint("speak hit "+vhit+" vehicles",owner);
-else sendint("speak hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote guns",owner);
+if(hit==0&&remhit==0&&vhit==0) sendint("speak|hit nothing",owner);
+else if(hit>0&&remhit==0&&vhit==0) sendint("speak|hit "+hit+" players",owner);
+else if(remhit>0&&hit==0&&vhit==0) sendint("speak|hit "+remhit+" remote guns",owner);
+else if(remhit>0&&vhit>0&&hit==0) sendint("speak|hit "+vhit+" vehicles and "+remhit+" remote guns",owner);
+else if(hit>0&&remhit==0&&vhit>0) sendint("speak|hit "+hit+" players and "+vhit+" vehicles",owner);
+else if(vhit>0&&hit==0&&remhit==0) sendint("speak|hit "+vhit+" vehicles",owner);
+else sendint("speak|hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote guns",owner);
 firetimer.restart();
 }
 doing="";
@@ -337,7 +337,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 else
@@ -370,7 +370,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
-send_reliable(players[index].peer_id,"move "+x+" "+y+" "+z,0);
+send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
 if(fuel>2.5&&lowfuel)

@@ -505,3 +505,21 @@ found=true;
 }
 return found;
 }
+string array_to_string(string[] r,string delimiter="\r\n")
+{
+string final;
+for(uint i=0; i<r.length(); i++)
+{
+final+=r[i]+delimiter;
+}
+return final;
+}
+string array_to_string_n(int[] r,string delimiter="\r\n")
+{
+string final;
+for(uint i=0; i<r.length(); i++)
+{
+final+=""+r[i]+delimiter;
+}
+return final;
+}

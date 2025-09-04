@@ -16,6 +16,7 @@ bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
+enable_input ();
 @t_net_loop = async<int> (net_loop);
 while (loop)
 {
@@ -71,25 +72,36 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
-if(key_pressed(KEY_GRAVE)) checkarroundmenu();
+if(key_pressed(KEY_GRAVE))
+{
+t_net_loop_mutex.unlock();
+checkarroundmenu();
+t_net_loop_mutex.lock(1000);
+}
+if(inve)
+{
+if(key_pressed(KEY_SPACE)) send_reliable(0,"command|firegun",0);
+else if(key_pressed(KEY_S) and vetype=="police_car") send_reliable(0,"command|policesiren",0);
+else if(key_pressed(KEY_UP)) send_reliable(0,"command|speedup",0);
+else if(key_pressed(KEY_DOWN)) send_reliable(0,"command|speeddown",0);
+else if(key_pressed(KEY_LEFT)) send_reliable(0,"command|turnleft",0);
+else if(key_pressed(KEY_RETURN)) send_reliable(0,"command|enter",0);
+else if(key_pressed(KEY_RIGHT)) send_reliable(0,"command|turnright",0);
+}
 if (key_pressed (KEY_ESCAPE))
 {
-/*
 if(controling_remgun)
 {
 speak ("You disconnect the controler and put it away");
 send_reliable(0,"remdisconnect",0);
 controling_remgun=false;
 }
-else if(inve) send_reliable(0,"command escape",0);
+else if(inve) send_reliable(0,"command|escape",0);
 else if(robotcontroling) {
 send_reliable(0,"robotexit",0);
 robotcontroling=false;
 }
-else
-{
-*/
-if(jumping==false)
+else if(jumping==false)
 {
 int e;
 t_net_loop_mutex.unlock();
@@ -460,6 +472,10 @@ if (key_up(KEY_G))
 camera.x=me.x;
 camera.y=me.y;
 camera.z=me.z;
+}
+else
+{
+
 }
 t_net_loop_mutex.unlock();
 }
