@@ -6,12 +6,15 @@ tp.behind_pitch_decrease = 5;
 p.behind_pitch_decrease = 5;
 distpool.behind_pitch_decrease = -5;
 distpool.pan_step = 0.2;
+distpool.volume_step=0.05;
 mpool.behind_pitch_decrease = 5;
 objpool.behind_pitch_decrease = 5;
-//set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
-set_sound_storage("sounds.dat");
+sourcepool.hrtf = false;
+distpool.hrtf = false;
+set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+//set_sound_storage("sounds.dat");
 data_read();
-set_sound_global_hrtf(global_hrtf);
+set_hrtf();
 /*
 if (currently_input_device != 1)
 {
@@ -27,7 +30,7 @@ create_buffer("chats");
 create_buffer("misc");
 create_buffer("kills");
 speak_length_start();
-show_window ("the killer version "+netver);
+show_window ("the killer version "+ver);
 weapons.reserve(15);
 set_garbage_collect_mode (3);
 set_garbage_collect_auto_frequency (5000);

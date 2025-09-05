@@ -176,15 +176,19 @@ int invclb(dynamic_menu_pro@ im, string data)
 tk_loop();
 if(key_pressed(KEY_SPACE))
 {
-if(key_down(KEY_LSHIFT) and key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
+if(!key_down(KEY_LSHIFT) and !key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
 {
-send_reliable(0,"giveitem "+im.get_item_name(im.get_position()),0);
+send_reliable(0,"giveitem|"+im.get_item_name(im.get_position()),0);
 return m.get_position();
 }
-if(key_down(KEY_LSHIFT) and key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
+else if(key_down(KEY_LSHIFT) and key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
 {
 send_reliable(0,"auctionitem "+im.get_item_name(im.get_position()),0);
 return m.get_position();
+}
+else if(key_down(KEY_LSHIFT) or key_down(KEY_RSHIFT) and key_up(KEY_LALT) and key_up(KEY_RALT))
+{
+send_reliable(0,"describe|"+im.get_item_name(im.get_position()),0);
 }
 }
 return 0;

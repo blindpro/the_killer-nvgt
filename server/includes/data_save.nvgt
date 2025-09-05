@@ -1,0 +1,42 @@
+void data_save ()
+{
+json_object js;
+js.set("chatting",chatting);
+js.set("gifting",gifting);
+js.set("storeopened",storeopened);
+js.set("storefight",storefight);
+//在这之前添加要添加的东西
+if (directory_exists("prefs")==false)
+{
+directory_create("prefs");
+}
+file f;
+f.open ("prefs/server_state.dat","wb");
+f.write (string_aes_encrypt(js.stringify(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(!["));
+f.close ();
+}
+void data_read ()
+{
+file f;
+f.open ("prefs/server_state.dat","rb");
+string data = string_aes_decrypt(f.read(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(![");
+f.close ();
+if (data=="")
+{
+return;
+}
+
+json_object@ js = parse_json(data);
+try
+{
+//在这之后添加要读入的东西
+chatting = js["chatting"];
+gifting = js["gifting"];
+storeopened = js["storeopened"];
+storefight = js["storefight"];
+}
+catch 
+{
+
+}
+}

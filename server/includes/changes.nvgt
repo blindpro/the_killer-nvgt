@@ -1,0 +1,12 @@
+string version="1.9.3";
+string lastupdate="12/26/2018, 12:35 PM central standard time";
+string changes;
+bool load_changes()
+{
+file f;
+bool success = f.open("prefs/changes.svr","rb");
+if(!success) return false;
+changes = f.read();
+f.close();
+return true;
+}
