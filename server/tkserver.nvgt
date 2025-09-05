@@ -35,7 +35,7 @@ int auctionamount;
 int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
-string minverstring="1.93.7";
+string minverstring="1.93.7.1";
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -526,6 +526,31 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
+if(wname=="mine")
+{
+if(players[index].map!="store")
+{
+if(mines_at(players[index].x,players[index].y,players[index].z,players[index].map)>=5)
+{
+players[index].sendpacket("speak|There are already enough mines here!",0);
+return;
+}
+place_mine(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name);
+takeobj = true;
+}
+//else takeobj=false;
+}
+else if(wname=="motion_bomb")
+{
+if(players[index].mbombtimer.elapsed<1000)
+{
+return;
+}
+players[index].mbombtimer.restart();
+spawn_motion_bomb(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name);
+play("motion_bombplacing",players[index].x,players[index].y,players[index].z,players[index].map);
+takeobj = true;
+}
 else if(wname=="fire_extinguisher")
 {
 takeobj=true;
@@ -613,7 +638,7 @@ return;
 }
 if(in_vehicle(players[index].name)>-1)
 {
-send_reliable(players[index].peer_id,"speak that won't work, jerk!",0);
+send_reliable(players[index].peer_id,"speak|that won't work, jerk!",0);
 return;
 }
 else if(players[index].map=="jail" or players[index].map=="store")
@@ -1536,9 +1561,9 @@ else if(parsed[0]=="auctionitem" and parsed.length () >1)
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(players[index].paid==0) send_reliable(e.peer_id,"speak this is only available to paid accounts",0);
+if(players[index].paid==0) send_reliable(e.peer_id,"speak|this is only available to paid accounts",0);
 else if(auction==true) send_reliable(e.peer_id,"speak there is already an auction in progress",0);
-else if(parsed[1]=="tk_dollar" or parsed[1]=="coin" or parsed[1]=="coin_pack") send_reliable(e.peer_id,"speak You cannot auction money for money, sir.",0);
+else if(parsed[1]=="tk_dollar" or parsed[1]=="coin" or parsed[1]=="coin_pack") send_reliable(e.peer_id,"speak|You cannot auction money for money, sir.",0);
 else send_serverbox(players[index].peer_id,2,-1,1,-1,"auctioning/"+parsed[1],"How many "+parsed[1]+"s would you like to auction?");
 return;
 }
@@ -1552,9 +1577,9 @@ string[] inp=string_split(parsed[0],"/",false);
 inp.insert_last(parsed[1]);
 if(inp.length () ==3)
 {
-if(inp[2]=="[cncel]") send_reliable(e.peer_id,"speak canceled",0);
-else if(stn(inp[2])<=0) send_reliable(e.peer_id,"speak you must auction at least 1 of an item!",0);
-else if(players[index].get_item_count(inp[1])<stn(inp[2])) send_reliable(e.peer_id,"speak You don't have enough. You wanted to auction "+stn(inp[2])+" "+inp[1]+"s and you only have "+players[index].get_item_count(inp[1]),0);
+if(inp[2]=="[cncel]") send_reliable(e.peer_id,"speak|canceled",0);
+else if(stn(inp[2])<=0) send_reliable(e.peer_id,"speak|you must auction at least 1 of an item!",0);
+else if(players[index].get_item_count(inp[1])<stn(inp[2])) send_reliable(e.peer_id,"speak|You don't have enough. You wanted to auction "+stn(inp[2])+" "+inp[1]+"s and you only have "+players[index].get_item_count(inp[1]),0);
 else
 {
 string jerk;
@@ -1568,9 +1593,9 @@ send_serverbox(e.peer_id,2,-1,1,-1,jerk,"Minimum bid for this auction?");
 }
 else if(inp.length () ==4)
 {
-if(inp[3]=="[cncel]") send_reliable(e.peer_id,"speak canceled",0);
-else if(stn(inp[2])<=0) send_reliable(e.peer_id,"speak bid must be greator than 0!",0);
-else if(auction) send_reliable(e.peer_id,"speak there is already an auction in progress",0);
+if(inp[3]=="[cncel]") send_reliable(e.peer_id,"speak|canceled",0);
+else if(stn(inp[2])<=0) send_reliable(e.peer_id,"speak|bid must be greator than 0!",0);
+else if(auction) send_reliable(e.peer_id,"speak|there is already an auction in progress",0);
 else
 {
 string what=inp[1];
@@ -1991,7 +2016,7 @@ return;
 }
 if(string_contains(name,"[cncel]",1)>-1)
 {
-send_reliable(players[index].peer_id,"speak Canceled",0);
+send_reliable(players[index].peer_id,"speak|Canceled",0);
 return;
 }
 if(players[index].map=="store")
@@ -2432,7 +2457,8 @@ vendingloop ();
 grenadeloop ();
 impactbombloop ();
 wirebombloop ();
-fireloop ();
+mineloop();
+motionbombloop();
 if(players.length()<=0) {
 objs.resize(0);
 //remguns.resize(0);
