@@ -45,3 +45,4 @@
 #include "mine.bgt"
 #include "vending_machine.nvgt"
 #include "grenade.nvgt"
+#include "mserver.nvgt"
