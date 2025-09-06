@@ -301,6 +301,7 @@ string map=parsed[5];
 tp.play_3d("fall.ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
 }
 }
+else if(parsed[0]=="facing"&&parsed.length () >1) facing=stn(parsed[1]);
 else if(parsed[0]=="land")
 {
 int x=stn(parsed[2]);
@@ -409,6 +410,54 @@ else if(parsed[0]=="speak")
 string temp = s;
 temp.replace_this("speak|","");
 speak (temp);
+}
+else if(parsed[0]=="clip")
+{
+clipboard_copy_text(string_trim_left(s,5));
+}
+else if(parsed[0]=="vespawning")
+{
+pause_all_sources();
+inve=true;
+if(parsed.length () ==2) vetype=parsed[1];
+}
+else if(parsed[0]=="vesiren"&&parsed.length () >1)
+{
+if(vesiren.playing) vesiren.stop();
+if(parsed[1]!="off")
+{
+vesiren.load(parsed[1]);
+vesiren.play_looped();
+}
+}
+else if(parsed[0]=="vestart" and parsed.length () >2)
+{
+vesound.load(parsed[1]);
+vesound.pitch=stn(parsed[2]);
+vesound.play_looped();
+}
+else if(parsed[0]=="vepitch"&&parsed.length () >1)
+{
+vesound.pitch=stn(parsed[1]);
+}
+else if(parsed[0]=="vestop")
+{
+vesound.stop();
+}
+else if(parsed[0]=="veunspawn")
+{
+if(vetype!="") vetype="";
+resume_all_sources();
+inve=false;
+}
+else if(parsed[0]=="lowfuel")
+{
+velfsound.load("vehicle_lowfuel.ogg");
+velfsound.play_looped();
+}
+else if(parsed[0]=="goodfuel")
+{
+velfsound.stop();
 }
 else if(parsed[0]=="notify")
 {

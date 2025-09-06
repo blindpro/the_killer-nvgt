@@ -505,3 +505,24 @@ found=true;
 }
 return found;
 }
+<<<<<<< HEAD
+=======
+string array_to_string(string[] r,string delimiter="\r\n")
+{
+string final;
+for(uint i=0; i<r.length(); i++)
+{
+final+=r[i]+delimiter;
+}
+return final;
+}
+string array_to_string_n(int[] r,string delimiter="\r\n")
+{
+string final;
+for(uint i=0; i<r.length(); i++)
+{
+final+=""+r[i]+delimiter;
+}
+return final;
+}
+>>>>>>> 2aa40c3f631a16ef3ac8c2bc1d720c15a3eec401

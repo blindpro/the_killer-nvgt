@@ -16,11 +16,12 @@ bool in_window;
 bool loop = true;
 in_game = true;
 in_game1 = true;
+enable_input ();
 @t_net_loop = async<int> (net_loop);
 while (loop)
 {
 wait (5);
-t_net_loop_mutex.lock(1000);
+t_net_loop_mutex.lock();
 if (dead)
 {
 while(deathtimer.elapsed<5000)
@@ -71,25 +72,36 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
-if(key_pressed(KEY_GRAVE)) checkarroundmenu();
+if(key_pressed(KEY_GRAVE))
+{
+t_net_loop_mutex.unlock();
+checkarroundmenu();
+t_net_loop_mutex.lock(1000);
+}
+if(inve)
+{
+if(key_pressed(KEY_SPACE)) send_reliable(0,"command|firegun",0);
+else if(key_pressed(KEY_S) and vetype=="police_car") send_reliable(0,"command|policesiren",0);
+else if(key_pressed(KEY_UP)) send_reliable(0,"command|speedup",0);
+else if(key_pressed(KEY_DOWN)) send_reliable(0,"command|speeddown",0);
+else if(key_pressed(KEY_LEFT)) send_reliable(0,"command|turnleft",0);
+else if(key_pressed(KEY_RETURN)) send_reliable(0,"command|enter",0);
+else if(key_pressed(KEY_RIGHT)) send_reliable(0,"command|turnright",0);
+}
 if (key_pressed (KEY_ESCAPE))
 {
-/*
 if(controling_remgun)
 {
 speak ("You disconnect the controler and put it away");
 send_reliable(0,"remdisconnect",0);
 controling_remgun=false;
 }
-else if(inve) send_reliable(0,"command escape",0);
+else if(inve) send_reliable(0,"command|escape",0);
 else if(robotcontroling) {
 send_reliable(0,"robotexit",0);
 robotcontroling=false;
 }
-else
-{
-*/
-if(jumping==false)
+else if(jumping==false)
 {
 int e;
 t_net_loop_mutex.unlock();
@@ -115,7 +127,7 @@ if(key_pressed(KEY_A)&&w>-1)
 {
 send_reliable(0,"ammocheck|"+weapons[w],0);
 }
-if(key_pressed(KEY_R))
+else if(key_pressed(KEY_R))
 {
 if(alt_is_down())
 send_reliable(0,"air",0);
@@ -124,42 +136,46 @@ send_reliable(0,"remconnect",0);
 else
 send_reliable(0,"reload",0);
 }
-if(key_pressed(KEY_Z))
+else if (key_pressed(KEY_TAB) and !alt_is_down())
+{
+send_reliable(0,"whoonline",0);
+}
+else if(key_pressed(KEY_Z))
 {
 speak ("Current location: "+last_zone+" of "+mapname);
 }
-if(key_pressed(KEY_Q) and can_move and !inve)
+else if(key_pressed(KEY_Q) and can_move and !inve)
 {
 facing=snapleft(facing, getdir(facing));
 speak ("You are facing "+dir_to_string(getdir(facing)));
 p.play_stationary("turn.ogg",false);
 send_reliable(0, "turn|"+facing, 0);
 }
-if(key_pressed(KEY_E) and can_move and !inve)
+else if(key_pressed(KEY_E) and can_move and !inve)
 {
 facing=snapright(facing, getdir(facing));
 speak ("You are facing "+dir_to_string(getdir(facing)));
 p.play_stationary("turn.ogg",false);
 send_reliable(0, "turn|"+facing, 0);
 }
-if(key_pressed(KEY_M) and !frozen)
+else if(key_pressed(KEY_M) and !frozen)
 {
 send_reliable(0,"whatnear",0);
 }
-if(key_pressed(KEY_F1))
+else if(key_pressed(KEY_F1))
 {
 send_reliable(0,"motd",0);
 }
-if(key_pressed(KEY_I) and !frozen)
+else if(key_pressed(KEY_I) and !frozen)
 {
 send_reliable(0, "invrequest", 0);
 t_net_loop_mutex.unlock();
 focuseditem=invmenu();
 t_net_loop_mutex.lock(1000);
 }
-if(key_pressed(KEY_BACKSLASH))
+else if(key_pressed(KEY_BACKSLASH))
 interrupt_buffer();
-if(key_pressed(KEY_N))
+else if(key_pressed(KEY_N))
 {
 if(trackx==-1 or tracky==-1 or trackz==-1 or tracking=="")
 {
@@ -167,46 +183,46 @@ speak ("Nothing to track");
 }
 else tell_where(trackx,tracky,trackz,"loctrack");
 }
-if(key_pressed(KEY_F))
+else if(key_pressed(KEY_F))
 {
 speak ("You are facing "+dir_to_string(getdir(facing)));
 }
-if(khome.pressing() and round(get_sound_master_volume(),0)<0)
+else if(khome.pressing() and round(get_sound_master_volume(),0)<0)
 {
 set_sound_master_volume(round(get_sound_master_volume(),0)+1);
 p.play_stationary("volume_up.ogg",false);
 }
-if(kend.pressing() and round(get_sound_master_volume(),0)>-60)
+else if(kend.pressing() and round(get_sound_master_volume(),0)>-60)
 {
 set_sound_master_volume(round(get_sound_master_volume(),0)-1);
 p.play_stationary("volume_down.ogg",false);
 }
-if(key_pressed(KEY_H))
+else if(key_pressed(KEY_H))
 {
 send_reliable(0,"healthcheck",0);
 }
-if(key_pressed(KEY_S) and posetimer.elapsed>=760 and can_move==true&&!inve)
+else if(key_pressed(KEY_S) and posetimer.elapsed>=760 and can_move==true&&!inve)
 {
 posetimer.restart();
 send_reliable(0,"sitstand",0);
 }
-if((firetimer.elapsed>=firetime and control_is_down() &&can_move and firing==false&&!inve) and weaponauto and mapname!="store")
+else if((firetimer.elapsed>=firetime and control_is_down() &&can_move and firing==false&&!inve) and weaponauto and mapname!="store")
 {
 firetimer.restart();
 firing=true;
 send_reliable(0,"firestart|"+weapons[w],0);
 }
-if(firing==true and !control_is_down() and weaponauto==true)
+else if(firing==true and !control_is_down() and weaponauto==true)
 {
 firing=false;
 send_reliable(0,"firestop",0);
 }
-if((firetimer.elapsed>=firetime and( control_is_pressed() or mouse_pressed(0)) &&can_move&&!inve) and !weaponauto and !weapons.is_empty())
+else if((firetimer.elapsed>=firetime and( control_is_pressed() or mouse_pressed(0)) &&can_move&&!inve) and !weaponauto and !weapons.is_empty())
 {
 firetimer.restart();
 send_reliable(0,"fire|"+weapons[w],0);
 }
-if(key_pressed(KEY_SLASH))
+else if(key_pressed(KEY_SLASH))
 {
 t_net_loop_mutex.unlock();
 string chat=input_box("enter chat");
@@ -214,7 +230,7 @@ t_net_loop_mutex.lock(1000);
 if(chat!="")
 send_reliable(0,chat,1);
 }
-if(key_pressed(KEY_SPACE) and jumping==false and canjump==1 and falling==false and can_move==true and inve==false and sitting==0)
+else if(key_pressed(KEY_SPACE) and jumping==false and canjump==1 and falling==false and can_move==true and inve==false and sitting==0)
 {
 /*
 if(controling_remgun) send_reliable(0,"firerem",0);
@@ -228,7 +244,7 @@ jumptimer.restart();
 jumpup=1;
 jumplandz=me.z;
 }
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
+else if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
 if(key_pressed(KEY_RETURN))
 {
@@ -240,12 +256,12 @@ else
 speak ("Error: could not activate item!");
 }
 }
-if(key_pressed(KEY_RETURN))
+else if(key_pressed(KEY_RETURN))
 {
 send_reliable(0, "enter", 0);
 doorcheck();
 }
-if(key_pressed(KEY_COMMA))
+else if(key_pressed(KEY_COMMA))
 {
 if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
@@ -256,7 +272,7 @@ else
 prevbufferitem();
 }
 }
-if(key_pressed(KEY_PERIOD))
+else if(key_pressed(KEY_PERIOD))
 {
 if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
@@ -267,7 +283,7 @@ else
 nextbufferitem();
 }
 }
-if(key_pressed(KEY_LBRACKET))
+else if(key_pressed(KEY_LBRACKET))
 {
 if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
@@ -278,7 +294,7 @@ else
 bufferleft();
 }
 }
-if(key_pressed(KEY_RBRACKET))
+else if(key_pressed(KEY_RBRACKET))
 {
 if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
@@ -290,7 +306,7 @@ bufferright();
 }
 }
 /*
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
+else if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {
 if(key_pressed(KEY_COMMA))
 {
@@ -310,14 +326,14 @@ lastbuffer();
 }
 }
 */
-if(key_pressed(KEY_C) and !frozen)
+else if(key_pressed(KEY_C) and !frozen)
 {
 string g;
 if(gmt()=="") g="you're in the air";
 else g="You're on "+gmt();
 speak ((mr.x==-0 ? 0 : mr.x)+", "+(mr.y==-0 ? 0 : mr.y)+", "+me.z+". "+g+" on "+mapname);
 }
-if(key_pressed(KEY_F2))
+else if(key_pressed(KEY_F2))
 {
 if(speakonlinemsgs==0)
 {
@@ -333,7 +349,7 @@ p.play_stationary("toggleoff.ogg",false);
 }
 data_save();
 }
-if(key_pressed(KEY_F3) and pinging==false)
+else if(key_pressed(KEY_F3) and pinging==false)
 {
 pinging=true;
 speak ("pinging");
@@ -341,13 +357,7 @@ p.play_stationary("pingstart.ogg",false);
 send_reliable(0,"ping",0);
 pingpongtimer.restart();
 }
-if(pinging==true and pingpongtimer.elapsed>=30000) 
-{
-pinging=false;
-p.play_stationary("pingstop.ogg",false);
-speak ("ping lost");
-}
-if(key_pressed(KEY_F4))
+else if(key_pressed(KEY_F4))
 {
 if(readmessages==0)
 {
@@ -363,7 +373,14 @@ readmessages=0;
 }
 data_save();
 }
-if (key_down(KEY_G))
+else if(key_pressed(KEY_F9))
+{
+string received=convert_size(n.bytes_received);
+string sent=convert_size(n.bytes_sent);
+string totalnstats=convert_size(n.bytes_sent+n.bytes_received);
+speak("You have received "+received+" of data. You have sent "+sent+" of data, adding up to a total of "+totalnstats+". Total map loading time: "+maploadtimer.elapsed+" ms");
+}
+else if (key_down(KEY_G))
 {
  if (key_pressed(KEY_T))
 {
@@ -456,6 +473,10 @@ camera.x=me.x;
 camera.y=me.y;
 camera.z=me.z;
 }
+else
+{
+
+}
 t_net_loop_mutex.unlock();
 }
 }
@@ -509,7 +530,7 @@ zone_speak (mr.x , mr.y , me.z);
 copy_translation_text_loop();
 sourcecheckloop();
 doorcheckloop ();
-//playerloop();
+playerloop();
 msoundcheckloop();
 objloop();
 if(trackx!=-1&&tracky!=-1&&trackz!=-1&&tracking!="")
@@ -538,6 +559,12 @@ if(in_map&&!following&&!frozen&&playing&&!inve&&!dmoving)
 fallloop();
 fallcheck();
 fallingloop();
+}
+if(pinging==true and pingpongtimer.elapsed>=30000) 
+{
+pinging=false;
+p.play_stationary("pingstop.ogg",false);
+speak ("ping lost");
 }
 }
 void fallloop()
