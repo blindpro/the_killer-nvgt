@@ -166,7 +166,7 @@ if(dex>-1)
 {
 if(chat==true)
 {
-send_reliable(players[dex].peer_id,"teammessage "+t,1);
+send_reliable(players[dex].peer_id,"teammessage|"+t,1);
 }
 else
 send_reliable(players[dex].peer_id,t,channel);
