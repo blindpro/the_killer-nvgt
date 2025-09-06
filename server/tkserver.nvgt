@@ -35,7 +35,7 @@ int auctionamount;
 int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
-string minverstring="1.93.7.1";
+string minverstring="1.93.8";
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -2477,10 +2477,7 @@ for(uint i =0; i < players.length(); i++)
 {
 scd(i);
 }
-for(uint i=0; i<teams.length(); i++)
-{
-teams[i].team_save();
-}
+team_save();
 saveshelters();
 data_save();
 }
