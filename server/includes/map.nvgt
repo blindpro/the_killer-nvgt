@@ -492,3 +492,16 @@ return true;
 }
 return false;
 }
+bool is_tile_water(int x, int y, int z, string map)
+{
+bool found=false;
+string[] watertiles={"shallow","water","water2","underwater"};
+for(uint i=0; i<watertiles.length(); i++)
+{
+if(string_contains(get_tile_at(x,y,z,map),watertiles[i],1)>-1)
+{
+found=true;
+}
+}
+return found;
+}
