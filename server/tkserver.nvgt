@@ -1346,13 +1346,11 @@ for(uint i=0; i<msounds.length(); i++)
 {
 send_reliable(players[index].peer_id,"createmsound|"+msounds[i].id+"|"+msounds[i].soundloop+"|"+msounds[i].x+"|"+msounds[i].y+"|"+msounds[i].z+"|"+msounds[i].map+"|"+msounds[i].pitch,4);
 }
-/*
 if(sirens.length()>0)
 for(uint i=0; i<sirens.length (); i++)
 {
 send_reliable(players[index].peer_id,"createsiren "+sirens[i].id+" "+sirens[i].soundloop+" "+sirens[i].x+" "+sirens[i].y+" "+sirens[i].z+" "+sirens[i].map,4);
 }
-*/
 string text = wnames.replace(" ","|");
 send_reliable(players[index].peer_id,"weaponlist|"+text,0);
 players[index].oldhealth=players[index].health;
@@ -2467,7 +2465,7 @@ else if(parsed[0]=="/t" and parsed.length()>1)
 int t=is_in_team(players[index].name);
 if(t>-1)
 {
-teams[t].transmit(players[index].nickname+" team coms: "+string_trim_left(get_event_message(),3),true);
+teams[t].transmit(players[index].nickname+" team coms: "+string_trim_left(s,3),true);
 log("eventstream","in team "+teams[t].teamname+", "+players[index].nickname+" ("+players[index].name+") said "+string_trim_left(get_event_message(),3));
 }
 else
