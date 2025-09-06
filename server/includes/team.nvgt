@@ -98,7 +98,7 @@ security_bombs[x].teamname="";
 if(message )
 {
 transmit(name+" was just removed from the team!");
-transmit("play_s teamremove.ogg",false,0);
+transmit("play_s|teamremove.ogg",false,0);
 }
 if(r==true)
 {
@@ -125,7 +125,7 @@ if(teammembers[t]==name)
 {
 teammembers.remove_at(t);
 transmit(name+" left the team!");
-transmit("play_s teamleave.ogg",false,0);
+transmit("play_s|teamleave.ogg",false,0);
 players[index].teamname="";
 write_to(players[index].name,"team.usr",players[index].teamname);
 /*
@@ -181,10 +181,10 @@ if(index>-1)
 players[index].teamname=teamname;
 if(message)
 {
-transmit("play_s teamadd.ogg",false,0);
+transmit("play_s|teamadd.ogg",false,0);
 transmit(name+" was added to your team!");
 send_reliable(players[index].peer_id,"You have been added to the "+teamname+" team!",2);
-send_reliable(players[index].peer_id,"play_s teamwelcome.ogg",0);
+send_reliable(players[index].peer_id,"play_s|teamwelcome.ogg",0);
 }
 /*
 for(uint x=0; x<security_bombs.length(); x++)
@@ -204,7 +204,7 @@ void destruct(bool message=true)
 {
 if(message)
 {
-transmit("play_s teamkicked.ogg",false,0);
+transmit("play_s|teamkicked.ogg",false,0);
 transmit("this team has been canceled!");
 }
 if(teammembers.length () >0)
@@ -349,17 +349,27 @@ catch
 {
 
 }
-json_a.clear();
-json_o.clear();
-@json_a = null;
-@json_o = null;
 }
 void load_all_teams()
 {
-string[] teamfiles=find_files("teams/*.team");
-for(uint i=0; i<teamfiles.length(); i++)
+file f;
+f.open("teams/teams.json","rb");
+string data = f.read();
+f.close();
+json_array@ json_a = parse_json(data);
+if(@json_a==null) return;
+json_object@ json_o = null;
+try
 {
-load_team(string_trim_right(teamfiles[i],5));
+for(uint i = 0; i < json_a.size(); i++)
+{
+@json_o = json_a[i];
+load_team(json_o["name"]);
+}
+}
+catch
+{
+
 }
 }
 bool is_part_of_team(string playername, string teamname)
@@ -396,7 +406,6 @@ json_o.set("points",teams[i].points);
 json_o.set("teammembers",linear(teams[i].teammembers));
 json_o.set("buffermembers",linear(teams[i].buffermembers));
 json_a.add(json_o);
-json_o.clear();
 }
 if (!directory_exists("teams")) directory_create("teams");
 file f;
