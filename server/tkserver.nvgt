@@ -958,6 +958,28 @@ players[index].give(wname, -1);
 players[index].using1=false;
 }
 }
+else if(parsed[0]=="teamcheck")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string charfolder="chars/"+players[index].name;
+if(file_exists(charfolder+"/team.usr"))
+{
+file tf;
+tf.open(charfolder+"/team.usr","rb");
+string t=tf.read();
+tf.close();
+if(team_exists(t))
+{
+int tx=get_team_index(t);
+teams[tx].add_member(players[index].name,false);
+send_reliable(players[index].peer_id,"welcome back to the "+t+" team!",2);
+if(players[index].hidden==0) send_reliable(0, players[index].name+" is part of the "+t+" team", 2);
+}
+}
+}
+}
 else if(parsed[0]=="admincheck")
 {
 int index=get_player_index(e.peer_id);
@@ -2648,6 +2670,19 @@ else
 send_reliable(players[index].peer_id,"you left the team!",2);
 teams[s].leave(players[index].name);
 }
+}
+}
+else if(parsed[0]=="/members")
+{
+int ist=is_in_team(players[index].name);
+if(ist>-1)
+{
+send_reliable(players[index].peer_id,teams[ist].list_members(),2);
+}
+else
+{
+send_reliable(players[index].peer_id,"You are not in a team",0);
+return;
 }
 }
 else if(parsed[0]=="/teamcreate")
