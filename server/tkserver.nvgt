@@ -35,7 +35,7 @@ int auctionamount;
 int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
-string minverstring="1.93.8";
+string minverstring="1.93.9";
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -83,6 +83,14 @@ for(uint i=0; i<stuff.length(); i++)
 load_shelter(string_replace(stuff[i],".shelter","",false));
 }
 setupserver();
+file f;
+f.open("prefs/death_messages.svr","rb");
+string[] lines = f.read().split("\r\n",false);
+f.close();
+for(uint i = 0; i < lines.length(); i++)
+{
+killmsgs.insert_last(lines[i]);
+}
 show_window("TK server v"+version);
 speak("TK server active");
 log("svr","The Killer server started.");

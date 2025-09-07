@@ -1048,8 +1048,7 @@ players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
 send_reliable(0,"play_s|kill.ogg",0);
-string km;
-//string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
+string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;
 players[i].underwater=false;
 players[i].sbombplacing=false;
@@ -1064,7 +1063,6 @@ players[i].oldhealth=10000;
 write_to(players[i].name,"lasthit.usr",players[i].hitby);
 write_to(players[i].name,"health.usr",players[i].health);
 players[i].statchangetimer.force(30000);
-/*
 int t=is_in_team(players[i].name);
 if(t>-1)
 {
@@ -1080,6 +1078,7 @@ if(are_teamed(players[i].name, kname)&&players[i].name!=kname&&players[i].hitby!
 teams[t].points-=l;
 teams[t].transmit("This team has lost "+l+" points!");
 }
+/*
 int v=is_part_of_event(players[i].name);
 if(v>-1)
 {
@@ -1121,7 +1120,6 @@ players[k].give("coin",extracoins);
 send_reliable(players[k].peer_id,"You get "+extracoins+"extra coins! Nice job!",2);
 }
 players[k].kills+=1;
-/*
 int tm=is_in_team(players[k].name);
 if(tm>-1 and !are_teamed(players[i].name, players[k].name)) {
 int l=random(500,1000);
@@ -1129,7 +1127,6 @@ teams[tm].points+=l;
 teams[tm].transmit("This team just got "+l+" extra points!");
 teams[tm].teamkills+=1;
 }
-*/
 if(players[i].should_subtract)
 {
 string[] keys=players[i].inventory.get_keys();
@@ -1172,8 +1169,8 @@ for(uint pl=0; pl<players.length(); pl++)
 if(pl>(players.length()-1) or i>(players.length()-1)) return;
 if(players[pl].name!=players[i].name and players[pl].beacon>0 and players[i].distancecheck(players[pl].x,players[pl].y,players[pl].z)<=50 and players[i].map==players[pl].map)
 {
-//if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,3);
-//else 
+if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
+else 
 send_unreliable(players[pl].peer_id,"beacon|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
 //net_loop();
 }

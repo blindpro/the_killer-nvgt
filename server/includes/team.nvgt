@@ -116,7 +116,7 @@ return true;
 }
 bool leave(string name)
 {
-int index=get_player_index(e.peer_id);
+int index=get_player_index_from(name);
 if(index>-1)
 {
 for(uint t=0; t<teammembers.length(); t++)
@@ -239,7 +239,7 @@ teams[i].points-= 20;
 }
 if(teams[i].teammembers.length ()<=0&&teams[i].buffermembers.length ()<=0)
 {
-file_delete("teams/"+teams[i].teamname+".team");
+//file_delete("teams/"+teams[i].teamname+".team");
 @teams[i]=null;
 teams.remove_at(i);
 return;
