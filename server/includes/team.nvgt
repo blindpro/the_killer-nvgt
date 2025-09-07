@@ -352,6 +352,7 @@ catch
 }
 void load_all_teams()
 {
+if (!file_exists("teams/teams.json")) return;
 file f;
 f.open("teams/teams.json","rb");
 string data = f.read();
