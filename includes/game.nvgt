@@ -496,7 +496,7 @@ can_move=true;
 //if(net_debug) file_put_contents("packets.log",packetlog,255);
 fade_all(p,distpool,shdistpool,mpool,sourcepool,objpool,tp);
 destroy_all_msounds();
-//destroy_all_sirens();
+destroy_all_sirens();
 p.destroy_all();
 distpool.destroy_all();
 destroy_all_sources();
@@ -532,6 +532,7 @@ sourcecheckloop();
 doorcheckloop ();
 playerloop();
 msoundcheckloop();
+sirencheckloop();
 objloop();
 if(trackx!=-1&&tracky!=-1&&trackz!=-1&&tracking!="")
 {

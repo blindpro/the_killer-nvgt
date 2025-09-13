@@ -22,10 +22,10 @@ if(cmd=="repair")
 {
 if(speed>0)
 {
-sendint("speak your vehicle must be off to receive repairs.",owner);
+sendint("speak|your vehicle must be off to receive repairs.",owner);
 return;
 }
-sendint("speak just a sec...",owner);
+sendint("speak|just a sec...",owner);
 soundtime=repair;
 soundtimer.restart();
 playsound("vehicle_repair",true,false);
@@ -69,7 +69,7 @@ else if(cmd=="escape")
 {
 if(speed!=0)
 {
-sendint("speak you cannot exit your vehicle until it is completely off", owner);
+sendint("speak|you cannot exit your vehicle until it is completely off", owner);
 return;
 }
 sendint("veunspawn",owner);
@@ -113,7 +113,7 @@ facing=snapleft(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
 sendint("facing|"+facing,owner);
-sendint("speak facing|"+dir_to_string(getdir(facing)),owner);
+sendint("speak|facing|"+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 else if(cmd=="turnright"&&speed>0)
@@ -122,7 +122,7 @@ facing=snapright(facing,getdir(facing),45);
 int index=get_player_index_from(owner);
 if(index>-1) players[index].facing=facing;
 sendint("facing|"+facing,owner);
-sendint("speak facing|"+dir_to_string(getdir(facing)),owner);
+sendint("speak|facing|"+dir_to_string(getdir(facing)),owner);
 playsound(type+"_turn",true,false);
 }
 }

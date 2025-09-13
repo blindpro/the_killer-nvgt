@@ -1379,7 +1379,7 @@ send_reliable(players[index].peer_id,"createmsound|"+msounds[i].id+"|"+msounds[i
 if(sirens.length()>0)
 for(uint i=0; i<sirens.length (); i++)
 {
-send_reliable(players[index].peer_id,"createsiren "+sirens[i].id+" "+sirens[i].soundloop+" "+sirens[i].x+" "+sirens[i].y+" "+sirens[i].z+" "+sirens[i].map,4);
+send_reliable(players[index].peer_id,"createsiren|"+sirens[i].id+"|"+sirens[i].soundloop+"|"+sirens[i].x+"|"+sirens[i].y+"|"+sirens[i].z+"|"+sirens[i].map,4);
 }
 string text = wnames.replace(" ","|");
 send_reliable(players[index].peer_id,"weaponlist|"+text,0);
@@ -1432,7 +1432,6 @@ else if(parsed[0]=="healthcheck")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-/*
 int v=in_vehicle(players[index].name);
 int sh=in_shelter(players[index].name);
 if(v<0&&sh<0) send_reliable(e.peer_id,"speak|"+players[index].health+" health, "+players[index].shieldshots+" shielded shots.",0);
@@ -1440,8 +1439,7 @@ else if(sh>-1&&v<0) send_reliable(players[index].peer_id,"speak|this shelter has
 else if(v>-1) {
 int ms=vs[v].fuel*(100/0.1)*(vs[v].fueltime-(vs[v].vfueltime*(vs[v].speed-1)));
 send_reliable(players[index].peer_id,"speak|your "+vs[v].type+" has "+vs[v].health+" health, and "+vs[v].fuel+"% fuel. Last hit by "+vs[v].hitby,0);
-*/
-send_reliable(e.peer_id,"speak|"+players[index].health+" health, "+players[index].shieldshots+" shielded shots.",0);
+}
 }
 }
 else if(parsed[0]=="land")

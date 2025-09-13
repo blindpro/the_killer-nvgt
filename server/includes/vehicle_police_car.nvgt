@@ -62,7 +62,7 @@ if(sirenmode!=0 or sirenid!="")
 destroy_siren(sirenid);
 sirenid="";
 sirenmode=0;
-sendint("vesiren off",owner);
+sendint("vesiren|off",owner);
 }
 sendint("vestop",owner);
 sendint("goodfuel",owner);
@@ -201,7 +201,7 @@ sendint("vesiren|off",owner);
 sendint("veunspawn",owner);
 int index=get_player_index_from(owner);
 play(type+"_die",x,y,z,map);
-send_plus(players[get_player_index_from(owner)].peer_id,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_plus(players[get_player_index_from(owner)].peer_id,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 remove=true;
 string hb=hitby;
 if(string_contains(hb,"'",1)>-1) hb=string_left(hb,string_contains(hb,"'",1));
@@ -213,7 +213,7 @@ players[index].pcfuel=100;
 players[index].pchealth=40000;
 players[index].give(type,-1);
 string km=killmsg(players[index].name+"'s "+type,hitby,players[index].zone);
-send_reliable(0,"playerdeath "+km,0);
+send_reliable(0,"playerdeath|"+km,0);
 players[index].health-=random(40000, 50000);
 players[index].hitby="internal:vehicle:"+type;
 }
