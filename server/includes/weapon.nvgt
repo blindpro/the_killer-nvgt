@@ -300,7 +300,7 @@ break;
 }
 else
 {
-send_reliable(e.peer_id,"inv invisibility_shield 1",0);
+send_reliable(e.peer_id,"inv|invisibility_shield 1",0);
 send_reliable(weapons[j].p.peer_id,"You can't go invisible while you're using an invisibility shield",2);
 @weapons[j]=null;
 weapons.remove_at(j);
@@ -341,7 +341,7 @@ continue;
 }
 for(uint x=0; x<players.length(); x++)
 {
-//if(in_vehicle(players[x].name)>-1 or players[x].is_dead or players[x].invinsible or players[x].newb==1) continue;
+if(in_vehicle(players[x].name)>-1 or players[x].is_dead or players[x].invinsible or players[x].newb==1) continue;
 if(get_3d_distance(rx, ry, weapons[j].z, players[x].x, players[x].y, players[x].z)<=weapons[j].spread and weapons[j].p.name!=players[x].name and players[x].map==weapons[j].map)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|"+(are_teamed(weapons[j].p.name, players[x].name)?"weaponpingteam":"weaponping")+".ogg",0);
