@@ -327,7 +327,7 @@ if(total_keypresses>=keypresses and keypresses>-1)
 if(autosend>=1)
 {
 message=string_replace(message, " ", "[SPCE]", true);
-send_reliable(0, sendtext+" "+message, 0);
+send_reliable(0, sendtext+"|"+message, 0);
 keys_pressed();
 get_characters();
 keys_released();
@@ -352,7 +352,7 @@ if(autosend>=1)
 {
 if(message.length()<=0)
 message="[bckspace]";
-send_reliable(0, sendtext+" "+message, 0);
+send_reliable(0, sendtext+"|"+message, 0);
 keys_pressed();
 get_characters();
 keys_released();
@@ -371,7 +371,7 @@ speak("blank");
 }
 if(key_pressed(KEY_ESCAPE))
 {
-send_reliable(0, sendtext+" [cncel]", 0);
+send_reliable(0, sendtext+"|[cncel]", 0);
 keys_pressed();
 get_characters();
 keys_released();

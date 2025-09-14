@@ -46,7 +46,7 @@ if(mines[i].lifetimer.elapsed>=3600000&&mines[i].d==false) mines[i].d=true;
 if(mines[i].d==true)
 {
 play("mineexplode",mines[i].x,mines[i].y,mines[i].z,mines[i].map);
-send_reliable(0,"distsound mineexplodedist "+mines[i].x+" "+mines[i].y+" "+mines[i].z+" "+mines[i].map,0);
+send_reliable(0,"distsound|mineexplodedist|"+mines[i].x+"|"+mines[i].y+"|"+mines[i].z+"|"+mines[i].map,0);
 for (uint i2=0; i2<players.length(); i2++)
 {
 if(players[i2].invinsible==true || players[i2].newb==1 || players[i2].is_dead==true||in_vehicle(players[i2].name)>-1) continue;

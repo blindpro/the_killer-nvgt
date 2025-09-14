@@ -421,6 +421,14 @@ players[index].vo("outofammo");
 }
 }
 }
+else if(parsed[0]=="codeclick")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+play("code",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+}
 else if(parsed[0]=="invrequest")
 {
 int index=get_player_index(e.peer_id);
@@ -456,6 +464,42 @@ send_reliable(players[index].peer_id,"You have "+loadedammo+" of "+players[index
 }
 else
 send_reliable(players[index].peer_id,"The "+parsed[1]+" does not take ammo",0);
+}
+}
+else if(parsed[0]=="remgunidset" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="back")
+{
+players[index].sendpacket("Canceled",0);
+return;
+}
+if(remgun_index(stn(parsed[1]))<0)
+{
+players[index].sendpacket("speak could not connect to this remgun. It may have been destroyed.",0);
+return;
+}
+players[index].remgunid=stn(parsed[1]);
+players[index].playsound("remgun_connect");
+send_serverbox(players[index].peer_id,0,-1,1,1,"remguncommand","Connected! What would you like to do? Press H for help");
+}
+}
+else if(parsed[0]=="remguncommand" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].remgunid==-1) return;
+int rindex=remgun_index(players[index].remgunid);
+if(rindex<0)
+{
+players[index].sendpacket("speak|Could not send command to this remgun. It may have been destroyed.",0);
+players[index].remgunid=-1;
+return;
+}
+remguns[rindex].command(parsed[1],e.peer_id);
 }
 }
 else if(parsed[0]=="draw" and parsed.length()>1)
@@ -598,6 +642,42 @@ return;
 }
 place_wirebomb(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name);
 takeobj=true;
+}
+else if(wname=="remote_gun_controller")
+{
+server_menu m;
+int hasrems=0;
+for(uint i=0; i<remguns.length(); i++)
+{
+if(remguns[i].owner==players[index].name)
+{
+m.add("Remote gun "+remguns[i].id+", ("+remguns[i].map+" at "+remguns[i].x+", "+remguns[i].y+", "+remguns[i].z+")",""+remguns[i].id);
+hasrems+=1;
+}
+}
+if(hasrems<=0)
+{
+players[index].sendpacket("You don't have any remote guns to connect to",0);
+return;
+}
+m.add("cancel","back");
+m.intro="Select remotegun to connect to. You have "+hasrems+" remote guns available";
+m.initial_packet="remgunidset";
+m.send(players[index].peer_id);
+}
+else if(wname=="remote_gun")
+{
+if(players[index].remconnecting or players[index].rmtimer.elapsed<6343) return;
+if(remgun_at(players[index].x,players[index].y,players[index].z,players[index].map))
+{
+send_reliable(players[index].peer_id,"speak|there is already a remote gun here.",0);
+return;
+}
+takeobj = true;
+send_reliable(players[index].peer_id,"stopmoving",0);
+players[index].rmtimer.restart();
+players[index].remconnecting=true;
+play("remgun_place",players[index].x,players[index].y,players[index].z,players[index].map);
 }
 else if(wname=="beer_bottle")
 {
@@ -760,13 +840,11 @@ if(players[index].statchangetimer.elapsed<20000)
 send_reliable(players[index].peer_id,"you can't use this yet",0);
 return;
 }
-/*
 if(in_vehicle(players[index].name)>-1)
 {
 send_reliable(players[index].peer_id,"Not in a "+vs[in_vehicle(players[index].name)].type+"!",2);
 return;
 }
-*/
 if(((max.x-players[index].x) <=100 and players[index].facing==90) or ((max.y-players[index].y) <= 100 and players[index].facing==0) or ((players[index].x-0) <= 100 and players[index].facing==270) or ((players[index].y-0) <= 100 and players[index].facing==180)) 
 {
 send_reliable(players[index].peer_id, "you can't use the warp_box here, because you are near edges ", 2);
@@ -1202,7 +1280,6 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, objs[i].x, objs[i].y, players[index].facing))+", "+players[index].distancecheck(objs[i].x,objs[i].y,objs[i].z)+" feet away. ";
 }
 }
-/*
 for (uint i=0; i<remguns.length(); i++)
 {
 if (remguns[i].x<players[index].x+20 and remguns[i].x>players[index].x-20 and remguns[i].y<players[index].y+20 and remguns[i].y>players[index].y-20 and get_1d_distance(players[index].z,remguns[i].z)<=20 and remguns[i].map==players[index].map)
@@ -1232,6 +1309,7 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, remguns[i].x, remguns[i].y, players[index].facing))+", "+players[index].distancecheck(remguns[i].x,remguns[i].y,remguns[i].z)+" feet away. ";
 }
 }
+/*
 for (uint i=0; i<remote_timebombs.length(); i++)
 {
 if (remote_timebombs[i].x<players[index].x+20 and remote_timebombs[i].x>players[index].x-20 and remote_timebombs[i].y<players[index].y+20 and remote_timebombs[i].y>players[index].y-20 and get_1d_distance(players[index].z,remote_timebombs[i].z)<=20 and remote_timebombs[i].map==players[index].map)
@@ -1293,7 +1371,7 @@ s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, 
 */
 if (s=="")
 s="There is nothing around";
-//if(in_vehicle(players[index].name)<0&&players[index].hidden==0) play("lookaround",players[index].x,players[index].y,players[index].z,players[index].map);
+if(in_vehicle(players[index].name)<0&&players[index].hidden==0) play("lookaround",players[index].x,players[index].y,players[index].z,players[index].map);
 send_reliable(players[index].peer_id, s, 2);
 }
 }
@@ -1946,7 +2024,7 @@ else if(parsed[0]=="menuedge")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(players[index].hidden==0) send_reliable(0,"menusound "+players[index].x+" "+players[index].y+" "+players[index].z+" "+players[index].map+" "+players[index].name+" menuedge.ogg",0);
+if(players[index].hidden==0) send_reliable(0,"menusound|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map+"|"+players[index].name+"|menuedge.ogg",0);
 }
 }
 else if(parsed[0]=="menuenter"&&parsed.length () >1)
@@ -2800,7 +2878,7 @@ mineloop();
 motionbombloop();
 if(players.length()<=0) {
 objs.resize(0);
-//remguns.resize(0);
+remguns.resize(0);
 }
 }
 catch

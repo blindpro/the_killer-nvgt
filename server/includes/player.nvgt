@@ -1017,14 +1017,12 @@ players[i].playsound("stun_dartstop");
 }
 players[i].stunned=false;
 }
-/*
 if(players[i].remconnecting==true and players[i].rmtimer.elapsed>=6343 and players[i].map!="store")
 {
 placeremgun(players[i].x,players[i].y,players[i].z,players[i].map,players[i].name);
 players[i].remconnecting=false;
 send_reliable(players[i].peer_id,"startmoving",0);
 }
-*/
 if(players[i].interceptortimer.elapsed>=775 and players[i].intercepting==true)
 {
 players[i].intercepting=false;
