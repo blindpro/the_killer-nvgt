@@ -232,17 +232,16 @@ send_reliable(0,chat,1);
 }
 else if(key_pressed(KEY_SPACE) and jumping==false and canjump==1 and falling==false and can_move==true and inve==false and sitting==0)
 {
-/*
 if(controling_remgun) send_reliable(0,"firerem",0);
 else
 {
-*/
 p.play_stationary("jump.ogg", false);
 send_reliable(0, "jump", 0);
 jumping=true;
 jumptimer.restart();
 jumpup=1;
 jumplandz=me.z;
+}
 }
 else if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
 {

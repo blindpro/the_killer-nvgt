@@ -204,6 +204,8 @@ objs[i].x=x;
 objs[i].y=y;
 objs[i].z=z;
 objs[i].map=map;
+send_reliable(0,"clear_obj",0);
+send_reliable(0,"objrequest",0);
 }
 }
 int get_nearest_item_at(int x, int y, int z, string map, string type)

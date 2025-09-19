@@ -25,7 +25,8 @@ owner=bowner;
 }
 void command(string cmd,int peer)
 {
-int index=get_player_index(e.peer_id);
+//int index=get_player_index(e.peer_id);
+int index=get_player_index(peer);
 if(index<0) return;
 players[index].playsound("remgun_keypress");
 string packet;

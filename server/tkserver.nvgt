@@ -502,6 +502,50 @@ return;
 remguns[rindex].command(parsed[1],e.peer_id);
 }
 }
+else if(parsed[0]=="remconnect")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(has_remgun(players[index].name)==true)
+{
+send_reliable(players[index].peer_id,"play_s|remgun_connect.ogg",0);
+send_reliable(e.peer_id,"remcontrol",0);
+players[index].cremguns=true;
+}
+else
+{
+send_reliable(e.peer_id,"No remote guns connected!",2);
+}
+}
+}
+else if(parsed[0]=="firerem")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+for(uint r=0; r<remguns.length(); r++)
+{
+if(remguns[r].owner==players[index].name)
+remguns[r].can_fire=true;
+}
+}
+}
+else if(parsed[0]=="destrem")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+for(uint r=0; r<remguns.length(); r++)
+{
+if(remguns[r].owner==players[index].name)
+{
+remguns[r].health=-1;
+remguns[r].hitby="internal:rg:destruct";
+}
+}
+}
+}
 else if(parsed[0]=="draw" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -1573,6 +1617,14 @@ players[index].sitting=1;
 send_reliable(players[index].peer_id,"sitstart",0);
 }
 }
+else if(parsed[0]=="air")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+send_reliable(players[index].peer_id,"You have "+players[index].air+" air. This should last you about "+ms_to_readable_time(players[index].air*3500),0);
+}
+}
 else if(parsed[0]=="sitstand")
 {
 int index=get_player_index(e.peer_id);
@@ -2422,6 +2474,52 @@ players[i].invinsibility_starting=true;
 }
 }
 }
+}
+else if(parsed[0]=="/spawn_obj" and parsed.length()>6)
+{
+if(players[index].dev)
+{
+send_reliable(e.peer_id,"done",0);
+spawn_obj(stn(parsed[1]),stn(parsed[2]),stn(parsed[3]),parsed[4],parsed[5],stn(parsed[6]));
+}
+else
+{
+send_reliable(e.peer_id,"You can not spawn items",0);
+}
+}
+else if(parsed[0]=="/killobjs")
+{
+if(players[index].adminable())
+{
+uint killobjs=objs.length();
+for(uint i=0; i<objs.length(); i++)
+{
+play("obj_break"+random(1,3),objs[i].x,objs[i].y,objs[i].z,objs[i].map);
+remove_obj(objs[i].id);
+}
+send_reliable(players[index].peer_id,killobjs+" items killed",2);
+}
+else
+{
+send_reliable(players[index].peer_id,"Can't do that",2);
+}
+}
+else if(parsed[0]=="/objgrab")
+{
+if(players[index].adminable() or beta==true)
+{
+send_reliable(players[index].peer_id,"moving",0);
+move_all_objs_to(players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else
+{
+send_reliable(players[index].peer_id,"Can't do that.",2);
+}
+}
+else if(parsed[0]=="/datasave"&&players[index].adminable())
+{
+saveloop();
+send_reliable(e.peer_id,"data saved",2);
 }
 else if(parsed[0]=="/give" and parsed.length()>3)
 {
@@ -3534,7 +3632,6 @@ return false;
 }
 bool has_remgun(string name)
 {
-/*
 for(uint i=0; i<remguns.length(); i++)
 {
 if(remguns[i].owner==name)
@@ -3542,7 +3639,7 @@ if(remguns[i].owner==name)
 return true;
 }
 }
-*/
+
 return false;
 }
 int select_random_player(string noname="")
