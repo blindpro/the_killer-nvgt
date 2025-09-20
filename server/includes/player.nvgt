@@ -588,10 +588,10 @@ if(e>-1)
 {
 events[e].leave(players[i],true,true);
 }
+*/
 int teamindex=is_in_team(name);
 if(teamindex>-1)
 teams[teamindex].remove_member(name,false,false);
-*/
 uint oldid=(players[i].disconnected ? 4294967294 : players[i].peer_id);
 if(got_kicked==true)
 {
@@ -604,12 +604,12 @@ if(cheatercheck(i,lost) and !got_kicked)
 write_to(players[i].name,"cheater.usr",players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit");
 send_reliable(0,players[i].name+" is a cheater!",2);
 }
+*/
 if(players[i].following!="")
 {
 int ind=get_player_index_from(players[i].following);
 if(ind>-1) players[ind].following="";
 }
-*/
 disconnections++;
 for(uint j=0; j<guns.length(); j++)
 {
