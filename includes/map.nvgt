@@ -61,7 +61,7 @@ string[]@ map_data = data.split("\r\n");
 pos ();
 for (uint i=0; i<map_data.length(); i++)
 {
-pos ();
+//pos ();
 string[]@ parts = map_data[i].split(":");
 if(parts[0] == "tile")
 {
