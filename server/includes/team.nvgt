@@ -9,7 +9,6 @@ double points=10000;
 timer pointstimer;
 string teamleader;
 string password;
-savedata tempsd("");
 team(string tn, string tl, string tpw=randomstring(4))
 {
 teamname=tn;
@@ -19,8 +18,6 @@ int index=get_player_index_from(teamleader);
 if(index>-1)
 players[index].teamname=tn;
 teammembers.insert_last(teamleader);
-tempsd.fn="teams/"+teamname+".team";
-tempsd.key="tk_team";
 }
 void buffercheck()
 {
@@ -144,6 +141,7 @@ return true;
 }
 return false;
 }
+/*
 void team_save()
 {
 if(directory_exists("teams")==false)
@@ -158,6 +156,7 @@ tempsd.add("teampassword",password);
 tempsd.add("teamkills",teamkills);
 tempsd.save();
 }
+*/
 void transmit(string t, bool chat=false, int channel=2)
 {
 for(uint i=0; i<teammembers.length(); i++)
@@ -347,4 +346,22 @@ int tx2=is_in_team(pn2);
 if(tx1==-1||tx2==-1) return false;
 if(tx1==tx2 or teams[tx1].is_member(pn2) or teams[tx2].is_member(pn1)) return true;
 return false;
+}
+void team_save()
+{
+json_object json_o;
+json_array json_a;
+for(uint i = 0; i < teams.length(); i++)
+{
+json_o.set("name",teams[i].teamname);
+json_o.set("password",teams[i].password);
+json_o.set("leader",teams[i].teamleader);
+json_o.set("maxmembers",teams[i].maxmembers);
+json_o.set("kills",teams[i].teamkills);
+json_o.set("points",teams[i].points);
+json_o.set("teammembers",linear(teams[i].teammembers));
+json_o.set("buffermembers",linear(teams[i].buffermembers));
+json_a.add(json_o);
+json_o.clear();
+}
 }
