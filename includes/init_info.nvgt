@@ -39,7 +39,7 @@ bool prior_connected=false;
 bool connected = false;
 bool beta=false, beta_server=false;
 uint peer_id=0;
-string ver="1.93", netver="1.93.7.1";
+string ver="1.93", netver="1.93.9";
 int compid;
 bool net_debug;
 string packetlog;

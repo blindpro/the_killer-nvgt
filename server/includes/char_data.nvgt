@@ -193,7 +193,6 @@ data=c.read();
 if(data=="") data="0";
 players[index].z=stn(data);
 c.close();
-/*
 if(!map_exists(players[index].map) and !shelter_exists(players[index].map))
 {
 players[index].map="main";
@@ -201,8 +200,7 @@ players[index].x=random(0,500);
 players[index].y=random(0,500);
 players[index].z=0;
 }
-*/
-//if(x!=players[index].x||y!=players[index].y||z!=players[index].z) move_player(players[index],players[index].map,players[index].x,players[index].y,players[index].z,false, false, get_shelter_index(players[index].map));
+if(x!=players[index].x||y!=players[index].y||z!=players[index].z) move_player(players[index],players[index].map,players[index].x,players[index].y,players[index].z,false, false, get_shelter_index(players[index].map));
 if(file_exists(charfolder+"/vs.usr"))
 {
 c.open(charfolder+"/vs.usr","rb");
@@ -237,7 +235,6 @@ ret=c.read();
 c.close();
 return ret;
 }
-/*
 void clear_charstuff(string n)
 {
 for(uint i=0; i<motion_bombs.length(); i++)
@@ -253,7 +250,6 @@ remote_timebombs.remove_at(i);
 }
 }
 }
-*/
 string unencrypt_password(string username)
 {
 string charfolder="chars/"+username;

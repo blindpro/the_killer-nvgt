@@ -22,10 +22,10 @@ if(cmd=="repair")
 {
 if(speed>0)
 {
-sendint("speak your vehicle must be off to receive repairs.",owner);
+sendint("speak|your vehicle must be off to receive repairs.",owner);
 return;
 }
-sendint("speak just a sec...",owner);
+sendint("speak|just a sec...",owner);
 soundtime=repair;
 soundtimer.restart();
 playsound("vehicle_repair",true,false);
@@ -66,7 +66,7 @@ else if(cmd=="escape")
 {
 if(speed!=0)
 {
-sendint("speak you cannot exit your vehicle until it is completely off", owner);
+sendint("speak|you cannot exit your vehicle until it is completely off", owner);
 return;
 }
 sendint("veunspawn",owner);

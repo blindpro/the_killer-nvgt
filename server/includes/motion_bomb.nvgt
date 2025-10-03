@@ -58,7 +58,7 @@ play("motion_bombbeep",motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z,mot
 if (motion_bombs[i].seconds<=0)
 {
 play("motion_bomb",motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z,motion_bombs[i].map);
-send_reliable(0,"distsound motion_bombdist "+motion_bombs[i].x+" "+motion_bombs[i].y+" "+motion_bombs[i].z+" "+motion_bombs[i].map,0);
+send_reliable(0,"distsound|motion_bombdist|"+motion_bombs[i].x+"|"+motion_bombs[i].y+"|"+motion_bombs[i].z+"|"+motion_bombs[i].map,0);
 for(uint i2=0; i2<impact_bombs.length(); i2++)
 {
 if(get_3d_distance(impact_bombs[i2].x,impact_bombs[i2].y,impact_bombs[i2].z,motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z)<=20 and impact_bombs[i2].map==motion_bombs[i].map)

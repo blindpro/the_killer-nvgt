@@ -42,7 +42,7 @@
 #include "remote_timebomb.nvgt"
 #include "tree.nvgt"
 #include "motion_bomb.nvgt"
-#include "mine.bgt"
+#include "mine.nvgt"
 #include "vending_machine.nvgt"
 #include "grenade.nvgt"
 #include "mserver.nvgt"

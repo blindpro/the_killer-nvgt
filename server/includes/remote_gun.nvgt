@@ -25,7 +25,8 @@ owner=bowner;
 }
 void command(string cmd,int peer)
 {
-int index=get_player_index(e.peer_id);
+//int index=get_player_index(e.peer_id);
+int index=get_player_index(peer);
 if(index<0) return;
 players[index].playsound("remgun_keypress");
 string packet;
@@ -47,7 +48,7 @@ health=-1;
 hitby="internal:rg:destruct";
 int index=get_player_index_from(owner);
 players[index].remgunid=-1;
-send_reliable(peer,"speak self destruct!",0);
+send_reliable(peer,"speak|self destruct!",0);
 }
 else if(cmd=="h")
 {
@@ -137,7 +138,7 @@ hit=true;
 players[x].hit(mindammage,maxdammage);
 players[x].should_subtract=false;
 players[x].hitby=owner+"'s remote gun"+id;
-send_reliable(players[index].peer_id,"play_s weaponping.ogg",0);
+send_reliable(players[index].peer_id,"play_s|weaponping.ogg",0);
 }
 }
 for(uint x=0; x<vs.length (); x++)
@@ -167,16 +168,16 @@ for(uint j=0; j<remguns.length(); j++)
 if(remguns[j].lifetimer.elapsed>remguns[j].lifetime or remguns[j].shotsfired>=50)
 {
 int index=get_player_index_from(remguns[j].owner);
-if(index>-1) send_reliable(players[index].peer_id,"play_s remgun_disconnect.ogg",0);
+if(index>-1) send_reliable(players[index].peer_id,"play_s|remgun_disconnect.ogg",0);
 remguns[j].health=-1;
 remguns[j].hitby="internal:rg:expire";
 }
 if(remguns[j].health<=0)
 {
 play("remgun_death",remguns[j].x,remguns[j].y,remguns[j].z,remguns[j].map);
-send_reliable(0,"playerdeath "+killmsg(remguns[j].owner+"'s remote gun "+remguns[j].id,remguns[j].hitby,remguns[j].map),0);
+send_reliable(0,"playerdeath|"+killmsg(remguns[j].owner+"'s remote gun "+remguns[j].id,remguns[j].hitby,remguns[j].map),0);
 int index=get_player_index_from(remguns[j].owner);
-if(index>-1) send_reliable(players[index].peer_id,"play_s remgun_disconnect.ogg",0);
+if(index>-1) send_reliable(players[index].peer_id,"play_s|remgun_disconnect.ogg",0);
 remguns.remove_at(j);
 continue;
 }
@@ -184,7 +185,7 @@ if(remguns[j].usetimer.elapsed>=remguns[j].usetime and remguns[j].can_fire==true
 {
 play("remgun_fire",remguns[j].x,remguns[j].y,remguns[j].z,remguns[j].map);
 if(remguns[j].lifetimer.elapsed>30000) remguns[j].lifetimer.force((remguns[j].lifetimer.elapsed-30000));
-send_reliable(0,"distsound remgun_firedist "+remguns[j].x+" "+remguns[j].y+" "+remguns[j].z+" "+remguns[j].map,0);
+send_reliable(0,"distsound|remgun_firedist|"+remguns[j].x+"|"+remguns[j].y+"|"+remguns[j].z+"|"+remguns[j].map,0);
 remguns[j].can_fire=false;
 remguns[j].shotsfired++;
 remguns[j].usetimer.restart();
@@ -201,7 +202,7 @@ play("hit"+random(1,3),players[x].x,players[x].y,players[x].z,players[x].map);
 players[x].health-=random(remguns[j].mindammage, remguns[j].maxdammage);
 players[x].should_subtract=false;
 players[x].hitby=remguns[j].owner+"'s remote gun"+remguns[j].id;
-send_reliable(players[index].peer_id,"play_s weaponping.ogg",0);
+send_reliable(players[index].peer_id,"play_s|weaponping.ogg",0);
 }
 }
 for(uint x=0; x<vs.length (); x++)

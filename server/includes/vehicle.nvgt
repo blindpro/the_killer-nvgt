@@ -212,7 +212,7 @@ if(health<=0)
 sendint("vestop",owner);
 sendint("veunspawn",owner);
 play(type+"_die",x,y,z,map);
-send_reliable(0,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_reliable(0,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 remove=true;
 int index=get_player_index_from(owner);
 string hb=hitby;
@@ -233,7 +233,7 @@ players[index].tankhealth=30000;
 }
 players[index].give(type,-1);
 string km=killmsg(players[index].name+"'s "+type,hitby,players[index].zone);
-send_reliable(0,"playerdeath "+km,0);
+send_reliable(0,"playerdeath|"+km,0);
 players[index].health-=random(20000, 50000);
 players[index].hitby="internal:vehicle:"+type;
 }
@@ -243,12 +243,12 @@ if(doing!=""&&soundtimer.elapsed>=soundtime)
 if(doing=="repair")
 {
 health=(type=="tank" ? 30000 : 15000);
-sendint("speak your "+type+" has been repaired!",owner);
+sendint("speak|your "+type+" has been repaired!",owner);
 }
 if(doing=="fall")
 {
 remove=true;
-send_reliable(0,"distsound vehicle_die_dist "+x+" "+y+" "+z+" "+map,0);
+send_reliable(0,"distsound|vehicle_die_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 sendint("veunspawn",owner);
 int index=get_player_index_from(owner);
 if(index>-1)
@@ -283,7 +283,7 @@ if(doing=="prefire")
 firetimer.restart();
 if(type=="aircraft")
 {
-send_reliable(0,"distsound aircraft_shot_fire_dist "+x+" "+y+" "+z+" "+map,0);
+send_reliable(0,"distsound|aircraft_shot_fire_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 playext("aircraft_shot_fire",x,y,z,map,owner);
 playint("aircraft_shot_fire",owner);
 int hit=0;
@@ -340,7 +340,7 @@ else sendint("speak hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote
 else if(type=="tank")
 {
 int rand=random(1,4);
-send_reliable(0,"distsound tank_artillery_fire_dist "+x+" "+y+" "+z+" "+map,0);
+send_reliable(0,"distsound|tank_artillery_fire_dist|"+x+"|"+y+"|"+z+"|"+map,0);
 playext("tank_artillery_fire"+rand+"_ext",x,y,z,map,owner);
 playint("tank_artillery_fire"+rand+"_int",owner);
 spawn_weapon(x,y,z,facing,"artillery",map,owner);

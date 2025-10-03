@@ -98,7 +98,7 @@ security_bombs[x].teamname="";
 if(message )
 {
 transmit(name+" was just removed from the team!");
-transmit("play_s teamremove.ogg",false,0);
+transmit("play_s|teamremove.ogg",false,0);
 }
 if(r==true)
 {
@@ -116,7 +116,7 @@ return true;
 }
 bool leave(string name)
 {
-int index=get_player_index(e.peer_id);
+int index=get_player_index_from(name);
 if(index>-1)
 {
 for(uint t=0; t<teammembers.length(); t++)
@@ -125,7 +125,7 @@ if(teammembers[t]==name)
 {
 teammembers.remove_at(t);
 transmit(name+" left the team!");
-transmit("play_s teamleave.ogg",false,0);
+transmit("play_s|teamleave.ogg",false,0);
 players[index].teamname="";
 write_to(players[index].name,"team.usr",players[index].teamname);
 /*
@@ -166,7 +166,7 @@ if(dex>-1)
 {
 if(chat==true)
 {
-send_reliable(players[dex].peer_id,"teammessage "+t,1);
+send_reliable(players[dex].peer_id,"teammessage|"+t,1);
 }
 else
 send_reliable(players[dex].peer_id,t,channel);
@@ -181,10 +181,10 @@ if(index>-1)
 players[index].teamname=teamname;
 if(message)
 {
-transmit("play_s teamadd.ogg",false,0);
+transmit("play_s|teamadd.ogg",false,0);
 transmit(name+" was added to your team!");
 send_reliable(players[index].peer_id,"You have been added to the "+teamname+" team!",2);
-send_reliable(players[index].peer_id,"play_s teamwelcome.ogg",0);
+send_reliable(players[index].peer_id,"play_s|teamwelcome.ogg",0);
 }
 /*
 for(uint x=0; x<security_bombs.length(); x++)
@@ -204,7 +204,7 @@ void destruct(bool message=true)
 {
 if(message)
 {
-transmit("play_s teamkicked.ogg",false,0);
+transmit("play_s|teamkicked.ogg",false,0);
 transmit("this team has been canceled!");
 }
 if(teammembers.length () >0)
@@ -239,7 +239,7 @@ teams[i].points-= 20;
 }
 if(teams[i].teammembers.length ()<=0&&teams[i].buffermembers.length ()<=0)
 {
-file_delete("teams/"+teams[i].teamname+".team");
+//file_delete("teams/"+teams[i].teamname+".team");
 @teams[i]=null;
 teams.remove_at(i);
 return;
@@ -285,6 +285,7 @@ void load_team(string t)
 string tl,tpw,tm,bm;
 double points;
 double kls,mxm;
+/*
 savedata tsd("teams/"+t+".team","tk_team");
 tsd.load();
 if(tsd.d.exists("leader"))
@@ -301,31 +302,75 @@ if(tsd.d.exists("buffermembers"))
 bm=tsd.read("buffermembers");
 if(tsd.d.exists("teamkills"))
 kls=tsd.readn("teamkills");
+*/
+file f;
+f.open("teams/teams.json","rb");
+string team_data = f.read();
+f.close();
+json_array@ json_a = parse_json(team_data);
+if(@json_a==null) return;
+json_object@ json_o = null;
+try
+{
+for(uint i = 0; i < json_a.size(); i++)
+{
+@json_o = json_a[i];
+if (json_o["name"] != t) continue;
+}
+if(json_o["name"] != t) return;
+if(json_o.exists("leader"))
+tl = json_o["leader"];
 create_team(t,tl);
 int x=get_team_index(t);
 teams[x].teamleader=tl;
-teams[x].teammembers=delinear(tm);
+if(json_o.exists("teammembers"))
+teams[x].teammembers=delinear(json_o["teammembers"]);
 for(uint i=0; i<teams[x].teammembers.length (); i++)
 {
 if(teams[x].teammembers[i]=="" or teams[x].teammembers[i]==" ") teams[x].teammembers.remove_at(i);
 }
-teams[x].maxmembers=mxm;
-teams[x].points=points;
-teams[x].buffermembers=delinear(bm);
+if(json_o.exists("maxmembers"))
+teams[x].maxmembers=json_o["maxmembers"];
+if(json_o.exists("points"))
+teams[x].points=json_o["points"];
+if(json_o.exists("buffermembers"))
+teams[x].buffermembers=delinear(json_o["buffermembers"]);
 for(uint i=0; i<teams[x].buffermembers.length (); i++)
 {
 if(teams[x].buffermembers[i]=="" or teams[x].buffermembers[i]==" ") teams[x].buffermembers.remove_at(i);
 }
-teams[x].password=tpw;
+if(json_o.exists("password"))
+teams[x].password=json_o["password"];
 teams[x].buffercheck();
-teams[x].teamkills=kls;
+if(json_o.exists("kills"))
+teams[x].teamkills=json_o["kills"];
+}
+catch
+{
+
+}
 }
 void load_all_teams()
 {
-string[] teamfiles=find_files("teams/*.team");
-for(uint i=0; i<teamfiles.length(); i++)
+if (!file_exists("teams/teams.json")) return;
+file f;
+f.open("teams/teams.json","rb");
+string data = f.read();
+f.close();
+json_array@ json_a = parse_json(data);
+if(@json_a==null) return;
+json_object@ json_o = null;
+try
 {
-load_team(string_trim_right(teamfiles[i],5));
+for(uint i = 0; i < json_a.size(); i++)
+{
+@json_o = json_a[i];
+load_team(json_o["name"]);
+}
+}
+catch
+{
+
 }
 }
 bool is_part_of_team(string playername, string teamname)
@@ -362,6 +407,10 @@ json_o.set("points",teams[i].points);
 json_o.set("teammembers",linear(teams[i].teammembers));
 json_o.set("buffermembers",linear(teams[i].buffermembers));
 json_a.add(json_o);
-json_o.clear();
 }
+if (!directory_exists("teams")) directory_create("teams");
+file f;
+f.open("teams/teams.json","wb");
+f.write(json_a.stringify());
+f.close();
 }

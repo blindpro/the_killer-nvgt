@@ -38,7 +38,7 @@ siren m1(id,loop,x,y,z,map,owner);
 sirens.insert_last(m1);
 for(uint i=0; i<players.length (); i++)
 {
-if(players[i].name!=owner) send_reliable(players[i].peer_id,"createsiren "+id+" "+loop+" "+x+" "+y+" "+z+" "+map,4);
+if(players[i].name!=owner) send_reliable(players[i].peer_id,"createsiren|"+id+"|"+loop+"|"+x+"|"+y+"|"+z+"|"+map,4);
 }
 return id;
 }
@@ -51,7 +51,7 @@ if(sirens[i].id==id)
 sirens[i].updateme(x,y,z);
 for(uint j=0; j<players.length (); j++)
 {
-if(players[j].name!=sirens[i].owner) send_unreliable(players[j].peer_id,"updatesiren "+id+" "+x+" "+y+" "+z,4);
+if(players[j].name!=sirens[i].owner) send_unreliable(players[j].peer_id,"updatesiren|"+id+"|"+x+"|"+y+"|"+z,4);
 }
 }
 }
@@ -73,7 +73,7 @@ for(uint i=0; i<sirens.length (); i++)
 {
 if(sirens[i].id==id)
 {
-send_reliable(0,"destroysiren "+id,4);
+send_reliable(0,"destroysiren|"+id,4);
 sirens.remove_at(i);
 continue;
 }
