@@ -70,10 +70,10 @@ else
 netsetup=n.setup_server(port, 200, 500);
 init_mapsystem();
 data_read();
-load_sell();
 load_compids();
 load_all_teams();
 load_changes();
+if(file_exists("prefs/shipments.svr")) load_shipments();
 string[] stuff=find_files("shelters/*.shelter");
 if(stuff.length () >0)
 for(uint i=0; i<stuff.length(); i++)
@@ -591,6 +591,23 @@ players[index].playsound("ammo_box");
 send_reliable(players[index].peer_id,"The pack contained "+h+" "+p[0]+" ammo!",2);
 players[index].give("ammo_"+p[0],h);
 players[index].give("empty_pack", 1);
+}
+if(string_left(wname,9)=="shipment_")
+{
+string s=string_trim_left(wname,9);
+int sid=get_shipment_item_index_from(s);
+if(sid<0)
+{
+send_reliable(players[index].peer_id,"Invalid shipment ID!",2);
+players[index].give(wname,-1);
+return;
+}
+string psend="Shipment contains "+shipment_items[sid].list_contents();
+shipment_items[sid].give_to(players[index].name);
+players[index].give(wname,-1);
+players[index].give("empty_pack", 1);
+players[index].playsound("packopen");
+send_reliable(players[index].peer_id, psend, 2);
 }
 if(string_left(wname,5)=="ammo_")
 {
@@ -2964,6 +2981,7 @@ remgunloop ();
 remote_timebombloop ();
 timebombloop ();
 treeloop ();
+shipmentloop();
 ultrabombloop ();
 vloop ();
 vendingloop ();
@@ -2993,6 +3011,7 @@ scd(i);
 team_save();
 saveshelters();
 data_save();
+save_shipments();
 }
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {

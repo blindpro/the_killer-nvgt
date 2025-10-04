@@ -2,3 +2,31 @@ int stn (string number)
 {
 	return string_to_number (number);
 }
+string convert_to_list(string[] arr)
+{
+string list;
+if(arr.length()==0) return "";
+if(arr.length()==1) return arr[0];
+for(uint i=0; i<arr.length(); i++)
+{
+if(i==arr.length()-1)
+list+=" and "+arr[i];
+else
+list+=arr[i]+", ";
+}
+return list;
+}
+string convert_to_list(int[] arr)
+{
+string list;
+if(arr.length()==0) return "";
+if(arr.length()==1) return arr[0];
+for(uint i=0; i<arr.length(); i++)
+{
+if(i==arr.length()-1)
+list+=" and "+arr[i];
+else
+list+=arr[i]+", ";
+}
+return list;
+}
