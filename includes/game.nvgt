@@ -18,6 +18,7 @@ in_game = true;
 in_game1 = true;
 enable_input ();
 @t_net_loop = async<int> (net_loop);
+if(profiler) start_profiling();
 while (loop)
 {
 wait (5);
@@ -492,7 +493,7 @@ if(firing) firing=false;
 if(importbufferlogs==1) export_all_buffers();
 frozen=false;
 can_move=true;
-//if(net_debug) file_put_contents("packets.log",packetlog,255);
+if(net_debug) put_file_contents("packets.log",packetlog,true);
 fade_all(p,distpool,shdistpool,mpool,sourcepool,objpool,tp);
 destroy_all_msounds();
 destroy_all_sirens();
@@ -510,7 +511,7 @@ focuseditem="";
 if(pinging) pinging = false;
 if(dmoving) dmoving = false;
 reset_network();
-//if(profiler) generate_profile((beta==true ? "beta_profile.log" : "profile.log"));
+if(profiler) print_profile();
 disable_input();
 while(t_net_loop.complete == false)
 {
@@ -673,4 +674,12 @@ if(heartsoundtimer.elapsed>=currenthealth/5+50)
 heartsoundtimer.restart();
 p.play_stationary("heartbeat.ogg",false);
 }
+}
+void print_profile()
+{
+file f;
+f.open((beta == true ? "beta_profile.log" : "profile.log"),"w");
+f.write(generate_profile());
+stop_profiling();
+reset_profiler();
 }

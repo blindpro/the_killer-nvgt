@@ -4,3 +4,5 @@ server/shelters
 server/logs
 logs
 sounds.dat
+profile.log
+packets.log
