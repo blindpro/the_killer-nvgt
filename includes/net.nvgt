@@ -534,6 +534,7 @@ else if(parsed[0]=="mapname")
 {
 mapname=string_replace(s,"mapname|","",false);
 msound_map_update ();
+siren_map_update();
 }
 else if(parsed[0]=="m_data")
 {
