@@ -79,6 +79,34 @@ t_net_loop_mutex.unlock();
 checkarroundmenu();
 t_net_loop_mutex.lock(1000);
 }
+if(shift_is_down() and alt_is_down()==false)
+{
+if(key_pressed(KEY_RETURN))
+{
+if (focuseditem!="" and can_move==true)
+{
+send_reliable(0, "use|"+focuseditem, 0);
+}
+else
+speak ("Error: could not activate item!");
+}
+else if(key_pressed(KEY_COMMA))
+{
+topbufferitem();
+}
+else if(key_pressed(KEY_PERIOD))
+{
+bottombufferitem();
+}
+else if(key_pressed(KEY_LBRACKET))
+{
+firstbuffer();
+}
+else if(key_pressed(KEY_RBRACKET))
+{
+lastbuffer();
+}
+}
 if(inve)
 {
 if(key_pressed(KEY_SPACE)) send_reliable(0,"command|firegun",0);
@@ -244,18 +272,6 @@ jumpup=1;
 jumplandz=me.z;
 }
 }
-else if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
-{
-if(key_pressed(KEY_RETURN))
-{
-if (focuseditem!="" and can_move==true)
-{
-send_reliable(0, "use|"+focuseditem, 0);
-}
-else
-speak ("Error: could not activate item!");
-}
-}
 else if(key_pressed(KEY_RETURN))
 {
 send_reliable(0, "enter", 0);
@@ -263,47 +279,19 @@ doorcheck();
 }
 else if(key_pressed(KEY_COMMA))
 {
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
-{
-topbufferitem();
-}
-else
-{
 prevbufferitem();
-}
 }
 else if(key_pressed(KEY_PERIOD))
 {
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
-{
-bottombufferitem();
-}
-else
-{
 nextbufferitem();
-}
 }
 else if(key_pressed(KEY_LBRACKET))
 {
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
-{
-firstbuffer();
-}
-else
-{
 bufferleft();
-}
 }
 else if(key_pressed(KEY_RBRACKET))
 {
-if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))
-{
-lastbuffer();
-}
-else
-{
 bufferright();
-}
 }
 /*
 else if(key_down(KEY_LSHIFT)||key_down(KEY_RSHIFT))

@@ -377,6 +377,10 @@ else if(parsed[0]=="invstring")
 inv=string_decompress(string_trim_left(s, 10));
 invchanged=true;
 }
+else if (parsed[0]=="inv" and parsed.length()>=3)
+{
+send_reliable(0,s,0);
+}
 else if(parsed[0]=="offline" and parsed.length()>1)
 {
 if(parsed[4]==name)
