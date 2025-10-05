@@ -6,3 +6,5 @@ logs
 sounds.dat
 profile.log
 packets.log
+server/packets.log
+server/profile.log

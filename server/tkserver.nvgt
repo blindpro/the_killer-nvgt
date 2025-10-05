@@ -35,7 +35,7 @@ int auctionamount;
 int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
-string minverstring="1.93.9";
+string minverstring="1.94.0";
 void main()
 {
 if(!SCRIPT_COMPILED)
