@@ -23,6 +23,7 @@ int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
 int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=0;
+timer uptimer, accumulated_uptimer;
 timer gifttimer;
 int gifting = 1;
 string[] gifts;
@@ -36,6 +37,9 @@ int auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
 string minverstring="1.94.0";
+int activations = 0;
+int peak = 0;
+string peakreached;
 void main()
 {
 if(!SCRIPT_COMPILED)
@@ -118,6 +122,12 @@ void net_loop ()
 //while (true)
 //{
 //wait (1);
+if(players.length()>peak)
+{
+peak=players.length();
+send_reliable(0,"notify|we have reached a new peak of "+peak+" players!",0);
+peakreached=get_date(true,false)+" at "+get_time();
+}
 network_event e = n.request();
 //mutex_lock(t_net_loop_mutex);
 string s;
@@ -617,6 +627,18 @@ else
 send_reliable(players[index].peer_id,"The "+parsed[1]+" does not take ammo",0);
 }
 }
+else if(parsed[0]=="uptime")
+{
+send_reliable(e.peer_id,"The server has been up for "+ms_to_readable_time(uptimer.elapsed),0);
+}
+else if(parsed[0]=="serverstats")
+{
+string received=convert_size(n.bytes_received);
+string sent=convert_size(n.bytes_sent);
+string totalreceived=convert_size(n.bytes_sent+n.bytes_received);
+int peers=n.get_peer_list().length();
+send_reliable(e.peer_id,"Version "+version+". Stats: There are "+peers+" connected peers, with "+received+" received, and "+sent+" sent, total: "+totalreceived+". There are a total of "+activations+" activated paid items so far! Peak: "+peak+". Reached on: "+peakreached+". Item stats: "+objgrabs+" items grabbed, and "+objspawns+" items spawned. Connection stats: "+connections+" connections, and "+disconnections+" disconnections",2);
+}
 else if(parsed[0]=="insertamount" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -648,6 +670,32 @@ vending_machines[v].vplay("insert");
 vending_machines[v].coins+=amount;
 players[index].give("coin", -amount);
 }
+}
+}
+else if(parsed[0]=="lchannel")
+{
+server_menu menu;
+menu.intro="Select a new language channel";
+menu.initial_packet="lchannelset";
+string[] lc=string_split(file_get_contents("prefs/language_channels.svr"),"\r\n",false);
+for(uint i=0; i<lc.length(); i+=1)
+{
+menu.add(lc[i],lc[i]);
+}
+menu.send(e.peer_id);
+}
+else if(parsed[0]=="lchannelset" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="back")
+{
+players[index].sendpacket("canceled", 0);
+return;
+}
+players[index].langchan=parsed[1];
+players[index].sendpacket("Using "+players[index].langchan+" as the new language channel",0);
 }
 }
 else if(parsed[0]=="remgunidset" and parsed.length()>1)

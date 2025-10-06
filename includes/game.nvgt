@@ -361,12 +361,24 @@ readmessages=0;
 }
 data_save();
 }
+else if(key_pressed(KEY_F6))
+{
+send_reliable(0,"serverstats",0);
+}
+else if(key_pressed(KEY_F7))
+{
+send_reliable(0,"uptime",0);
+}
 else if(key_pressed(KEY_F9))
 {
 string received=convert_size(n.bytes_received);
 string sent=convert_size(n.bytes_sent);
 string totalnstats=convert_size(n.bytes_sent+n.bytes_received);
 speak("You have received "+received+" of data. You have sent "+sent+" of data, adding up to a total of "+totalnstats+". Total map loading time: "+maploadtimer.elapsed+" ms");
+}
+else if(key_pressed(KEY_F10))
+{
+send_reliable(0,"lchannel",0);
 }
 else if (key_down(KEY_G))
 {
