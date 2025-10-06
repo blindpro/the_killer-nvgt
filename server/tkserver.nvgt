@@ -419,6 +419,159 @@ players[index].vo("outofammo");
 }
 }
 }
+else if(parsed[0]=="shstoragecommand" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s>-1)
+{
+string command=get_event_message(e.message).replace("shstoragecommand|","",false);
+shelters[s].storage_command(command,e.peer_id);
+}
+}
+}
+else if(parsed[0]=="shtake" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(in_shelter(players[index].name)<0)
+{
+send_reliable(players[index].peer_id,"An internal error happened. Sorry",0);
+return;
+}
+if(parsed[1]=="back")
+{
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+if(parsed[1]=="invall")
+{
+int s=in_shelter(players[index].name);
+string invstring=shelters[s].invdic_to_string();
+if(invstring=="")
+{
+send_reliable(players[index].peer_id,"nothing to take",0);
+return;
+}
+string[] invarray=delinear(invstring);
+for(uint i=0; i<invarray.length(); i++)
+{
+string[] ite=string_split(invarray[i],"=",false);
+players[index].give(ite[0],stn(ite[1]));
+shelters[s].give(ite[0],-stn(ite[1]));
+}
+players[index].playsound("shelter_storage_take");
+return;
+}
+players[index].shitem=parsed[1];
+send_serverbox(players[index].peer_id,1,2,0,-1,"shtakenow","How many "+players[index].shitem+"s would you like to take from the shelter");
+}
+}
+else if(parsed[0]=="shgivenow" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+int index2=in_shelter(players[index].name);
+if(index<0 or index2<0)
+{
+send_reliable(e.peer_id,"An internal error happened. Sorry about this",0);
+return;
+}
+if(string_contains(parsed[1],"[cncel]",1)>-1)
+{
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+int amount=stn(parsed[1]);
+if(amount<=0)
+{
+send_reliable(players[index].peer_id,"At least 1 item must be deposited!",0);
+return;
+}
+int has=players[index].get_item_count(players[index].shitem);
+if(has<amount)
+{
+send_reliable(players[index].peer_id,"Error: You do not have enough "+players[index].shitem+"s!",0);
+return;
+}
+else
+{
+players[index].give(players[index].shitem,-amount);
+shelters[index2].give(players[index].shitem,amount);
+players[index].playsound("shelter_storage_give");
+send_reliable(players[index].peer_id,"You put "+amount+" "+players[index].shitem+"s inside the shelter's item cabinet",0);
+}
+}
+else if(parsed[0]=="shgive" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(in_shelter(players[index].name)<0)
+{
+send_reliable(players[index].peer_id,"An internal error happened. Sorry",0);
+return;
+}
+if(parsed[1]=="back")
+{
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+if(parsed[1]=="invall")
+{
+int s=in_shelter(players[index].name);
+string invstring=players[index].get_inv();
+string[] invarray=delinear(invstring);
+for(uint i=0; i<invarray.length(); i++)
+{
+string[] ite=string_split(invarray[i],"=",false);
+players[index].give(ite[0],-stn(ite[1]));
+shelters[s].give(ite[0],stn(ite[1]));
+}
+players[index].playsound("shelter_storage_give");
+players[index].inventory.delete_all();
+return;
+}
+players[index].shitem=parsed[1];
+send_serverbox(players[index].peer_id,1,2,0,-1,"shgivenow","How many "+players[index].shitem+"s would you like to store");
+}
+}
+else if(parsed[0]=="shtakenow" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+int index2=in_shelter(players[index].name);
+if(index<0 or index2<0)
+{
+send_reliable(e.peer_id,"An internal error happened. Sorry about this",0);
+return;
+}
+if(string_contains(parsed[1],"[cncel]",1)>-1)
+{
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+int amount=stn(parsed[1]);
+if(amount<=0)
+{
+send_reliable(players[index].peer_id,"At least 1 item must be taken out!",0);
+return;
+}
+int has=shelters[index2].get_item_count(players[index].shitem);
+if(has<amount)
+{
+send_reliable(players[index].peer_id,"Error: This shelter  does not have enough "+players[index].shitem+"s!",0);
+return;
+}
+else
+{
+players[index].give(players[index].shitem,amount);
+shelters[index2].give(players[index].shitem,-amount);
+players[index].playsound("shelter_storage_take");
+send_reliable(players[index].peer_id,"You take "+amount+" "+players[index].shitem+"s out of the shelter's item cabinet",0);
+}
+}
 else if(parsed[0]=="codeclick")
 {
 int index=get_player_index(e.peer_id);
@@ -464,6 +617,39 @@ else
 send_reliable(players[index].peer_id,"The "+parsed[1]+" does not take ammo",0);
 }
 }
+else if(parsed[0]=="insertamount" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id, "canceled", 0);
+return;
+}
+int s=in_shelter(players[index].name);
+int v=get_vending_index(players[index].x, players[index].y, players[index].z, players[index].map);
+int amount=stn(parsed[1]);
+if(players[index].get_item_count("coin")<amount)
+{
+send_reliable(players[index].peer_id, "not enough money", 0);
+return;
+}
+if(v<0 and s<0) return;
+if(s>-1)
+{
+shelters[s].compplay("ultrabombcoinadd");
+shelters[s].coins+=amount;
+players[index].give("coin", -amount);
+}
+else if(v>-1)
+{
+vending_machines[v].vplay("insert");
+vending_machines[v].coins+=amount;
+players[index].give("coin", -amount);
+}
+}
+}
 else if(parsed[0]=="remgunidset" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -482,6 +668,310 @@ return;
 players[index].remgunid=stn(parsed[1]);
 players[index].playsound("remgun_connect");
 send_serverbox(players[index].peer_id,0,-1,1,1,"remguncommand","Connected! What would you like to do? Press H for help");
+}
+}
+else if(parsed[0]=="shcommand" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s>-1)
+{
+string command=get_event_message(e.message).replace("shcommand|","",false);
+shelters[s].command(command,e.peer_id);
+}
+}
+}
+else if(parsed[0]=="shsendstore")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1 and in_shelter(players[index].name)>-1)
+{
+if(parsed[1]=="back")
+{
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", "you exit the store screen. \r\nwhat would you like to do?");
+return;
+}
+else if(parsed[1]=="shoppingcart")
+{
+string cart_items;
+int s=in_shelter(players[index].name);
+if(s>-1)
+{
+string[] temp=shelters[s].shopping_cart.get_keys();
+for(int i=0; i<temp.length(); i++)
+{
+cart_items+=shelters[s].get_cart_item_amount(temp[i])+" "+temp[i]+". costs "+get_shelter_price(temp[i], shelters[s].get_cart_item_amount(temp[i]))+" coins.:"+temp[i]+"[]";
+}
+cart_items+="total price is "+shelters[s].get_total_cart_price()+" coins. press enter to checkout:checkout[]";
+send_menu(players[index].peer_id, "shopping cart menu", "shcartaction", cart_items);
+}
+}
+else
+{
+int si=get_store_index_from(parsed[1]);
+if(si>-1) stores[si].send(players[index].peer_id, "shcartadding", true);
+}
+}
+}
+else if(parsed[0]=="shcartaction")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1 and in_shelter(players[index].name)>-1)
+{
+int s=in_shelter(players[index].name);
+if(parsed.length()<3 and parsed[1]=="back" or parsed.length()>=3 and parsed[2]=="[cncel]")
+{
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", "operation canceled. \r\nwhat would you like to do?");
+return;
+}
+if(parsed[1]=="checkout" and s>-1) shelters[s].checkout(players[index].peer_id);
+else
+{
+if(parsed.length()<3)
+{
+send_serverbox(players[index].peer_id, 2, -1, -1, -1, "shcartaction "+parsed[1], "how much of "+parsed[1]+"do you want to remove");
+return;
+}
+else
+{
+int amount=stn(parsed[2]);
+if(amount>shelters[s].get_cart_item_amount(parsed[1]))
+{
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", "you don't have that many of this item on your shopping cart. \r\nwhat would you like to do now?");
+return;
+}
+string result;
+if(amount==shelters[s].get_cart_item_amount(parsed[1]))
+{
+result+="you removed the hole set of "+parsed[1]+"s from the shopping cart";
+}
+else
+{
+result+="you removed "+amount+" "+parsed[1];
+if(amount>1) result+="s";
+result+=" from the shopping cart.";
+}
+shelters[s].add_to_cart(parsed[1], -amount);
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", result+"\r\nwhat would you like to do now?");
+}
+}
+}
+}
+else if(parsed[0]=="shcartadding")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1 and in_shelter(players[index].name)>-1)
+{
+if(parsed[1]=="back")
+{
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", "canceled. \r\nwhat would you like to do?");
+return;
+}
+send_serverbox(players[index].peer_id, 2, -1, -1, -1, "shcartadded "+parsed[1], "how much of this item do you want to add?");
+}
+}
+else if(parsed[0]=="shcartadded")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s>-1)
+{
+if(parsed[2]!="[cncel]")
+{
+shelters[s].add_to_cart(parsed[1], stn(parsed[2]));
+int num=stn(parsed[2]);
+string result=parsed[2]+" "+parsed[1];
+if(num>2) result+="s";
+result+=" have been added to the shopping cart";
+send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", result+"\r\nwhat would you like to do now?");
+}
+else
+{
+send_reliable(players[index].peer_id, "operation canceled", 0);
+return;
+}
+}
+}
+}
+else if(parsed[0]=="shmoneycommand" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s>-1)
+{
+string command=get_event_message(e.message).replace("shmoneycommand|","",false);
+shelters[s].sh_money_command(command,e.peer_id);
+}
+}
+}
+else if(parsed[0]=="shsendmoneyrequest" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s<0)
+{
+send_reliable(players[index].peer_id,"An internal server error happened. Please try your request again",0);
+return;
+}
+if(stn(parsed[1])==shelters[s].compcode)
+{
+string stuff="Enter shelter ID";
+send_serverbox(players[index].peer_id,1,-1,0,-1,"shsendmoney",stuff);
+return;
+}
+else
+{
+shelters[s].compplay("shelter_computererror");
+string information="Incorrect code";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+}
+}
+}
+else if(parsed[0]=="shmoneycashout" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(s<0)
+{
+send_reliable(players[index].peer_id,"An internal server error happened. Please try your request again",0);
+return;
+}
+if(stn(parsed[1])==shelters[s].compcode)
+{
+string stuff="enter amount of coins you want to take out. Amount of coins in the computer: "+shelters[s].coins;
+send_serverbox(players[index].peer_id,2,-1,0,-1,"shcashid",stuff);
+return;
+}
+else
+{
+shelters[s].compplay("shelter_computererror");
+string information="Incorrect code";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+}
+}
+}
+else if(parsed[0]=="shcashid" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+string stuff="canceled";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
+return;
+}
+int s=in_shelter(players[index].name);
+if(s<0)
+{
+send_reliable(players[index].peer_id,"Sorry, an internal error happened",0);
+return;
+}
+double amount=stn(parsed[1]);
+if(amount<0)
+{
+string stuff="Sorry, can't enter negative values";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
+return;
+}
+if(shelters[s].coins<amount)
+{
+string stuff="Error: this shelter does not have the required funds to do this operation";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
+return;
+}
+string stuff="Success! Select an option";
+send_serverbox(e.peer_id,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
+//spawn_timeitem(3,3,0,shelters[s].sheltername,"coin",amount);
+players[index].give("coin", amount);
+shelters[s].coins-=amount;
+}
+}
+else if(parsed[0]=="shsendmoney" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+string information="canceled";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+return;
+}
+int sh=get_shelter_from_id(parsed[1]);
+if(sh<0)
+{
+string information="Error! ID not valid";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+return;
+}
+else
+{
+send_serverbox(players[index].peer_id,1,2,0,-1,"shsendnow|"+parsed[1],"Enter amount of coins you want to send to this shelter");
+}
+}
+}
+else if(parsed[0]=="shsendnow" and parsed.length()>2)
+{
+if(get_player_index(e.peer_id)>-1)
+{
+int index=get_player_index(e.peer_id);
+if(parsed[2]=="[cncel]")
+{
+string information="canceled.";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+"\r\nwhat would you like to do");
+return;
+}
+string id=parsed[1];
+double amount=stn(parsed[2]);
+int s=in_shelter(players[index].name);
+if(s<0)
+{
+send_reliable(players[index].peer_id,"An internal error happened. Please try your request again",0);
+return;
+}
+else
+{
+if(amount<0)
+{
+shelters[s].compplay("shelter_computererror");
+string information="Can not send a negative amount!";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+"\r\nwhat would you like to do");
+return;
+}
+if(shelters[s].coins<amount)
+{
+shelters[s].compplay("shelter_computererror");
+string information="Sorry, this shelter does not have the amount requested";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+return;
+}
+int s2=get_shelter_from_id(id);
+if(s2<0)
+{
+shelters[s].compplay("shelter_computererror");
+string information="No matching shelters with ID "+id;
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+".\r\nwhat would you like to do");
+return;
+}
+shelters[s].compplay("shelter_money_transfer_sent");
+shelters[s2].compplay("shelter_money_transfer_receive");
+string information="Transaction completed! Thank you for using SH pay 0.2.4!";
+send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+"\r\nwhat would you like to do");
+shelters[s].coins-=amount;
+shelters[s2].coins+=amount;
+return;
+}
 }
 }
 else if(parsed[0]=="shelterfix" and parsed.length()>1)
@@ -819,6 +1309,66 @@ send_reliable(players[index].peer_id,"stopmoving",0);
 players[index].rmtimer.restart();
 players[index].remconnecting=true;
 play("remgun_place",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="coin")
+{
+/*
+int j=get_jplayer_index(round(players[index].x,0), players[index].y,players[index].z,players[index].map);
+if(j>-1)
+{
+if(jplayers[j].jstarted==true)
+{
+send_reliable(players[index].peer_id,"already in use",0);
+return;
+}
+else
+{
+takeobj=true;
+jplayers[j].coins+=1;
+jplayers[j].start();
+players[index].playsound("ultrabombcoinadd");
+}
+}
+*/
+int vending=get_vending_index(players[index].x,players[index].y,players[index].z,players[index].map);
+if(vending>-1)
+{
+send_serverbox(players[index].peer_id, 2, -1, -1, -1, "insertamount", "how many coins do you want to insert into this vending machine?");
+}
+if(in_shelter(players[index].name)>-1)
+{
+if(players[index].x==0 and players[index].y==4 and players[index].z==0)
+{
+send_serverbox(players[index].peer_id, 2, -1, -1, -1, "insertamount", "how many coins do you want to add to this shelter?");
+}
+}
+bool hasu=false;
+string[] ultrabombset;
+takeobj=false;
+for(uint i=0; i<ultrabombs.length(); i++)
+{
+if(ultrabombs[i].x==round(players[index].x,0) and ultrabombs[i].y==round(players[index].y, 0) and ultrabombs[i].z==players[index].z and players[index].map==ultrabombs[i].map and ultrabombs[i].coins<50)
+{
+ultrabombset.insert_last(ultrabombs[i].id);
+hasu=true;
+}
+}
+if(hasu==true)
+{
+takeobj=true;
+for(uint j=0; j<ultrabombset.length(); j++)
+{
+for(uint j2=0; j2<ultrabombs.length(); j2++)
+{
+if(ultrabombs[j2].id==ultrabombset[j])
+{
+ultrabombs[j2].coins+=1;
+ultrabombs[j2].owner=players[index].name;
+play("ultrabombcoinadd",ultrabombs[j2].x,ultrabombs[j2].y,ultrabombs[j2].z,ultrabombs[j2].map);
+}
+}
+}
+}
 }
 else if(wname=="beer_bottle")
 {
@@ -3103,6 +3653,7 @@ impactbombloop ();
 wirebombloop ();
 mineloop();
 motionbombloop();
+timeitemloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
