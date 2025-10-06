@@ -13,6 +13,11 @@ js.set ("currently_output_device",currently_output_device);
 js.set ("speakonlinemsgs",speakonlinemsgs);
 js.set ("importbufferlogs",importbufferlogs);
 js.set ("rcontrol",rcontrol);
+js.set ("tts_default_voice",tts.voice);
+js.set ("tts_default_rate",tts.rate);
+js.set ("tts_default_volume",tts.volume);
+js.set ("use_screen_reader",use_sr);
+js.set("speak_interrupt",tts_default_interrupt);
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -50,6 +55,11 @@ currently_output_device = js["currently_output_device"];
 speakonlinemsgs = js["speakonlinemsgs"];
 importbufferlogs = js["importbufferlogs"];
 rcontrol = js["rcontrol"];
+tts.set_voice(js["tts_default_voice"]);
+tts.set_rate(js["tts_default_rate"]);
+tts.set_volume(js["tts_default_volume"]);
+use_sr = js["use_screen_reader"];
+tts_default_interrupt = js["speak_interrupt"];
 }
 catch 
 {
