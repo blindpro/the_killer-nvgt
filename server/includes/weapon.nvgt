@@ -268,7 +268,6 @@ play("stun_dartdrop",weapons[j].x,weapons[j].y,weapons[j].z,weapons[j].map);
 weapons.remove_at(j);
 break;
 }
-/*
 else if(weapons[j].type=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,"");
@@ -276,7 +275,6 @@ spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 weapons.remove_at(j);
 break;
 }
-*/
 else if(weapons[j].type=="grenade")
 {
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
@@ -324,7 +322,6 @@ if(@weapons[j].p!=null)
 if(string_left(get_tile_at(rx,ry,weapons[j].z,weapons[j].map),4)=="wall" or rx>weapons[j].maxcoords.x or ry>weapons[j].maxcoords.y or rx<0 or ry<0)
 {
 if(weapons[j].bullet) play("rico"+random(1, 5), rx, ry, weapons[j].z, weapons[j].map);
-/*
 else if(weapons[j].type=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,"");
@@ -332,7 +329,6 @@ spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 weapons.remove_at(j);
 continue;
 }
-*/
 else if(weapons[j].type=="grenade")
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
@@ -377,12 +373,10 @@ players[x].stun(weapons[j].stuntime,false,false);
 players[x].hitby=weapons[j].p.name+"'s "+weapons[j].type;
 if(weapons[j].type=="artillery") players[x].hitby=weapons[j].p.name+"'s tank";
 }
-/*
 else if(weapons[j].type=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,players[x].name);
 }
-*/
 if(weapons[j].type=="grenade")
 {
 spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);

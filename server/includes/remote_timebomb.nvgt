@@ -33,7 +33,7 @@ if (remote_timebombs[i].seconds<=0)
 play("remote_timebombexplode",remote_timebombs[i].x,remote_timebombs[i].y,remote_timebombs[i].z,remote_timebombs[i].map);
 //if(remote_timebombs[i].r==2)
 //spawn_fire(remote_timebombs[i].x,remote_timebombs[i].y,remote_timebombs[i].z,remote_timebombs[i].map,random(400,700));
-send_reliable(0,"distsound remote_timebombexplode_dist "+remote_timebombs[i].x+" "+remote_timebombs[i].y+" "+remote_timebombs[i].z+" "+remote_timebombs[i].map,0);
+send_reliable(0,"distsound|remote_timebombexplode_dist|"+remote_timebombs[i].x+"|"+remote_timebombs[i].y+"|"+remote_timebombs[i].z+"|"+remote_timebombs[i].map,0);
 for(uint i2=0; i2<impact_bombs.length(); i2++)
 {
 if(get_3d_distance(impact_bombs[i2].x,impact_bombs[i2].y,impact_bombs[i2].z,remote_timebombs[i].x,remote_timebombs[i].y,remote_timebombs[i].z)<=30 and impact_bombs[i2].map==remote_timebombs[i].map)

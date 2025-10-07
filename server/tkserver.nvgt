@@ -639,6 +639,49 @@ string totalreceived=convert_size(n.bytes_sent+n.bytes_received);
 int peers=n.get_peer_list().length();
 send_reliable(e.peer_id,"Version "+version+". Stats: There are "+peers+" connected peers, with "+received+" received, and "+sent+" sent, total: "+totalreceived+". There are a total of "+activations+" activated paid items so far! Peak: "+peak+". Reached on: "+peakreached+". Item stats: "+objgrabs+" items grabbed, and "+objspawns+" items spawned. Connection stats: "+connections+" connections, and "+disconnections+" disconnections",2);
 }
+else if(parsed[0]=="rbomb" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id,"canceled",0);
+return;
+}
+players[index].rbombs+=1;
+players[index].give("remote_timebomb", -1);
+place_remote_timebomb(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name,stn(parsed[1]));
+send_reliable(players[index].peer_id,"Bomb placed at "+players[index].x+" "+players[index].y+" "+players[index].z+" with code "+parsed[1],2);
+}
+}
+else if(parsed[0]=="rtdcode" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id,"Canceled!",0);
+return;
+}
+int code=stn(parsed[1]);
+int exploded=0;
+send_reliable(players[index].peer_id,"Searching...",0);
+play("remote_timebombcode",players[index].x,players[index].y,players[index].z,players[index].map);
+for(uint i=0; i<remote_timebombs.length(); i++)
+{
+if(remote_timebombs[i].code==code)
+{
+exploded++;
+remote_timebombs[i].bombtimer.restart();
+remote_timebombs[i].d=true;
+play("remote_timebombcharge",remote_timebombs[i].x,remote_timebombs[i].y,remote_timebombs[i].z,remote_timebombs[i].map);
+}
+}
+send_reliable(players[index].peer_id,exploded+" detenated!",0);
+}
+}
 else if(parsed[0]=="insertamount" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -1236,6 +1279,10 @@ takeobj = true;
 }
 //else takeobj=false;
 }
+else if(wname=="remote_timebomb_controller")
+{
+send_serverbox(players[index].peer_id,2,-1,1,-1,"rtdcode","Enter the code for the remote timebomb or remote timebombs. Note: all bombs with this code will be detenated!");
+}
 else if(wname=="motion_bomb")
 {
 if(players[index].mbombtimer.elapsed<1000)
@@ -1281,6 +1328,12 @@ vs[v].fuel=100;
 takeobj=true;
 }
 }
+}
+else if(wname=="sticky_bomb")
+{
+takeobj = true;
+play("stickybombthrow",players[index].x,players[index].y,players[index].z,players[index].map);
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
 }
 else if(wname=="fire_extinguisher")
 {
@@ -1445,6 +1498,23 @@ players[index].playsound("beerdrink");
 players[index].beerswigs+=1;
 players[index].drunkstage+=random(3,9);
 }
+else if(wname=="remote_timebomb")
+{
+if(players[index].rbombs>=players[index].rbomblimit)
+{
+takeobj=false;
+send_reliable(players[index].peer_id,"Uh, don't go too crazy with these!",0);
+return;
+}
+else
+{
+if(players[index].map!="store")
+{
+send_serverbox(players[index].peer_id,2,-1,1,-1,"rbomb","Enter the code you would like this bomb to have");
+}
+else takeobj=false;
+}
+}
 else if(wname=="impact_bomb" and players[index].map!="store")
 {
 takeobj=true;
@@ -1512,6 +1582,30 @@ play("grenadethrow",players[index].x,players[index].y,players[index].z,players[i
 spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
 players[index].grenadetimer.restart();
 }
+}
+else if(wname=="security_bomb"&&players[index].sbombplacing==false)
+{
+string tile=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
+if(tile=="" and in_shelter(players[index].name)<0)
+{
+send_reliable(players[index].peer_id,"You can't do this in the air!",0);
+takeobj=false;
+return;
+}
+for(uint i=0; i<security_bombs.length(); i++)
+{
+if(security_bombs[i].x==players[index].x&&security_bombs[i].y==players[index].y&&security_bombs[i].z==players[index].z&&security_bombs[i].map==players[index].map)
+{
+send_reliable(players[index].peer_id,"there is already a security bomb here. No point in wasting such powerful things on only one square",0);
+takeobj=false;
+return;
+}
+}
+send_reliable(players[index].peer_id,"stopmoving",0);
+players[index].playsound("security_bombplace");
+players[index].sbombtimer.restart();
+players[index].sbombplacing=true;
+takeobj = true;
 }
 else if(wname=="ultrabomb")
 {
@@ -2455,7 +2549,6 @@ else if(parsed[0]=="jump")
 int index=get_player_index(e.peer_id);
 if(index > -1)
 {
-/*
 int r=random(0,50);
 if(r>=45)
 {
@@ -2466,7 +2559,6 @@ stickybombs[sticky].stickyplayer="";
 players[index].playsound("stickybombunstick");
 }
 }
-*/
 if(players[index].hidden==0) send_reliable(0,"jump|"+players[index].name+"|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map, 0, index);
 }
 }
@@ -3775,6 +3867,8 @@ wirebombloop ();
 mineloop();
 motionbombloop();
 timeitemloop();
+sbombloop();
+stickybombloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);

@@ -48,3 +48,5 @@
 #include "mserver.nvgt"
 #include "shipment.nvgt"
 #include "sizer.nvgt"
+#include "sec_bomb.nvgt"
+#include "stickybomb.nvgt"

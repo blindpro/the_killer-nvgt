@@ -863,7 +863,6 @@ send_reliable(0,"notify|"+players[i].nickname+" is no longer a newbie!",0);
 log("eventstream","server notification: "+players[i].nickname+" is no longer a newbie!");
 file_delete("chars/"+players[i].name+"/newb.usr");
 }
-//开始
 if(players[i].following!="")
 {
 int ind=get_player_index_from(players[i].following);
@@ -909,13 +908,12 @@ players[i].sbombplacing=false;
 players[i].sbombtimer.pause();
 send_reliable(players[i].peer_id,"Done!",0);
 send_reliable(players[i].peer_id,"startmoving",0);
-//spawn_security_bomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
+spawn_security_bomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
 if(players[i].shieldshots<0)
 {
 players[i].shieldshots=0;
 }
-//结束
 if(players[i].health!=players[i].oldhealth)
 {
 players[i].statchangetimer.restart();
