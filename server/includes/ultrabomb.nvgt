@@ -49,7 +49,7 @@ if(ultrabombs[i].coins>=50)
 {
 play("remote_timebombcode",ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z,ultrabombs[i].map);
 ultrabombs[i].readyd=true;
-sendint("speak your ultrabomb is ready to go! Just get out of range so I can start my countdown!",ultrabombs[i].owner);
+sendint("speak|your ultrabomb is ready to go! Just get out of range so I can start my countdown!",ultrabombs[i].owner);
 }
 }
 if(ultrabombs[i].readyd and ultrabombs[i].ownerrange)
@@ -68,7 +68,7 @@ play("ultrabombstart",ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z,ultrabombs
 playint("ultrabombstart",ultrabombs[i].owner);
 destroy_moving_sound(ultrabombs[i].loopid);
 if(!ultrabombs[i].silenced) play("ultrabombgenerator_off",ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z,ultrabombs[i].map);
-sendint("speak ultrabomb countdown started!",ultrabombs[i].owner);
+sendint("speak|ultrabomb countdown started!",ultrabombs[i].owner);
 ultrabombs[i].bombtimer.restart();ultrabombs[i].beeptimer.restart();
 ultrabombs[i].ownerrange=false;ultrabombs[i].d=true;
 }
@@ -86,7 +86,7 @@ play("ultrabombbeep",ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z,ultrabombs[
 if (ultrabombs[i].seconds<=0)
 {
 play("ultrabomb",ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z,ultrabombs[i].map);
-send_reliable(0,"distsound ultrabombdist "+ultrabombs[i].x+" "+ultrabombs[i].y+" "+ultrabombs[i].z+" "+ultrabombs[i].map,0);
+send_reliable(0,"distsound|ultrabombdist|"+ultrabombs[i].x+"|"+ultrabombs[i].y+"|"+ultrabombs[i].z+"|"+ultrabombs[i].map,0);
 for (uint i2=0; i2<players.length(); i2++)
 {
 if(players[i2].invinsible==true || players[i2].is_dead==true||in_vehicle(players[i2].name)>-1) continue;

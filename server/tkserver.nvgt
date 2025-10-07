@@ -1513,6 +1513,81 @@ spawn_weapon(players[index].x, players[index].y, players[index].z, players[index
 players[index].grenadetimer.restart();
 }
 }
+else if(wname=="ultrabomb")
+{
+if(in_shelter(players[index].name)>-1 and players[index].x==7 and players[index].y==7 and players[index].z==0)
+{
+send_reliable(players[index].peer_id,"Can not place ultrabombs here",0);
+takeobj=false;
+return;
+}
+string tile=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
+if(tile=="" and in_shelter(players[index].name)<0)
+{
+send_reliable(players[index].peer_id,"You can't do this in the air!",0);
+takeobj=false;
+return;
+}
+
+for(uint u=0; u<ultrabombs.length(); u++)
+{
+if(ultrabombs[u].x==players[index].x and ultrabombs[u].y==players[index].y and ultrabombs[u].z==players[index].z and ultrabombs[u].map==players[index].map)
+{
+send_reliable(players[index].peer_id,"Oops? It seems as though there is already an ultrabomb placed there",0);
+return;
+}
+}
+players[index].ultrabombtimer.restart();
+players[index].ultrabombplacing=true;
+send_reliable(players[index].peer_id,"stopmoving",0);
+players[index].playsound("ultrabombdeploy");
+}
+else if(wname=="ultrabomb_silencer")
+{
+bool hasu=false;
+string[] ultrabombset;
+takeobj=false;
+for(uint i=0; i<ultrabombs.length(); i++)
+{
+if(ultrabombs[i].x==players[index].x and ultrabombs[i].y==players[index].y and ultrabombs[i].z==players[index].z and players[index].map==ultrabombs[i].map and ultrabombs[i].silenced==false and ultrabombs[i].started==true)
+{
+ultrabombset.insert_last(ultrabombs[i].id);
+hasu=true;
+}
+}
+if(hasu==true)
+{
+takeobj=true;
+for(uint j=0; j<ultrabombset.length(); j++)
+{
+for(uint j2=0; j2<ultrabombs.length(); j2++)
+{
+if(ultrabombs[j2].id==ultrabombset[j])
+{
+play("ultrabombgenerator_off",ultrabombs[j2].x,ultrabombs[j2].y,ultrabombs[j2].z,ultrabombs[j2].map);
+destroy_moving_sound(ultrabombs[j2].loopid);
+ultrabombs[j2].silenced=true;
+}
+}
+}
+}
+}
+else if(wname=="ultrabomb_locator")
+{
+send_reliable(players[index].peer_id,"searching...",0);
+string list;
+players[index].playsound("ultrabomblocator");
+for(uint i=0; i<ultrabombs.length(); i++)
+{
+if(ultrabombs[i].owner==players[index].name)
+{
+list+=ultrabombs[i].owner+"'s ultrabomb: "+ultrabombs[i].x+", "+ultrabombs[i].y+", "+ultrabombs[i].z+" on "+ultrabombs[i].map+".\r\n";
+}
+}
+if(list=="")
+list="none";
+send_reliable(players[index].peer_id,"Your ultrabombs: "+list,2);
+}
 else if(wname=="tk_ultra_health_potion")
 {
 if(players[index].statchangetimer.elapsed<60000) return;
@@ -1960,7 +2035,6 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, shelters[i].x, shelters[i].y, players[index].facing))+", "+players[index].distancecheck(shelters[i].x,shelters[i].y,shelters[i].z)+" feet away. ";
 }
 }
-/*
 for (uint i=0; i<vending_machines.length(); i++)
 {
 if (vending_machines[i].x<players[index].x+20 and vending_machines[i].x>players[index].x-20 and vending_machines[i].y<players[index].y+20 and vending_machines[i].y>players[index].y-20 and get_1d_distance(vending_machines[i].z,players[index].z)<=20 and vending_machines[i].map==players[index].map)
@@ -2020,7 +2094,6 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, ultrabombs[i].x, ultrabombs[i].y, players[index].facing))+", "+players[index].distancecheck(ultrabombs[i].x,ultrabombs[i].y,ultrabombs[i].z)+" feet away. ";
 }
 }
-*/
 for (uint i=0; i<objs.length(); i++)
 {
 if (objs[i].x<players[index].x+20 and objs[i].x>players[index].x-20 and objs[i].y<players[index].y+20 and objs[i].y>players[index].y-20 and get_1d_distance(players[index].z,objs[i].z)<=20 and objs[i].map==players[index].map)
@@ -2079,7 +2152,6 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, remguns[i].x, remguns[i].y, players[index].facing))+", "+players[index].distancecheck(remguns[i].x,remguns[i].y,remguns[i].z)+" feet away. ";
 }
 }
-/*
 for (uint i=0; i<remote_timebombs.length(); i++)
 {
 if (remote_timebombs[i].x<players[index].x+20 and remote_timebombs[i].x>players[index].x-20 and remote_timebombs[i].y<players[index].y+20 and remote_timebombs[i].y>players[index].y-20 and get_1d_distance(players[index].z,remote_timebombs[i].z)<=20 and remote_timebombs[i].map==players[index].map)
@@ -2109,6 +2181,7 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, remote_timebombs[i].x, remote_timebombs[i].y, players[index].facing))+", "+players[index].distancecheck(remote_timebombs[i].x,remote_timebombs[i].y,remote_timebombs[i].z)+" feet away. ";
 }
 }
+/*
 for (uint i=0; i<lockers.length(); i++)
 {
 if (lockers[i].x<players[index].x+20 and lockers[i].x>players[index].x-20 and lockers[i].y<players[index].y+20 and lockers[i].y>players[index].y-20 and get_1d_distance(players[index].z,lockers[i].z)<=20 and "store"==players[index].map)

@@ -922,7 +922,6 @@ players[i].statchangetimer.restart();
 players[i].oldhealth=players[i].health;
 if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
 }
-//开始
 if(players[i].ultrabombplacing==true)
 {
 if(players[i].ultrabombtimer.elapsed>=4921)
@@ -930,10 +929,9 @@ if(players[i].ultrabombtimer.elapsed>=4921)
 players[i].ultrabombplacing=false;
 players[i].ultrabombtimer.restart();
 send_reliable(players[i].peer_id,"startmoving",0);
-//spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
+spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
 }
-//结束
 if(players[i].antibioticed==true)
 {
 if(players[i].awarnouttimer.elapsed>=20000)
