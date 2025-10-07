@@ -46,3 +46,5 @@
 #include "vending_machine.nvgt"
 #include "grenade.nvgt"
 #include "mserver.nvgt"
+#include "shipment.nvgt"
+#include "sizer.nvgt"

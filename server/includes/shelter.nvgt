@@ -320,7 +320,7 @@ if(players[px].name!=owner)
 stuff+="Error: you do not have permition to view this information";
 else
 stuff="You're computer code has been copyed to the windows clipboard";
-send_reliable(peer,"clip "+compcode,0);
+send_reliable(peer,"clip|"+compcode,0);
 send_serverbox(peer,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
 }
 else if(parsed[0]=="o")
@@ -337,7 +337,7 @@ else if(parsed[0]=="i")
 {
 string stuff="copied to clipboard";
 send_serverbox(peer,0,-1,1,1,"shmoneycommand",stuff+".\r\nwhat would you like to do");
-send_reliable(peer, "clip "+id, 0);
+send_reliable(peer, "clip|"+id, 0);
 }
 else if(parsed[0]=="[cncel]")
 {
@@ -389,7 +389,6 @@ send_serverbox(peer,0,-1,1,1,"shcommand",stuff+".\r\nwhat would you like to do")
 else if(parsed[0]=="s")
 {
 string storelist;
-/*
 for(int i=0; i<stores.length(); i++)
 {
 storelist+=string_replace(stores[i].name, "_", " ", true)+":"+stores[i].name+"[]";
@@ -397,7 +396,6 @@ storelist+=string_replace(stores[i].name, "_", " ", true)+":"+stores[i].name+"[]
 if(shopping_cart.get_size()>0)
 storelist+="view your shopping cart and checkout:shoppingcart[]";
 send_menu(peer, "stores menu. choose one of the following stores.", "shsendstore", storelist);
-*/
 }
 else if(parsed[0]=="t")
 {
@@ -501,7 +499,7 @@ int get_total_cart_price()
 int final=0;
 for(int i=0; i<shopping_cart.get_keys().length(); i++)
 {
-//final+=get_shelter_price(shopping_cart.get_keys()[i], get_cart_item_amount(shopping_cart.get_keys()[i]));
+final+=get_shelter_price(shopping_cart.get_keys()[i], get_cart_item_amount(shopping_cart.get_keys()[i]));
 }
 return final;
 }
@@ -531,7 +529,7 @@ send_serverbox(peer, 0, -1, 1, 1, "shcommand", "sorry, you don't have enough mon
 return;
 }
 coins-=tp;
-//spawn_shipment(x, y, z, map, shipment_inv);
+spawn_shipment(x, y, z, map, shipment_inv);
 compplay("store_order_complete");
 send_serverbox(peer, 0, -1, 1, 1, "shcommand", "your shippment should arive soon! \r\nwhat would you like to do?");
 shopping_cart.delete_all();

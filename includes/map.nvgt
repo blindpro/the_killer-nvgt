@@ -61,7 +61,7 @@ string[]@ map_data = data.split("\r\n");
 pos ();
 for (uint i=0; i<map_data.length(); i++)
 {
-pos ();
+//pos ();
 string[]@ parts = map_data[i].split(":");
 if(parts[0] == "tile")
 {
@@ -105,7 +105,7 @@ spawn_door(x, y, z, fx, fy,fz,speed,snd1,snd2,snd3,snd4);
 else if(parts[0]=="mapname")
 {
 mapname = parts[1];
-msound_map_update();
+//msound_map_update();
 }
 else if(parts[0]=="maxx")
 {

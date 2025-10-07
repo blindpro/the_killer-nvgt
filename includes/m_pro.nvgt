@@ -738,13 +738,13 @@ else
 internal_tts.speak_interrupt("music volume: "+music.volume);
 }
 }
-if (key_down(volkeydown) and voltimer.elapsed>=voltime)
+if (key_down(volkeydown) and voltimer.elapsed>=voltime and menumusvol>-100)
 {
 music.volume=music.volume-2;
 menumusvol=music.volume;
 voltimer.restart();
 }
-if (key_down(volkeyup) and voltimer.elapsed>=voltime)
+if (key_down(volkeyup) and voltimer.elapsed>=voltime and menumusvol<0)
 {
 music.volume=music.volume+2;
 menumusvol=music.volume;

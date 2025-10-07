@@ -5,6 +5,9 @@ js.set("chatting",chatting);
 js.set("gifting",gifting);
 js.set("storeopened",storeopened);
 js.set("storefight",storefight);
+js.set("activations",activations);
+js.set("peak",peak);
+js.set("peakreached",peakreached);
 //在这之前添加要添加的东西
 if (directory_exists("prefs")==false)
 {
@@ -34,6 +37,9 @@ chatting = js["chatting"];
 gifting = js["gifting"];
 storeopened = js["storeopened"];
 storefight = js["storefight"];
+activations = js["activations"];
+peakreached = js["peakreached"];
+peak = js["peak"];
 }
 catch 
 {
