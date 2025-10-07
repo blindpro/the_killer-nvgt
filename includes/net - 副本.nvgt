@@ -319,6 +319,10 @@ else if(parsed[0]=="spawn_obj")
 {
 spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], stn(parsed[7]), stn(parsed[6]));
 }
+else if(parsed[0]=="clear_obj")
+{
+objs.resize(0);
+}
 else if(parsed[0]=="load_obj" and parsed.length()>=1)
 {
 string data = string_replace(s,"load_obj|","",false);
@@ -516,9 +520,9 @@ string[] parsed=s.split("|");
 if(parsed[0]=="createmsound"&&parsed.length()>=8) createmsound(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6],stn(parsed[7]));
 else if(parsed[0]=="updatemsound"&&parsed.length()>=6) updatemsound(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),stn(parsed[5]));
 else if(parsed[0]=="destroymsound"&&parsed.length()>1) destroymsound(parsed[1]);
-//else if(parsed[0]=="createsiren"&&parsed.length()>=7) createsiren(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6]);
-//else if(parsed[0]=="updatesiren"&&parsed.length()>=5) updatesiren(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]));
-//else if(parsed[0]=="destroysiren"&&parsed.length()>1) destroysiren(parsed[1]);
+else if(parsed[0]=="createsiren"&&parsed.length()>=7) createsiren(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6]);
+else if(parsed[0]=="updatesiren"&&parsed.length()>=5) updatesiren(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]));
+else if(parsed[0]=="destroysiren"&&parsed.length()>1) destroysiren(parsed[1]);
 }
 }
 }
