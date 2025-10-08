@@ -373,7 +373,7 @@ players[x].stun(weapons[j].stuntime,false,false);
 players[x].hitby=weapons[j].p.name+"'s "+weapons[j].type;
 if(weapons[j].type=="artillery") players[x].hitby=weapons[j].p.name+"'s tank";
 }
-else if(weapons[j].type=="sticky_bomb")
+if(weapons[j].type=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,players[x].name);
 }
