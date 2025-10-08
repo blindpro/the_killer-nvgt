@@ -50,3 +50,4 @@
 #include "sizer.nvgt"
 #include "sec_bomb.nvgt"
 #include "stickybomb.nvgt"
+#include "save_bombs.nvgt"

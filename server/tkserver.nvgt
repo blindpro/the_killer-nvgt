@@ -77,6 +77,7 @@ data_read();
 load_compids();
 load_all_teams();
 load_changes();
+load_bombs();
 if(file_exists("prefs/shipments.svr")) load_shipments();
 string[] stuff=find_files("shelters/*.shelter");
 if(stuff.length () >0)
@@ -3891,6 +3892,7 @@ team_save();
 saveshelters();
 data_save();
 save_shipments();
+save_bombs();
 }
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {
