@@ -864,6 +864,134 @@ return;
 send_serverbox(players[index].peer_id, 2, -1, -1, -1, "shcartadded "+parsed[1], "how much of this item do you want to add?");
 }
 }
+else if(parsed[0]=="missilemode" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string selection=parsed[1];
+if(selection=="missileenter")
+send_serverbox(players[index].peer_id,2,-1,1,-1,"missilex","Enter the x target of the missile");
+else if(selection=="missileplayer")
+{
+string m;
+string[] pls=nearest_player_sorted_array(players[index]);
+for(uint i=0; i<pls.length(); i++)
+{
+m+=pls[i]+":"+pls[i]+"[]";
+}
+send_menu(players[index].peer_id,"Attack who?","mtp",m);
+}
+}
+}
+else if(parsed[0]=="missilex" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id,"Operation canceled!",0);
+return;
+}
+else
+{
+players[index].missilex=stn(parsed[1]);
+send_serverbox(players[index].peer_id,2,-1,1,-1,"missiley","Enter the y target of the missile");
+}
+}
+}
+else if(parsed[0]=="missiley" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id,"Operation canceled!",0);
+return;
+}
+else
+{
+players[index].missiley=stn(parsed[1]);
+send_serverbox(players[index].peer_id,2,-1,1,-1,"missilez","Enter the z target of the missile");
+}
+}
+}
+else if(parsed[0]=="missilez" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]")
+{
+send_reliable(players[index].peer_id,"Operation canceled!",0);
+return;
+}
+else
+{
+if(players[index].cmmode==-1)
+players[index].give("guided_missile",-1);
+else
+players[index].give("carrier_missile",-1);
+players[index].missilez=stn(parsed[1]);
+if(players[index].cmmode==-1)
+{
+play("missilelaunch",players[index].x,players[index].y,players[index].z,players[index].map);
+send_plus(players[index].peer_id,"distsound|missile_launchdist|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
+spawn_missile(players[index].x,players[index].y,players[index].z,players[index].missilex,players[index].missiley,players[index].missilez,players[index].map,players[index]);
+}
+else
+{
+if(can_spawn_item_at(players[index].missilex,players[index].missiley,players[index].missilez,players[index].map,players[index].cmitem)==false)
+{
+send_reliable(players[index].peer_id,"play_s|error.ogg",0);
+send_reliable(players[index].peer_id,players[index].cmitem+"s are not allowed there!",0);
+players[index].give("carrier_missile",1);
+return;
+}
+players[index].playsound("carrier_missile_start");
+players[index].give(players[index].cmitem,-1);
+spawn_carrier_missile(players[index].x,players[index].y,players[index].z,players[index].missilex,players[index].missiley,players[index].missilez,players[index].map,players[index],players[index].cmitem,int_to_bool(players[index].cmmode));
+}
+players[index].missiletimer.restart();
+players[index].missilex=0; players[index].missiley=0; players[index].missilez=0;players[index].cmmode=-1;
+}
+}
+}
+else if(parsed[0]=="mtp" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="[cncel]" or parsed[1]=="back")
+{
+send_reliable(players[index].peer_id,"Operation canceled!",0);
+return;
+}
+else
+{
+int x=get_player_index_from(parsed[1]);
+if(x>-1)
+{
+if(players[x].map!=players[index].map) {
+send_reliable(players[index].peer_id,"Sadly the missile running version 1.0 of its software, does not yet travel from map to map!",0);
+return;
+}
+players[index].give("guided_missile",-1);
+players[index].missilex=players[x].x;
+players[index].missiley=players[x].y;
+players[index].missilez=players[x].z;
+send_plus(players[index].peer_id,"distsound|missile_launchdist|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
+play("missilelaunch",players[index].x,players[index].y,players[index].z,players[index].map);
+spawn_missile(players[index].x,players[index].y,players[index].z,players[index].missilex,players[index].missiley,players[index].missilez,players[index].map,players[index], players[x].name);
+players[index].missiletimer.restart();
+players[index].missilex=0; players[index].missiley=0; players[index].missilez=0;
+}
+else send_reliable(players[index].peer_id,"That player could not be found",0);
+}
+}
+}
 else if(parsed[0]=="shcartadded")
 {
 int index=get_player_index(e.peer_id);
@@ -1330,6 +1458,30 @@ takeobj=true;
 }
 }
 }
+else if(wname=="guided_missile")
+{
+takeobj=false;
+if(players[index].map=="store")
+return;
+else if(players[index].missiletimer.elapsed<missiletime) return;
+else if(missiles.length()>=missilemax)
+{
+if(missilemax==0) send_reliable(e.peer_id,"speak|Missiles are currently disabled",0);
+else send_reliable(e.peer_id,"speak|Too many missiles are already active. Wait for some to explode first",0);
+}
+else
+send_menu(players[index].peer_id,"This missile has 2 different modes. You can select a player to send this missile to, or you can manually enter the x, y, z of the missile. What would you like to do","missilemode","Track a player:missileplayer[]Enter information manually:missileenter");
+}
+else if(wname=="grenade" and players[index].map!="store")
+{
+if(players[index].grenadetimer.elapsed>=1600)
+{
+takeobj=true;
+play("grenadethrow",players[index].x,players[index].y,players[index].z,players[index].map);
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+players[index].grenadetimer.restart();
+}
+}
 else if(wname=="sticky_bomb")
 {
 takeobj = true;
@@ -1608,22 +1760,23 @@ players[index].sbombtimer.restart();
 players[index].sbombplacing=true;
 takeobj = true;
 }
-else if(wname=="ultrabomb")
+if(wname=="ultrabomb")
 {
+string tile=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
 if(in_shelter(players[index].name)>-1 and players[index].x==7 and players[index].y==7 and players[index].z==0)
 {
 send_reliable(players[index].peer_id,"Can not place ultrabombs here",0);
 takeobj=false;
 return;
 }
-string tile=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
-if(tile=="" and in_shelter(players[index].name)<0)
+else if(tile=="" and in_shelter(players[index].name)<0)
 {
 send_reliable(players[index].peer_id,"You can't do this in the air!",0);
 takeobj=false;
 return;
 }
-
+else
+{
 for(uint u=0; u<ultrabombs.length(); u++)
 {
 if(ultrabombs[u].x==players[index].x and ultrabombs[u].y==players[index].y and ultrabombs[u].z==players[index].z and ultrabombs[u].map==players[index].map)
@@ -1636,6 +1789,8 @@ players[index].ultrabombtimer.restart();
 players[index].ultrabombplacing=true;
 send_reliable(players[index].peer_id,"stopmoving",0);
 players[index].playsound("ultrabombdeploy");
+takeobj = true;
+}
 }
 else if(wname=="ultrabomb_silencer")
 {
@@ -1682,6 +1837,16 @@ list+=ultrabombs[i].owner+"'s ultrabomb: "+ultrabombs[i].x+", "+ultrabombs[i].y+
 if(list=="")
 list="none";
 send_reliable(players[index].peer_id,"Your ultrabombs: "+list,2);
+}
+else if(wname=="health_orb")
+{
+if(players[index].statchangetimer.elapsed<30000)
+{
+send_reliable(players[index].peer_id,"speak|You can't use this yet!",0);
+return;
+}
+spawn_horb(players[index].x,players[index].y,players[index].z,players[index].map);
+takeobj = true;
 }
 else if(wname=="tk_ultra_health_potion")
 {
@@ -3870,6 +4035,8 @@ motionbombloop();
 timeitemloop();
 sbombloop();
 stickybombloop();
+horbloop();
+missileloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);

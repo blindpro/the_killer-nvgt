@@ -417,13 +417,11 @@ remove_obj(x);
 hit=true;
 }
 }
-/*
-for(uint x=0; x<horbs.length; x++)
+for(uint x=0; x<horbs.length(); x++)
 {
 if(get_3d_distance(rx, ry, weapons[j].z, horbs[x].x, horbs[x].y, horbs[x].z)<=weapons[j].spread and horbs[x].map==weapons[j].map)
 horbs[x].shoot();
 }
-*/
 }
 for(uint x=0; x<remguns.length(); x++)
 {

@@ -633,6 +633,45 @@ continue;
 }
 }
 }
+class pld
+{
+double tx,ty,tz;
+double sx,sy,sz;
+double dist;
+int index;
+pld(player@ p1, player@ p2)
+{
+sx=p1.x;sy=p1.y;sz=p1.z;
+tx=p2.x;ty=p2.y;tz=p2.z;
+index=get_player_index_from(p2.name);
+dist=get_3d_distance(sx,sy,sz,tx,ty,tz);
+}
+int opCmp(pld@ o)
+{
+if(o.dist<dist) return -1;
+if(o.dist>dist) return 1;
+return 0;
+}
+}
+string[] nearest_player_sorted_array(player@ p)
+{
+pld@[] t;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==p.name||players[i].is_dead||players[i].invinsible||p.map!=players[i].map||players[i].hidden==1 or players[i].newb==1) continue;
+pld temp(p,players[i]);
+t.insert_last(temp);
+}
+string[] blankret;
+if(t.is_empty()) return blankret;
+t.sort_descending();
+string[] names;
+for(uint i=0; i<t.length(); i++)
+{
+names.insert_last(players[t[i].index].name);
+}
+return names;
+}
 void spawn_player(int x, int y, int z, string map, string name,int pi, string cid, string ip, string ver, string ctext,int hid)
 {
 player p1(x,y,z,map,name,pi,cid,ip,ver,ctext,hid);

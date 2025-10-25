@@ -51,3 +51,5 @@
 #include "sec_bomb.nvgt"
 #include "stickybomb.nvgt"
 #include "save_bombs.nvgt"
+#include "health_orb.nvgt"
+#include "missile.nvgt"
