@@ -1620,6 +1620,40 @@ players[index].rmtimer.restart();
 players[index].remconnecting=true;
 play("remgun_place",players[index].x,players[index].y,players[index].z,players[index].map);
 }
+else if(wname=="tk_dollar")
+{
+bool useable=false;
+int s=in_shelter(players[index].name);
+if(s>-1 and players[index].x==0 and players[index].y==4 and players[index].z==0)
+{
+useable=true;
+players[index].give("tk_dollar",-1);
+shelters[s].coins+=5000;
+players[index].stun(1600);
+}
+int v=get_vending_index(players[index].x,players[index].y,players[index].z,players[index].map);
+if(v>-1)
+{
+players[index].stun(1600);
+players[index].give("tk_dollar",-1);
+useable=true;
+vending_machines[v].coins+=5000;
+}
+for(int i=0; i<stores.length(); i++)
+{
+if(players[index].x==stores[i].x and players[index].y==stores[i].y and players[index].z==stores[i].z and players[index].map==stores[i].map)
+{
+useable=true;
+players[index].give("tk_dollar", -1);
+players[index].give("coin", 5000);
+send_reliable(players[index].peer_id, "you received 5000 coins for exchanging a tk dollar", 2);
+}
+}
+if(useable)
+players[index].playsound("shelter_insertdollar");
+else
+send_reliable(players[index].peer_id,"Sorry, you must be standing on a shelter computer or on a vending machine or on a store register to use this item",0);
+}
 else if(wname=="coin")
 {
 int j=get_jplayer_index(round(players[index].x,0), players[index].y,players[index].z,players[index].map);
