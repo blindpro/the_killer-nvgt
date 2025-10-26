@@ -53,3 +53,4 @@
 #include "save_bombs.nvgt"
 #include "health_orb.nvgt"
 #include "missile.nvgt"
+#include "j_player.nvgt"

@@ -1030,6 +1030,53 @@ shelters[s].sh_money_command(command,e.peer_id);
 }
 }
 }
+else if(parsed[0]=="cmstart" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string selection=parsed[1];
+if(selection=="back" or selection=="" or selection==" ")
+{
+send_reliable(players[index].peer_id,"canceled",0);
+return;
+}
+players[index].cmitem=selection;
+if(actable_items.find(selection)<0)
+{
+players[index].playsound("carrier_missileinput");
+players[index].cmmode=0;
+send_serverbox(players[index].peer_id,2,-1,1,-1,"missilex","Enter the X coordinate of the missile");
+return;
+}
+else
+{
+string m="yes:yes[]no:no";
+send_menu(players[index].peer_id,"Would you like this item to deploy when it has reached its destination?","cmmode",m);
+}
+}
+}
+else if(parsed[0]=="cmmode" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string answer=parsed[1];
+if(answer=="back")
+{
+players[index].cmmode=-1;
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+if(answer=="yes")
+{
+players[index].cmmode=1;
+}
+else if(answer=="no")
+players[index].cmmode=0;
+send_serverbox(players[index].peer_id,2,-1,1,-1,"missilex","Enter the X coordinate of the missile");
+}
+}
 else if(parsed[0]=="shsendmoneyrequest" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -1482,6 +1529,15 @@ spawn_weapon(players[index].x, players[index].y, players[index].z, players[index
 players[index].grenadetimer.restart();
 }
 }
+else if(wname=="missile_interceptor")
+{
+if(players[index].intercepting) return;
+play("missile_interceptor_fire",players[index].x,players[index].y,players[index].z,players[index].map);
+send_plus(players[index].peer_id,"distsound|missile_interceptor_firedist|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
+send_reliable(players[index].peer_id,"stopmoving",0);
+players[index].interceptortimer.restart();
+players[index].intercepting=true;
+}
 else if(wname=="sticky_bomb")
 {
 takeobj = true;
@@ -1566,7 +1622,6 @@ play("remgun_place",players[index].x,players[index].y,players[index].z,players[i
 }
 else if(wname=="coin")
 {
-/*
 int j=get_jplayer_index(round(players[index].x,0), players[index].y,players[index].z,players[index].map);
 if(j>-1)
 {
@@ -1583,7 +1638,6 @@ jplayers[j].start();
 players[index].playsound("ultrabombcoinadd");
 }
 }
-*/
 int vending=get_vending_index(players[index].x,players[index].y,players[index].z,players[index].map);
 if(vending>-1)
 {
@@ -1667,6 +1721,23 @@ send_serverbox(players[index].peer_id,2,-1,1,-1,"rbomb","Enter the code you woul
 }
 else takeobj=false;
 }
+}
+else if(wname=="carrier_missile" and players[index].map!="store")
+{
+string menuitems;
+string items=players[index].get_inv(false);
+if(items=="")
+{
+send_reliable(players[index].peer_id,"Sorry, your inventory is empty",2);
+return;
+}
+string[] p=string_split(items,"\r\n",false);
+for(uint i=0; i<p.length(); i++)
+{
+string[] another_p=string_split(p[i],"=",false);
+menuitems+=another_p[0]+", you have "+another_p[1]+":"+another_p[0]+"[]";
+}
+send_menu(players[index].peer_id,"Select the item you would like to send","cmstart",menuitems);
 }
 else if(wname=="impact_bomb" and players[index].map!="store")
 {
@@ -4037,6 +4108,8 @@ sbombloop();
 stickybombloop();
 horbloop();
 missileloop();
+jplayerloop();
+cmloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
@@ -4724,7 +4797,6 @@ return indexs[random(0,indexs.length()-1)];
 }
 void intercept(int x,int y, int z, string map, int index=-1)
 {
-/*
 if(index>-1)
 {
 for(uint j=0; j<carrier_missiles.length(); j++)
@@ -4762,7 +4834,6 @@ missiles[j].intercepttimer.restart();
 }
 }
 }
-*/
 }
 string killmsg(string player1, string player2, string player1weapon)
 {
@@ -4843,7 +4914,7 @@ add_drink_item("pop_can",20);
 //add_drink_item("energy_drink",50);
 add_drink_item("health_drink",150);
 add_drink_item("beer_bottle",200);
-//spawn_jplayer(13, 20,0,"store");
+spawn_jplayer(13, 20,0,"store");
 if(!load_store_registers())
 {
 create_store(0, 0, 0, "store", "weapon_store");
