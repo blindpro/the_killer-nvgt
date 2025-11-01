@@ -18,6 +18,7 @@ js.set ("tts_default_rate",tts.rate);
 js.set ("tts_default_volume",tts.volume);
 js.set ("use_screen_reader",use_sr);
 js.set("speak_interrupt",tts_default_interrupt);
+js.set("fi",join(fi,"\r\n"));
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -60,6 +61,12 @@ tts.set_rate(js["tts_default_rate"]);
 tts.set_volume(js["tts_default_volume"]);
 use_sr = js["use_screen_reader"];
 tts_default_interrupt = js["speak_interrupt"];
+string fi_string = js["fi"];
+string[] fi_array = fi_string.split("\r\n",false);
+for(uint i = 0; i < fi_array.length(); i++)
+{
+fi[i] = fi_array[i];
+}
 }
 catch 
 {

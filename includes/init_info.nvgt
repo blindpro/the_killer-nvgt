@@ -117,3 +117,4 @@ bool firing=false;
 string vetype;
 sound vesound,velfsound,vesiren;
 bool controling_remgun=false , robotcontroling=false;
+string[] fi(12);

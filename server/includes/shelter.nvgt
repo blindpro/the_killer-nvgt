@@ -597,8 +597,8 @@ hb=string_replace(hb,pn,cn2n(pn),false);
 x=get_player_index_from(pn);
 }
 else hb=cn2n(hb,true);
-send_reliable(0,"play_s kill.ogg",0);
-send_reliable(0,"playerdeath "+cn2n(shelters[i].owner)+"'s "+shelters[i].sheltername+" shelter was just destroyed by "+hb+"!",0);
+send_reliable(0,"play_s|kill.ogg",0);
+send_reliable(0,"playerdeath|"+cn2n(shelters[i].owner)+"'s "+shelters[i].sheltername+" shelter was just destroyed by "+hb+"!",0);
 int index=get_player_index_from(shelters[i].owner);
 if(index>-1) send_reliable(players[index].peer_id,"your "+shelters[i].sheltername+" shelter was just destroyed!",2);
 if(x>-1)

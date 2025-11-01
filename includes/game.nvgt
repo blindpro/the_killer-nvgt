@@ -454,15 +454,39 @@ walktimer.restart();
 move(Right);
 }
 }
-if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon)
-{
 for(uint i = 0; i < weapon_key_codes.length(); i++)
+{
+if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon)
 {
 if(key_pressed(weapon_key_codes[i])&&i<=weapons.length()-1&&i!=w)
 {
 w = i;
 speak(weapons[w]);
 send_reliable(0, "draw|"+weapons[w], 0);
+}
+}
+if(shift_is_down()&&alt_is_down()==false)
+{
+if (key_pressed(weapon_key_codes[i])&&!focuseditem.is_empty())
+{
+if(fi.find(focuseditem)>-1) speak(focuseditem+" is already set as a favorite");
+else
+{
+fi[i]=focuseditem;
+p.play_stationary("favorite_item.ogg",false);
+speak("favorite item "+(i+1)+" set to "+focuseditem);
+}
+}
+}
+if(alt_is_down()&&!shift_is_down()&&can_move)
+{
+if(key_pressed(weapon_key_codes[i])&&i<fi.length())
+{
+if(fi[i].is_empty()) speak("favorite item "+(i+1)+" not assigned");
+else
+{
+send_reliable(0,"use|"+fi[i],0);
+}
 }
 }
 }
@@ -486,8 +510,8 @@ void exitgame(bool return_to_menu=true)
 in_game =false;
 falling=false;
 me.x=0;me.y=0;me.z=0;
-//vesound.stop();
-//velfsound.stop();
+vesound.stop();
+velfsound.stop();
 //music.stop();
 if(firing) firing=false;
 if(importbufferlogs==1) export_all_buffers();
