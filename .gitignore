@@ -8,3 +8,4 @@ profile.log
 packets.log
 server/packets.log
 server/profile.log
+server/compchars.log

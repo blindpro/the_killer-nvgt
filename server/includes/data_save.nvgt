@@ -8,6 +8,9 @@ js.set("storefight",storefight);
 js.set("activations",activations);
 js.set("peak",peak);
 js.set("peakreached",peakreached);
+js.set("missiletime",missiletime);
+js.set("missilemax",missilemax);
+js.set("geo",geo);
 //在这之前添加要添加的东西
 if (directory_exists("prefs")==false)
 {
@@ -40,6 +43,9 @@ storefight = js["storefight"];
 activations = js["activations"];
 peakreached = js["peakreached"];
 peak = js["peak"];
+missiletime = js["missiletime"];
+missilemax = js["missilemax"];
+geo = js["geo"];
 }
 catch 
 {

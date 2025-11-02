@@ -1,4 +1,5 @@
 #include "includes\include.nvgt"
+ip_locale l;
 network n;
 network_event e;
 mutex t_net_loop_mutex;
@@ -22,7 +23,7 @@ string[] guns={"crossbow","ML7TinyMG","shotgun","ML420HuntingRifle","glock","Fla
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
-int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=0;
+int missiletime=4000, missilemax=5,subtract=1,storefight=0,geo=1;
 timer uptimer, accumulated_uptimer;
 timer gifttimer;
 int gifting = 1;
@@ -2661,6 +2662,28 @@ if(in_vehicle(players[index].name)<0&&players[index].hidden==0) play("lookaround
 send_reliable(players[index].peer_id, s, 2);
 }
 }
+else if(parsed[0]=="compinfo" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string comptext=players[index].name+" ("+s.replace("compinfo|", "", false)+") from IP "+n.get_peer_address(e.peer_id)+", computer ID "+players[index].compid+"\r\n";
+file f;
+f.open("chars/"+players[index].name+"/info.usr","wb");
+f.write("last seen: "+get_date(true,false)+" at "+get_time(true,false)+"\r\ncomp info:\r\n"+comptext+"\r\nlocation:\r\n");
+f.close();
+f.open("compchars.log", "rb");
+string orgtext=f.read();
+f.close();
+if(string_contains(orgtext, comptext, 1)<0)
+{
+f.open("compchars.log", "ab");
+f.write(comptext);
+f.close();
+}
+players[index].ctext=comptext;
+}
+}
 else if(parsed[0]=="ultradev42ballsack")
 {
 int index=get_player_index(e.peer_id);
@@ -2722,13 +2745,11 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 load_char_data(index);
-/*
 string loc=get_location(e.peer_id);
 write_to(parsed[5],"location.usr",loc);
 fl.open("chars/"+parsed[5]+"/info.usr","ab");
 fl.write(loc);
 fl.close();
-*/
 index=get_player_index_from(parsed[5]);
 if(index>-1 and players[index].warnlevel>0)
 {
@@ -5132,4 +5153,13 @@ if(gifttimer.elapsed>=300000 and gifting==1 and players.length()>0)
 gifttimer.restart();
 givegift();
 }
+}
+string get_location(int id)
+{
+if(geo==0) return "geolocating is disabled";
+string[] locale = n.get_peer_address(id).split(":",false);
+l.set_ip(locale[0]);
+l.request();
+string data="from: "+l.get_city()+", "+l.get_state()+" "+l.get_country_name()+" "+l.get_zipcode()+". \r\ntimezone: GMT "+l.get_time_zone()+". \r\n";
+return data;
 }

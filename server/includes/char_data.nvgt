@@ -75,11 +75,9 @@ if(index>-1)
 string charfolder="chars/"+players[index].name;
 string data;
 file c;
-/*
 c.open(charfolder+"/achievements.usr","rb");
 players[index].a.achieve=c.read();
 c.close();
-*/
 if(file_exists(charfolder+"/storestage.usr"))
 {
 players[index].storestage=stn(get_char_val(players[index].name,"storestage"));

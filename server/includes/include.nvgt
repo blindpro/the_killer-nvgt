@@ -56,3 +56,4 @@
 #include "j_player.nvgt"
 #include "achievement.nvgt"
 #include "achievement_loop.nvgt"
+#include "ip_locale.nvgt"
