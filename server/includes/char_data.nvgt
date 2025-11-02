@@ -12,11 +12,9 @@ players[ie].give("ammo_"+guns[i],a);
 }
 players[ie].ammo.delete_all();
 */
-/*
 fl.open(charfolder+"/achievements.usr","wb");
 fl.write(players[ie].a.achieve);
 fl.close();
-*/
 write_to(players[ie].name,"storestage.usr",players[ie].storestage);
 write_to(players[ie].name,"storetimer.usr",players[ie].storetimer.elapsed);
 write_to(players[ie].name,"dfc.usr",players[ie].deathfreecards);

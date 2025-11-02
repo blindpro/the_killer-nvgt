@@ -106,7 +106,7 @@ timer maptraveltimer;
 timer chattimer;
 string ammostuff;
 string muted;
-//achievements a;
+achievements a;
 playerweapon w(this);
 string zone;
 string ip;
@@ -1131,7 +1131,7 @@ players[i].y=random(0,20);
 players[i].z=0;
 send_reliable(players[i].peer_id, "entershelter|0|100|0|main", 0);
 }
-//if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
+if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
 string hb;
 if(string_contains(players[i].hitby,"'",1)>-1)
 {
@@ -1143,7 +1143,7 @@ hb=players[i].hitby;
 int k=get_player_index_from(hb);
 if(k>-1)
 {
-//achloop(k,i);
+achloop(k,i);
 if(players[k].name!=players[i].name)
 {
 if(string_contains(players[i].hitby,"bomb",1)<0)

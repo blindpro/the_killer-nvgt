@@ -1,0 +1,65 @@
+string achievelist="I'm just bad at this grenade thing, die by your own grenade. Humiliation achievement.\r\nBad at dodging, die by your own ultrabomb.\r\nI really like booms! Die by your own impact bombs\r\nI wanna die now, kill yourself any other way.\r\nkill an invisible player, self-explanatory\r\nbutcher, kill somebody with a knife.\r\nCommander Blade, kil somebody with a knife while they are not stunned.\r\ngrenade in your face, kill somebody with a grenade.\r\ntastes like grenade, die by somebody's grenade. Humiliation achievement.\r\nkilled somebody in a tank, blow an aircraft out of the sky, bring down the popo. Killing somebody in one of these vehicles while you yourself are not in one.\r\nkilled a vehicle with your knife, self-explanatory\r\nlaser a tank to death, kill a tank with a vehicle with an onboard laser.\r\nprofessional dogfighter, kill an aircraft with an aircraft.\r\nAWOL, kill a police car with your police car\r\nnailed by a rogue, die in a police car that was killed by another police car.\r\neat my missile, die by missile.\r\nalmost had it, die by missile while your interceptor is powering up.\r\nPrivate Shotgun, kill somebody with a shotgun.\r\nGeneral Shotgun, kill somebody with a shotgun while they are not stunned.\r\nholy shit that was close, manage a kill with less than 1000 health.\r\nclose, but no cigar, be the one killed by the obtainer of the previous achievement.\r\nYouch! That hurt, manage a kill where the player went from over 2000 health to death.\r\nyou beat my shield, kill somebody with a shield, without using a bomb.\r\nbullseye, kill somebody with a stun or health dart.";
+class achievements
+{
+string achieve;
+int count_achievements()
+{
+int ret=0;
+if(achieve=="")
+return ret;
+string[]  ac=string_split(achieve,"+",false);
+return ac.length();
+}
+bool add(string name)
+{
+if (!achievement_exists(name))
+{
+achieve+="+"+name;
+return true;
+}
+return false;
+}
+string[] list_achievements()
+{
+string[] a=string_split(achieve,"+",true);
+if (achieve=="")
+a.insert_last("No achievements");
+return a;
+}
+bool achievement_exists(string name)
+{
+string[] s=list_achievements();
+for (uint i=0; i<s.length(); i++)
+{
+if (s[i]==name)
+{
+return true;
+}
+}
+return false;
+}
+}
+
+void add_achievement(string achievement, int index,string reward="",bool public=false)
+{
+bool stuff=false;
+stuff=players[index].a.add(achievement);
+if (stuff==true)
+{
+send_reliable(players[index].peer_id,"play_s|achievement.ogg",0);
+if(reward=="")
+send_reliable(players[index].peer_id,"New achievement! "+achievement,2);
+else
+send_reliable(players[index].peer_id,"New achievement! "+achievement+". Reward: "+reward,2);
+if(public==true)
+{
+send_plus(players[index].peer_id,"play_s|achievement_complete.ogg",0);
+send_plus(players[index].peer_id,"alert: "+players[index].name+" completed the achievement "+achievement+"!",2);
+}
+if(reward!="")
+{
+string[] rw=string_split(reward," ",true);
+players[index].give(rw[1],stn(rw[0]));
+}
+}
+}

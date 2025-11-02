@@ -54,3 +54,5 @@
 #include "health_orb.nvgt"
 #include "missile.nvgt"
 #include "j_player.nvgt"
+#include "achievement.nvgt"
+#include "achievement_loop.nvgt"

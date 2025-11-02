@@ -282,8 +282,7 @@ spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name
 weapons.remove_at(j);
 break;
 }
-/*
-if(weapons[j].type=="invisibility_shield")
+ if(weapons[j].type=="invisibility_shield")
 {
 if(@weapons[j].p!=null)
 {
@@ -306,7 +305,6 @@ break;
 }
 }
 }
-*/
 else
 {
 @weapons[j]=null;

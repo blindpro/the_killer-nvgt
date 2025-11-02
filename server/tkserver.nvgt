@@ -1348,6 +1348,24 @@ remguns[r].hitby="internal:rg:destruct";
 }
 }
 }
+else if(parsed[0]=="packsomething" and parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+if(parsed[1]=="back")
+{
+send_reliable(players[index].peer_id,"Canceled",0);
+return;
+}
+string item=parsed[1];
+players[index].give(item,-10);
+players[index].give("pack_of_10_"+item,1);
+players[index].give("empty_pack", -1);
+players[index].playsound("pack");
+send_reliable(players[index].peer_id,"You put 10 "+item+"s in a box and close it",0);
+}
+}
 else if(parsed[0]=="draw" and parsed.length()>1)
 {
 int index=get_player_index(e.peer_id);
@@ -1505,6 +1523,34 @@ takeobj=true;
 }
 }
 }
+else if(wname=="health_dart")
+{
+if(players[index].stunthrowtimer.elapsed>=7500)
+{
+players[index].stunthrowtimer.restart();
+play("stun_dartthrow",players[index].x,players[index].y,players[index].z,players[index].map);
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+takeobj = true;
+}
+}
+else if(wname=="invisibility_shield")
+{
+if(players[index].statchangetimer.elapsed<30000)
+{
+send_reliable(players[index].peer_id,"Error!",0);
+return;
+}
+if(players[index].invusetimer.elapsed>=60000)
+{
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+players[index].invusetimer.restart();
+takeobj = true;
+}
+else
+{
+send_reliable(players[index].peer_id,"speak|error. You can not use an invisibility shield yet.",0);
+}
+}
 else if(wname=="guided_missile")
 {
 takeobj=false;
@@ -1564,6 +1610,21 @@ return;
 players[index].mbombtimer.restart();
 takeobj=true;
 placetimebomb(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name,5000);
+}
+else if(wname=="empty_pack")
+{
+string invs=players[index].get_inv();
+string[] invp=string_split(invs,"\r\n",false);
+server_menu menu;
+menu.initial_packet="packsomething";
+menu.intro="What do you want to pack?";
+for(uint i=0; i<invp.length(); i++)
+{
+string[] p2=string_split(invp[i],"=",false);
+if(players[index].get_item_count(p2[0])<10 or p2[0]=="empty_pack") continue;
+menu.add(p2[0]+", "+p2[1],p2[0]);
+}
+menu.send(players[index].peer_id);
 }
 else if(wname=="wirebomb")
 {
@@ -2110,6 +2171,23 @@ else if(wname=="tk_dollar_pack")
 takeobj = true;
 players[index].give("tk_dollar",5);
 play("gift",players[index].x,players[index].y,players[index].z,players[index].map);
+}
+else if(wname=="tk_deluxe_pack")
+{
+takeobj = true;
+players[index].give("tank",50);
+players[index].give("aircraft",100);
+players[index].give("tk_ultra_health_potion",20);
+players[index].give("guided_missile",100);
+players[index].give("missile_interceptor",250);
+players[index].give("tk_dollar",10);
+players[index].give("motion_bomb",50);
+players[index].give("mine",20);
+players[index].give("wirebomb",100);
+players[index].give("shield",500);
+players[index].give("ultrabomb",10);
+send_reliable(players[index].peer_id,"TK deluxe pack activated!",2);
+//scd(index);
 }
 else if(wname=="grenade_pack")
 {
@@ -2771,12 +2849,10 @@ players[index].health-=falld*50;
 players[index].should_subtract=false;
 players[index].hitby="the laws of gravity";
 send_reliable(0,"hardland|"+players[index].name+"|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
-/*
 if(players[index].health>=2500)
 {
 add_achievement("Survived a fall with 50 percent default health",index,"1 antibiotic_pack");
 }
-*/
 players[index].sitting=1;
 send_reliable(players[index].peer_id,"sitstart",0);
 }

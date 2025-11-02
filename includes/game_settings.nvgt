@@ -130,7 +130,8 @@ else
 {
 global_hrtf = false;
 }
-set_hrtf();
+//set_hrtf();
+set_sound_global_hrtf(global_hrtf);
 musictrack="menumus"+string_to_number (sl + 1)+".ogg";
 menu_sound.pause ();
 currently_input_device = input_device_temp;

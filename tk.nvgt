@@ -14,7 +14,6 @@ distpool.hrtf = false;
 //set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
 set_sound_storage("sounds.dat");
 data_read();
-set_hrtf();
 set_sound_global_hrtf(global_hrtf);
 /*
 if (currently_input_device != 1)

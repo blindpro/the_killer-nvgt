@@ -124,8 +124,3 @@ return true;
 }
 return false;
 }
-void set_hrtf()
-{
-set_sound_global_hrtf(global_hrtf);
-distpool.hrtf = false;
-}
