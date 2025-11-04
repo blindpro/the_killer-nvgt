@@ -2745,8 +2745,9 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 load_char_data(index);
-string loc=get_location(e.peer_id);
-write_to(parsed[5],"location.usr",loc);
+string loc;
+//loc =get_location(e.peer_id);
+//write_to(parsed[5],"location.usr",loc);
 fl.open("chars/"+parsed[5]+"/info.usr","ab");
 fl.write(loc);
 fl.close();
@@ -3702,6 +3703,7 @@ players[index].newbtimer.restart();
 players[index].newb=2;
 players[index].playsound("newbiestopping");
 }
+/*test code
 else if(parsed[0]=="/ibb")
 {
 for (uint i = 0; i <= 500; i++)
@@ -3710,6 +3712,7 @@ for (uint y = 0; y <= 500; y++)
 spawn_impact_bomb(i,y,players[index].z,players[index].map,players[index].name);
 }
 }
+*/
 else if(parsed[0]=="/inv")
 {
 if(players[index].adminable())
