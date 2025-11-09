@@ -114,6 +114,7 @@ void destroy_all_motion_bombs()
 {
 motion_bombs.resize(0);
 }
+/*
 void create_motion_bomb_from_datastream(string data)
 {
 dictionary d=deserialize(data);
@@ -151,4 +152,37 @@ string[] r=create_datastream_from_motion_bomb(motion_bombs[i]);
 d.set(r[0],r[1]);
 }
 return serialize(d);
+}
+*/
+void create_motion_bomb_from_json_array(json_array@ motion_bomb_array)
+{
+json_object@ motion_bomb_object = null;
+for(uint i = 0; i < motion_bomb_array.size(); i++)
+{
+if(motion_bomb_array.is_object(i)) @motion_bomb_object = motion_bomb_array[i];
+else continue;
+int motion_bomb_x = motion_bomb_object["x"];
+int motion_bomb_y = motion_bomb_object["y"];
+int motion_bomb_z = motion_bomb_object["z"];
+string motion_bomb_map = motion_bomb_object["map"];
+string motion_bomb_owner = motion_bomb_object["owner"];
+motion_bomb m1(motion_bomb_x, motion_bomb_y, motion_bomb_z, motion_bomb_map, motion_bomb_owner);
+motion_bombs.insert_last(m1);
+}
+}
+json_array@ create_json_array_from_motion_bomb()
+{
+if(motion_bombs.length()<0) return null;
+json_object motion_bomb_object;
+json_array motion_bomb_array;
+for(uint i = 0; i < motion_bombs.length(); i++)
+{
+motion_bomb_object.set("x",motion_bombs[i].x);
+motion_bomb_object.set("y",motion_bombs[i].y);
+motion_bomb_object.set("z",motion_bombs[i].z);
+motion_bomb_object.set("map",motion_bombs[i].map);
+motion_bomb_object.set("owner",motion_bombs[i].owner);
+motion_bomb_array.add(motion_bomb_object);
+}
+return motion_bomb_array;
 }

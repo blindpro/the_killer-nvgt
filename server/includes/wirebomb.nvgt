@@ -109,6 +109,7 @@ void destroy_all_wirebombs()
 {
 wirebombs.resize(0);
 }
+/*
 void create_wirebomb_from_datastream(string data)
 {
 dictionary d=deserialize(data);
@@ -147,4 +148,40 @@ string[] r=create_datastream_from_wirebomb(wirebombs[i]);
 d.set(r[0],r[1]);
 }
 return serialize(d);
+}
+*/
+json_array@ create_json_array_from_wirebomb()
+{
+if(wirebombs.length()<0) return null;
+json_object wirebomb_object;
+json_array wirebomb_array;
+for(uint i = 0; i < wirebombs.length(); i++)
+{
+wirebomb_object.set("x",wirebombs[i].x);
+wirebomb_object.set("y",wirebombs[i].y);
+wirebomb_object.set("z",wirebombs[i].z);
+wirebomb_object.set("map",wirebombs[i].map);
+wirebomb_object.set("owner",wirebombs[i].owner);
+wirebomb_object.set("teamname",wirebombs[i].teamname);
+wirebomb_array.add(wirebomb_object);
+}
+return wirebomb_array;
+}
+void create_wirebomb_from_json_array(json_array@ wirebomb_array)
+{
+json_object@ wirebomb_object = null;
+for(uint i = 0; i < wirebomb_array.size(); i++)
+{
+if(wirebomb_array.is_object(i)) @wirebomb_object = wirebomb_array[i];
+else continue;
+int wirebomb_x = wirebomb_object["x"];
+int wirebomb_y = wirebomb_object["y"];
+int wirebomb_z = wirebomb_object["z"];
+string wirebomb_map = wirebomb_object["map"];
+string wirebomb_owner = wirebomb_object["owner"];
+string wirebomb_teamname = wirebomb_object["teamname"];
+wirebomb w1(wirebomb_x, wirebomb_y, wirebomb_z, wirebomb_map, wirebomb_owner);
+w1.teamname = wirebomb_teamname;
+wirebombs.insert_last(w1);
+}
 }

@@ -112,6 +112,11 @@ if(key_pressed(KEY_ESCAPE) || s_quit)
 {
 server_quit ();
 }
+if(key_pressed(KEY_S))
+{
+json_array@ js = create_json_array_from_mine();
+alert("info",js.stringify());
+}
 if(key_pressed(KEY_A))
 {
 speak(objspawns+","+objgrabs + "," + players.length ());

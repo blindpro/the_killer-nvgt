@@ -15,7 +15,8 @@ player@ p;
 security_bomb(int tx,int ty,int tz, string tmap, string towner)
 {
 owner=towner;
-@p=players[get_player_index_from(owner)];
+int index = get_player_index_from(owner);
+if(index>-1) @p=players[index];
 x=tx;
 y=ty;
 z=tz;
@@ -132,6 +133,7 @@ void destroy_all_security_bombs()
 {
 security_bombs.resize(0);
 }
+/*
 void create_security_bomb_from_datastream(string data)
 {
 dictionary d=deserialize(data);
@@ -170,4 +172,40 @@ string[] r=create_datastream_from_security_bomb(security_bombs[i]);
 d.set(r[0],r[1]);
 }
 return serialize(d);
+}
+*/
+json_array@ create_json_array_from_security_bomb()
+{
+if(security_bombs.length()<0) return null;
+json_object security_bomb_object;
+json_array security_bomb_array;
+for(uint i = 0; i < security_bombs.length(); i++)
+{
+security_bomb_object.set("x",security_bombs[i].x);
+security_bomb_object.set("y",security_bombs[i].y);
+security_bomb_object.set("z",security_bombs[i].z);
+security_bomb_object.set("map",security_bombs[i].map);
+security_bomb_object.set("owner",security_bombs[i].owner);
+security_bomb_object.set("teamname",security_bombs[i].teamname);
+security_bomb_array.add(security_bomb_object);
+}
+return security_bomb_array;
+}
+void create_security_bomb_from_json_array(json_array@ security_bomb_array)
+{
+json_object@ security_bomb_object = null;
+for(uint i = 0; i < security_bomb_array.size(); i++)
+{
+if(security_bomb_array.is_object(i)) @security_bomb_object = security_bomb_array[i];
+else continue;
+int security_bomb_x = security_bomb_object["x"];
+int security_bomb_y = security_bomb_object["y"];
+int security_bomb_z = security_bomb_object["z"];
+string security_bomb_map = security_bomb_object["map"];
+string security_bomb_owner = security_bomb_object["owner"];
+string security_bomb_teamname = security_bomb_object["teamname"];
+security_bomb s1(security_bomb_x, security_bomb_y, security_bomb_z, security_bomb_map, security_bomb_owner);
+s1.teamname = security_bomb_teamname;
+security_bombs.insert_last(s1);
+}
 }

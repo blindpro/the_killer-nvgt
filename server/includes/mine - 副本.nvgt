@@ -110,7 +110,6 @@ if(mines[i].x==x and mines[i].y==y and mines[i].z==z and mines[i].map==map) here
 }
 return here;
 }
-/*
 void create_mine_from_datastream(string data)
 {
 dictionary d=deserialize(data);
@@ -132,26 +131,6 @@ create_mine_from_datastream(val);
 }
 @temp=null;
 }
-*/
-void create_mine_from_json_array(json_array@ mine_array)
-{
-json_object@ mine_object = null;
-for(uint i = 0; i < mine_array.size(); i++)
-{
-if(mine_array.is_object(i)) @mine_object = mine_array[i];
-else continue;
-int mine_x = mine_object["x"];
-int mine_y = mine_object["y"];
-int mine_z = mine_object["z"];
-string mine_map = mine_object["map"];
-string mine_owner = mine_object["owner"];
-double mine_lifetime = mine_object["lifetime"];
-mine m1(mine_x, mine_y, mine_z, mine_map, mine_owner);
-m1.lifetimer.force(mine_lifetime);
-mines.insert_last(m1);
-}
-}
-/*
 string[] create_datastream_from_mine(mine@ m)
 {
 dictionary d;
@@ -170,22 +149,4 @@ string[] r=create_datastream_from_mine(mines[i]);
 d.set(r[0],r[1]);
 }
 return serialize(d);
-}
-*/
-json_array@ create_json_array_from_mine()
-{
-json_object mine_object;
-json_array mine_array;
-if(mines.length()<0) return null;
-for(uint i = 0; i < mines.length(); i++)
-{
-mine_object.set("x",mines[i].x);
-mine_object.set("y",mines[i].y);
-mine_object.set("z",mines[i].z);
-mine_object.set("map",mines[i].map);
-mine_object.set("owner",mines[i].owner);
-mine_object.set("lifetime",mines[i].lifetimer.elapsed);
-mine_array.add(mine_object);
-}
-return mine_array;
 }
