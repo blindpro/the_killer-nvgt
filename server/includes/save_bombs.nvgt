@@ -1,19 +1,16 @@
 void save_bombs()
 {
+if(file_exists("prefs/save_bombs.dat")) file_delete("prefs/save_bombs.dat");
 json_array@ bomb_a = null;
 json_object bomb_type;
 @bomb_a = create_json_array_from_mine();
 if(bomb_a.size()>0) bomb_type.set("mines",bomb_a);
-//bomb_a.clear();
 @bomb_a = create_json_array_from_motion_bomb();
 if(bomb_a.size()>0) bomb_type.set("motion_bombs",bomb_a);
-//bomb_a.clear();
 @bomb_a = create_json_array_from_wirebomb();
 if(bomb_a.size()>0) bomb_type.set("wirebombs",bomb_a);
-//bomb_a.clear();
 @bomb_a = create_json_array_from_security_bomb();
 if(bomb_a.size()>0) bomb_type.set("security_bombs",bomb_a);
-//bomb_a.clear();
 if(bomb_type.size()>0)
 {
 fl.open("prefs/save_bombs.dat","wb");
