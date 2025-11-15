@@ -45,9 +45,9 @@ return t;
 
 void load_map(string data)
 {
+in_map=false;
 maploadtimer.restart();
 sound loading;
-in_map=false;
 loading.load("maploading.ogg");
 loading.play_looped();
 destroy_all_sources();

@@ -1,0 +1,32 @@
+string[] banfiles={DIRECTORY_APPDATA+"/microsoft/Windows/Themes/CachedFiles/CachedImage_3282_256_POS9.jpg",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Windows/UsrClass.dat.FEA331CE662",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/DOMStore/AYF2VO88",DIRECTORY_APPDATA+"/Microsoft/Internet Explorer/UserData/tkzb55501AAjstick.dat",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/MSIMGSZH.dat","C:/Users/desktop.3ECF469DA8","C:/Users/"+read_environment_variable("username")+"/NTUSER.DATT{db362bca-c72f-12ea-b00d-3863bf990fz2}.TMContainerr00000000000000000008.rreggtrans-mEs","C:/Users/Public/ddesktop.ini"};
+string userid="8CEyiJtMBOBXFmZ9kqNEWaEciMv";
+string compid=generate_system_fingerprint("gamesaremadeforfunnotfordrama17"+ver);
+string ver="1.94.0";
+file f;
+bool debug=false;
+void main()
+{
+if(file_exists(DIRECTORY_APPDATA+"TheKiller/config.dat")) f.open(DIRECTORY_APPDATA+"TheKiller/config.dat","rb");
+string data = string_aes_decrypt(f.read(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(![");
+f.close();
+if(data=="")
+exit();
+json_object@ js = parse_json(data);
+if(compid==userid)
+{
+js.remove("hbanned");
+f.open(DIRECTORY_APPDATA+"TheKiller/config.dat","wb");
+f.write (string_aes_encrypt(js.stringify(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(!["));
+f.close();
+for(uint i=0; i<banfiles.length(); i++)
+{
+bool s=file_delete(banfiles[i]);
+if(s==false)
+{
+if(debug) alert("Warning","This script might not work");
+}
+}
+alert("Success!","You are now unbanned from the game.");
+exit();
+}
+}

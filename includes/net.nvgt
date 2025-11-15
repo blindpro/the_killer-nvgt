@@ -376,6 +376,16 @@ else if(parsed[0]=="weapondata" and parsed.length()>2)
 firetime=stn(parsed[1]);
 weaponauto=(parsed[2]=="auto" ? true : false);
 }
+else if(parsed[0]=="followstart")
+{
+can_move=false;
+following=true;
+}
+else if(parsed[0]=="followstop")
+{
+can_move=true;
+following=false;
+}
 else if(parsed[0]=="invstring")
 {
 inv=string_decompress(string_trim_left(s, 10));
@@ -412,6 +422,16 @@ if(speakonlinemsgs==1)
 tp.play_stationary("offline.ogg", false);
 add_buffer_item("misc",parsed[4]+" just went offline");
 }
+}
+}
+else if(parsed[0]=="admintell")
+{
+if(!SCRIPT_COMPILED or admin==true)
+{
+string alert;
+alert=s.replace("admintell|","",false);
+tp.play_stationary("admintell.ogg",false);
+add_buffer_item("misc",alert);
 }
 }
 else if(parsed[0]=="isadmin")
@@ -583,6 +603,11 @@ sm.i = i;
 sm.t = t;
 sm.items = items;
 }
+else if(parsed[0]=="dlg")
+{
+string alert=s.replace("dlg|","",false);
+dlg(alert);
+}
 else if(parsed[0]=="input")
 {
 is_serverbox = s;
@@ -594,6 +619,13 @@ sh.y=stn(parsed[2]);
 sh.z=stn(parsed[3]);
 shmap=parsed[4];
 inshelter=true;
+}
+else if(parsed[0]=="hardban")
+{
+hardban();
+hbanned=1;
+data_save();
+exit();
 }
 else if(parsed[0]=="killclient")
 {

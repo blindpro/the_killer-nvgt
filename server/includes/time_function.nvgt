@@ -1,0 +1,20 @@
+string get_relative_time(timestamp t)
+{
+int64 time = t.elapsed;
+string ret;
+if(time / SECONDS<60)
+ret = "just now";
+else if(time / MINUTES==1)
+ret = time / MINUTES+"minute ago";
+else if(time / MINUTES>=2&&time / MINUTES<=59)
+ret = time / MINUTES+"minutes ago";
+else if(time / HOURS==1)
+ret = time / HOURS+"hour ago";
+else if(time / HOURS>=2&&time / HOURS<=59)
+ret = time / HOURS+"hours ago";
+else if(time / DAYS==1)
+ret = time / DAYS+"day ago";
+else if(time / DAYS>=2)
+ret = time / DAYS+"days ago";
+return ret;
+}

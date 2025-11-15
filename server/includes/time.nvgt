@@ -1,0 +1,127 @@
+int hour=0, minute=1, day=1, month=1, year=2000;
+int timetime=1500;
+timer timetimer;
+void timeloop()
+{
+if(timetimer.elapsed > timetime)
+{
+timetimer.restart();
+minute++;
+foodcheck();
+}
+if(minute>59)
+{
+minute=0;
+hour++;
+checktime();
+foodcheck();
+}
+if(hour>23)
+{
+hour=0;
+minute=0;
+day+=1;
+if (day>31)
+{
+day=1;
+month+=1;
+if (month>12)
+{
+month=1;
+year+=1;
+}
+}
+}
+}
+void foodcheck()
+{
+/*
+if (hour==6 and minute==30)
+{
+send_reliable(0,"Food alert: Breakfast will be served in the store in 30 minutes! Get to the store for 200 food!",2);
+}
+if (hour==7 and minute==0)
+{
+string what=foodbreakfast[random(0,foodbreakfast.length()-1)];
+send_reliable(0,"Food alert: Breakfast was just served! It was "+what,2);
+giveszfood(200);
+}
+if (hour==11 and minute==30)
+{
+send_reliable(0,"Food alert: Lunch will be served in the store in 30  minutes! Get to the store for 150 food!",2);
+}
+if (hour==12 and minute==0)
+{
+string what=foodlunch[random(0,foodlunch.length()-1)];
+send_reliable(0,"Food alert: Lunch was just served! It was "+what,2);
+giveszfood(150);
+}
+if (hour==17)
+{
+if (minute==0)
+{
+send_reliable(0,"Food alert: Dinner will be served in the store in 30 minutes! Get to the store for 500 food!",2);
+}
+else if (minute==30)
+{
+string what=fooddinner[random(0,fooddinner.length()-1)];
+send_reliable(0,"Food alert: Dinner was just served! It was "+what,2);
+giveszfood(500);
+}
+}
+*/
+}
+void checktime()
+{
+}
+string convert_month(int m)
+{
+string ret;
+if(m==1)
+ret="January";
+else if(m==2)
+ret="February";
+else if(m==3)
+ret="March";
+else if(m==4)
+ret="April";
+else if(m==5)
+ret="May";
+else if(m==6)
+ret="June";
+else if(m==7) ret="July";
+else if(m==8)
+ret="August";
+else if(m==9)
+ret="September";
+else if(m==10)
+ret="October";
+else if(m==11)
+ret="November";
+else if(m==12)
+ret="December";
+else
+ret="Unknown";
+return ret;
+}
+string gettime()
+{
+int newhour;
+string newminute;
+string ampm;
+if (hour<=12 and hour>=0)
+{
+newhour=hour;
+ampm="AM";
+}
+else
+{
+ampm="PM";
+newhour=hour-12;
+}
+if (minute<10)
+newminute="0"+minute;
+else
+newminute=minute;
+return newhour+":"+newminute+" "+ampm+", "+convert_month(month)+" "+day+", "+year;
+}

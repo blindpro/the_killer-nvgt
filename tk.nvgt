@@ -14,6 +14,13 @@ distpool.hrtf = false;
 //set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
 set_sound_storage("sounds.dat");
 data_read();
+if(is_hardbanned())
+{
+p.play_stationary("error.ogg",false);
+int q=question("error","you are currently banned from the game. Would you like to generate an ID to reverse this ban?");
+if(q==1) clipboard_set_text(banid);
+exit();
+}
 set_sound_global_hrtf(global_hrtf);
 /*
 if (currently_input_device != 1)

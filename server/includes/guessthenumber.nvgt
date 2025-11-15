@@ -1,0 +1,114 @@
+int guessthenumber_active=0;
+double gntarget=random(1,50);
+int[] guessthenumber_guesses;
+int guessthenumber_minutes=5;
+string guessthenumber_winner;
+timer guessthenumbertimer, gnstarttimer;
+int gnstart_auto = 1;
+void gnloop()
+{
+if(guessthenumber_active==1)
+{
+if(guessthenumbertimer.elapsed>60000)
+{
+guessthenumbertimer.restart();
+guessthenumber_minutes++;
+}
+if(guessthenumber_minutes>4||get_paid_online().length()<=guessthenumber_guesses.length())
+{
+guessthenumber_active=0;
+send_reliable(0,"play_s|gnfinished.ogg",0);
+int windex=get_gnwinner();
+int bestnum=get_closest_value(gntarget,guessthenumber_guesses);
+string result;
+if(windex>-1)
+result=players[windex].name+" is the winner! congratulations!";
+else
+result="There was no winner in this game";
+result+="\r\nThe best number entered was "+bestnum+" and the number was "+gntarget+". Numbers entered were: "+convert_to_list(guessthenumber_guesses);
+send_reliable(0,result,2);
+if(windex>-1)
+players[windex].give("tk_dollar",4);
+for(uint i=0; i<players.length(); i++)
+{
+players[i].gnplaying=0;
+file_delete("chars/"+players[i].name+"/gn.usr");
+}
+}
+}
+if(gnstarttimer.elapsed>60000*30)
+{
+gnstarttimer.restart();
+if(guessthenumber_active==0 and gnstart_auto==1 and get_paid_online().length()>=4)
+{
+send_reliable(0,"The guess the number minigame has started. Everyone has 5 minutes to enter a number in to the box. Type /gnsubmit to submit your guess, no less than 1 and no higher than 50. The cloesest person to the number gets 2 tk dollars. Go!",2);
+send_reliable(0, "play_s|gnstart.ogg", 0);
+gnstart();
+}
+}
+if(players.length()!=currentlyonline&&svrmon==true)
+{
+currentlyonline=players.length();
+string stuffage="There are ";
+if(players.length()<=0)
+{
+stuffage+="currently no connected players on the server";
+write_to_webfile("tk/playerlist.db",stuffage);
+}
+else
+{
+stuffage+="currently "+players.length()+" players online. They are: ";
+for(uint i=0; i<players.length(); i++)
+{
+//netloop();
+if(i==players.length()-1)
+stuffage+="and "+players[i].name+" with "+players[i].kills+" kills and "+players[i].deaths+" deaths.";
+else
+stuffage+=players[i].name+" with "+players[i].kills+" kills and "+players[i].deaths+" deaths, ";
+}
+write_to_webfile("tk/playerlist.db",stuffage);
+}
+}
+}
+void gnstart() {
+guessthenumber_guesses.resize(0);
+guessthenumber_minutes=0;
+guessthenumbertimer.restart();
+gntarget=random(1,50);
+guessthenumber_active=1;
+}
+int get_gnwinner()
+{
+if(guessthenumber_guesses.is_empty()) return -1;
+int[] guesses=guessthenumber_guesses;
+int winnum=get_closest_value(gntarget,guesses);
+int final_index=-1;
+for(uint i=0; i<players.length(); i++) {
+if(players[i].gnplaying==0) continue;
+if(players[i].guessnum==winnum) final_index=i;
+}
+return final_index;
+}
+//function to see if a number is already there in guess the number.
+bool num_is_active(int num)
+{
+bool active=false;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].gnplaying==0) continue;
+if(players[i].guessnum==num) active=true;
+}
+return active;
+}
+double  get_closest_value(double num, int[] arr) {
+double diff=0;
+double result;
+for(uint i=0; i<arr.length(); i++) {
+int d=abs(num-arr[i]);
+if(d<diff || diff==0) {
+diff=d;
+result=arr[i];
+}
+}
+return result;
+}

@@ -20,7 +20,7 @@ mid=spawn_moving_sound("vendingloop.ogg",x,y,z,map);
 }
 void command(string c,int peer)
 {
-string[] parsed=string_split(c," ",false);
+string[] parsed=string_split(c,"|",false);
 if(parsed[0]=="[SPCE]")
 {
 string vlist;
@@ -29,7 +29,7 @@ for(uint i=0; i<vendingitems.length(); i++)
 {
 vlist+=i+1+": "+vendingitems[i]+" for "+vendingprices[i]+" coins.\r\n";
 }
-send_serverbox(peer,1,-1,1,1,"vendingpress vendingbuy",vlist);
+send_serverbox(peer,1,-1,1,1,"vendingpress|vendingbuy",vlist);
 }
 else if(parsed[0]=="r")
 {

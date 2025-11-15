@@ -647,7 +647,7 @@ jumping=false;
 }
 void fallcheck()
 {
-if(get_tile_at(mr.x, mr.y, me.z)=="" and falling==false and playing==true and jumping==false and playing==true or get_tile_at(mr.x, mr.y, me.z)=="blank" and falling==false and jumping==false and playing==true)
+if(get_tile_at(mr.x, mr.y, me.z)=="" and falling==false and jumping==false and playing==true or get_tile_at(mr.x, mr.y, me.z)=="blank" and falling==false and jumping==false and playing==true)
 {
 falling=true;
 falldistance=0;

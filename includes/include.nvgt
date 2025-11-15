@@ -40,3 +40,4 @@
 #pragma plugin legacy_sound
 #include "sizer.nvgt"
 #include "police_siren.nvgt"
+#include "ban.nvgt"

@@ -56,7 +56,7 @@ file f;
 f.open("maps/"+loadname+".map", "rb");
 rawdata=f.read();
 f.close();
-//clear_vending_machines_on_map(loadname);
+clear_vending_machines_on_map(loadname);
 }
 else
 rawdata=loadname;
@@ -95,7 +95,6 @@ temp.maxz=maxz;
 temp.type=type;
 maptiles.insert_last(temp);
 }
-/*
 else if(parsed[0]=="vending_machine" and parsed.length()>3)
 {
 int vx=stn(parsed[1]);
@@ -103,7 +102,6 @@ int vy=stn(parsed[2]);
 int vz=stn(parsed[3]);
 spawn_vending_machine(vx,vy,vz,name);
 }
-*/
 else if(parsed[0]=="ispawn" and parsed.length()>=9)
 {
 int minx=string_to_number(parsed[1]);

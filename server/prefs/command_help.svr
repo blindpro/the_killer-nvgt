@@ -1,0 +1,36 @@
+Any of these commands are typed with a slash after the input box. So open the chatbox with the slash key and type any command including it's prepending slash.
+/newbie: disables the newbie flag if you have it enabled.
+/mute <playername>: mutes a player.
+/unmute <playername>: unmutes a player.
+/changes: views a list of changes to the server. This displays in a menu.
+/request: request anything to the developers. Suggestions and bugs should go here.
+/events: Sends you a message with all the events on the server.
+/joinevent <ID:  joins an event in progress.
+/leaveevent: leaves the current event if you joined any.
+/nickfind <nickname>: Finds players(if any) with that nickname. Not case sensative. Prints out each player on it's own packet in the misc buffer, since multiple people can have the same nickname.
+/beacon: toggles whether you hear player beacons or not.
+/teamcreate: create a team. Just press enter and it will ask you for your team name.
+/members: Lists your team's members.
+/teamshelters: tells you what shelters are assigned to your team. To assign a shelter to your team, you must build it and then type \"/shteam set\" inside it.
+/teampass <password>: updates your team's password. Only works if you are leader of the team.
+/teamremove <playername>: removes a player from your team.
+/teamcancel: cancels your team
+/teamleave: leaves a team you are in, if you're not the leader. If you are the leader use cancel.
+/t <message>: sends a message to your team.
+/jointeam <teamname> <teampassword>: Joins a team. If a player wants you in their team they will probably pm you with the info to join it.
+/shadd <playername>: Adds a player to the shelter allowed players list. Please note that in order for this to work, you must be in a shelter you own.
+/shremove <playername>: Removes a player from the shelter allowed players list. Please note that in order for this to work, you must be in a shelter you own.
+/shallowed: checks allowed players in a shelter you own.
+/shteam: can link a shelter to a team. Use /shteam by itself to check currently associated team, /shteam set to assign it to the team you are a part of, and /shteam remove to unlink it from that team. This can be used to let anyone from that team enter the shelter, among possibly other things.
+/shchat <message>: sends out a chat into a shelter you are currently in for anyone inside. Does not require owner permissions.
+/me: sends a me message, called emotes on some games.
+/activeadmins: checks the connected admins and developers
+/admins: lists the current admins, even if they are not online.
+/sell: opens a menu to sell items to the store.
+/transfer playername item amount: transfer amount of item to playername. This is our way of adding a player to player give feature without a client update. As such, it has a limitation range of 5 tiles.
+/auction amount item bid: auctions amount of a certain item with a minimum bid of bid. Note that you can also do this by hitting space in your inv menu. If this command is followed by no parameters, I.E. /auction, it will tell you about the current auction in progress.
+/cancelauction: cancels your auction.
+/bid number: bids number of coins on an active auction. If the bid is too low it will tell you.
+/cancelbid: cancels your previous bid, mainly useful if you added one too many digits or whatever. It will revert to the state it was previously in.
+/deleteme: deletes your character. Note that once you do this even we developers can't get it back!
+If you need any help, let one of us know.

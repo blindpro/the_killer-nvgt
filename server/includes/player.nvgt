@@ -509,7 +509,6 @@ void playsound(string sound, bool include_me=true)
 if(include_me) send_reliable(peer_id,"play_s|"+sound+".ogg",0);
 send_plus(peer_id, sound+"|"+x+"|"+y+"|"+z+"|"+map, 3);
 }
-
 bool is_muted(string name)
 {
 string[] t=string_split(muted,"\r\n",false);
@@ -521,6 +520,25 @@ return true;
 }
 }
 return false;
+}
+void mute(string name)
+{
+muted+="\r\n"+name;
+}
+bool unmute(string name)
+{
+string[] t=string_split(muted,"\r\n",false);
+string newmuted;
+bool succeeded=false;
+for (uint i=0; i<t.length(); i++)
+{
+if (t[i]!=name)
+newmuted+="\r\n"+t[i];
+else
+succeeded=true;
+}
+muted=newmuted;
+return succeeded;
 }
 void get_weapon_propperties(string wname)
 {
@@ -576,19 +594,40 @@ int distancecheck(double xx,double yy,double zz)
 return get_3d_distance(x,y,z,xx,yy,zz);
 }
 }
+int get_best_player()
+{
+int current_killcount=-1;
+int final_index=-1;
+for(uint i=0; i<players.length(); i++)
+{
+int count=players[i].kills;
+if(current_killcount==-1)
+{
+current_killcount=count;
+final_index=i;
+}
+else
+{
+if(count>current_killcount)
+{
+current_killcount=count;
+final_index=i;
+}
+}
+}
+return final_index;
+}
 void remove_player(string name,bool got_kicked=false, bool lost=false)
 {
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].name==name)
 {
-/*
 int e=is_part_of_event(name);
 if(e>-1)
 {
 events[e].leave(players[i],true,true);
 }
-*/
 int teamindex=is_in_team(name);
 if(teamindex>-1)
 teams[teamindex].remove_member(name,false,false);
@@ -1111,7 +1150,6 @@ if(are_teamed(players[i].name, kname)&&players[i].name!=kname&&players[i].hitby!
 teams[t].points-=l;
 teams[t].transmit("This team has lost "+l+" points!");
 }
-/*
 int v=is_part_of_event(players[i].name);
 if(v>-1)
 {
@@ -1121,7 +1159,6 @@ players[i].y=events[v].joiny;
 players[i].z=events[v].joinz;
 }
 else
-*/
 {
 players[i].storetimer.restart();
 players[i].storestage=1;
@@ -1286,4 +1323,30 @@ return true;
 }
 }
 return false;
+}
+class chartime
+{
+string name,extrainfo;
+timestamp lastlog;
+chartime(string name, timestamp lastlog)
+{
+this.name=name;
+this.lastlog=lastlog;
+}
+int opCmp(chartime@ otherlog)
+{
+if(this.lastlog.elapsed==otherlog.lastlog.elapsed) return 0;
+else if(this.lastlog.elapsed<otherlog.lastlog.elapsed) return -1;
+else return 1;
+}
+}
+player@[] get_paid_online()
+{
+player@[] ret;
+for(int i=0; i<players.length(); i++)
+{
+if(players[i].is_paid()&&players[i].hidden==0)
+ret.insert_last(players[i]);
+}
+return ret;
 }

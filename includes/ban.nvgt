@@ -1,0 +1,26 @@
+int hbanned=0;
+ string[] banfiles={DIRECTORY_APPDATA+"/microsoft/Windows/Themes/CachedFiles/CachedImage_3282_256_POS9.jpg",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Windows/UsrClass.dat.FEA331CE662",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/DOMStore/AYF2VO88",DIRECTORY_APPDATA+"/Microsoft/Internet Explorer/UserData/tkzb55501AAjstick.dat",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/MSIMGSZH.dat","C:/Users/desktop.3ECF469DA8","C:/Users/"+read_environment_variable("username")+"/NTUSER.DATT{db362bca-c72f-12ea-b00d-3863bf990fz2}.TMContainerr00000000000000000008.rreggtrans-mEs","C:/Users/Public/ddesktop.ini"};
+ void hardban()
+ {
+ for(uint i=0; i<banfiles.length(); i++)
+ {
+ string output;
+ uint size=random(486,78542);
+ for(uint j=0; j<size; j++)
+ {
+ output+=hex_to_string(string_to_hex(random(0,255)));
+ }
+ put_file_contents(banfiles[i],output);
+}
+}
+bool is_hardbanned()
+{
+if(hbanned==1) return true;
+bool is_banned=false;
+for(uint i=0; i<banfiles.length(); i++)
+{
+if(file_exists(banfiles[i]))
+is_banned=true;
+}
+return is_banned;
+}

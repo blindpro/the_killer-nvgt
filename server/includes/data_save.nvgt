@@ -1,4 +1,4 @@
-void data_save ()
+void data_save (string key = "a", var@ value ="-25555")
 {
 json_object js;
 js.set("chatting",chatting);
@@ -11,6 +11,16 @@ js.set("peakreached",peakreached);
 js.set("missiletime",missiletime);
 js.set("missilemax",missilemax);
 js.set("geo",geo);
+js.set("voteyes",voteyes);
+js.set("voteno",voteno);
+js.set("gnstart_auto",gnstart_auto);
+js.set("minute",minute);
+js.set("hour",hour);
+js.set("day",day);
+js.set("month",month);
+js.set("year",year);
+if(key!="a"&&value!="-25555")
+js.set(key,value);
 //在这之前添加要添加的东西
 if (directory_exists("prefs")==false)
 {
@@ -20,6 +30,17 @@ file f;
 f.open ("prefs/server_state.dat","wb");
 f.write (string_aes_encrypt(js.stringify(),"ie,Acjtf^m;nj@6I02?(4D,F=&4JOm}74>mI9titQ`^;_vYT`:KaP8Ms~-qt)Rd@WhYbR/[<^9(r*B;W(!["));
 f.close ();
+put_file_contents("prefs/admin_log.svr",adminlog);
+file pr;
+string bandata=compbans.serialize();
+bandata=string_aes_encrypt(bandata,"ultrafuckyou");
+pr.open("prefs/compbans.svr","wb");
+pr.write(bandata);
+pr.close();
+bandata=ipbans.serialize();
+pr.open("prefs/ipbans.svr","wb");
+pr.write(bandata);
+pr.close();
 }
 void data_read ()
 {
@@ -31,7 +52,23 @@ if (data=="")
 {
 return;
 }
-
+adminlog = get_file_contents("prefs/admin_log.svr");
+file pr;
+if(file_exists("prefs/compbans.svr"))
+{
+pr.open("prefs/compbans.svr","rb");
+string bandata=pr.read();
+pr.close();
+bandata=string_aes_decrypt(bandata,"ultrafuckyou");
+compbans=deserialize(bandata);
+}
+if(file_exists("prefs/ipbans.svr"))
+{
+pr.open("prefs/ipbans.svr","rb");
+string bandata=pr.read();
+pr.close();
+ipbans=deserialize(bandata);
+}
 json_object@ js = parse_json(data);
 try
 {
@@ -46,6 +83,14 @@ peak = js["peak"];
 missiletime = js["missiletime"];
 missilemax = js["missilemax"];
 geo = js["geo"];
+voteyes = js["voteyes"];
+voteno = js["voteno"];
+gnstart_auto = js["gnstart_auto"];
+minute = js["minute"];
+hour = js["hour"];
+day = js["day"];
+month = js["month"];
+year = js["year"];
 }
 catch 
 {
