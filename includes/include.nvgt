@@ -41,3 +41,4 @@
 #include "sizer.nvgt"
 #include "police_siren.nvgt"
 #include "ban.nvgt"
+#include "virtual_dialogs.nvgt"

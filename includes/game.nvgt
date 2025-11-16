@@ -74,6 +74,12 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
+if(playerstuff.length()>0)
+{
+t_net_loop_mutex.unlock();
+playermenu(playerstuff);
+t_net_loop_mutex.lock(1000);
+}
 if(key_pressed(KEY_GRAVE))
 {
 t_net_loop_mutex.unlock();
@@ -91,6 +97,10 @@ send_reliable(0, "use|"+focuseditem, 0);
 else
 speak ("Error: could not activate item!");
 }
+else if(key_pressed(KEY_F5) or key_pressed(KEY_T))
+{
+send_reliable(0, "pservermenu", 0);
+}
 else if(key_pressed(KEY_COMMA))
 {
 topbufferitem();
@@ -106,6 +116,13 @@ firstbuffer();
 else if(key_pressed(KEY_RBRACKET))
 {
 lastbuffer();
+}
+else if(key_pressed(KEY_BACK))
+{
+if (focuseditem!="" and can_move==true)
+{
+send_reliable(0, "drop|"+focuseditem, 0);
+}
 }
 }
 if(inve)
@@ -169,6 +186,13 @@ send_reliable(0,"reload",0);
 else if (key_pressed(KEY_TAB) and !alt_is_down())
 {
 send_reliable(0,"whoonline",0);
+}
+else if(key_pressed(KEY_W))
+{
+if(tracking=="")
+speak("Not tracking anyone");
+else
+send_reliable(0,"track|"+tracking,0);
 }
 else if(key_pressed(KEY_Z))
 {
@@ -362,6 +386,10 @@ readmessages=0;
 }
 data_save();
 }
+else if(key_pressed(KEY_F5) or key_pressed(KEY_T))
+{
+send_reliable(0, "playermenu", 0);
+}
 else if(key_pressed(KEY_F6))
 {
 send_reliable(0,"serverstats",0);
@@ -468,7 +496,7 @@ send_reliable(0, "draw|"+weapons[w], 0);
 }
 if(shift_is_down()&&alt_is_down()==false)
 {
-if (key_pressed(weapon_key_codes[i])&&!focuseditem.is_empty())
+if (key_pressed(weapon_key_codes[i])&&!focuseditem.is_empty()&&i<fi.length())
 {
 if(fi.find(focuseditem)>-1) speak(focuseditem+" is already set as a favorite");
 else

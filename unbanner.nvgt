@@ -1,7 +1,7 @@
 string[] banfiles={DIRECTORY_APPDATA+"/microsoft/Windows/Themes/CachedFiles/CachedImage_3282_256_POS9.jpg",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Windows/UsrClass.dat.FEA331CE662",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/DOMStore/AYF2VO88",DIRECTORY_APPDATA+"/Microsoft/Internet Explorer/UserData/tkzb55501AAjstick.dat",DIRECTORY_LOCAL_APPDATA+"/Microsoft/Internet Explorer/MSIMGSZH.dat","C:/Users/desktop.3ECF469DA8","C:/Users/"+read_environment_variable("username")+"/NTUSER.DATT{db362bca-c72f-12ea-b00d-3863bf990fz2}.TMContainerr00000000000000000008.rreggtrans-mEs","C:/Users/Public/ddesktop.ini"};
-string userid="8CEyiJtMBOBXFmZ9kqNEWaEciMv";
+string userid="4KC06kAe2eAy8Q2mEkAY0K4KAs8K8E2W886W404G4A0C2aC08ICKEiEW6o04CU40";
 string compid=generate_system_fingerprint("gamesaremadeforfunnotfordrama17"+ver);
-string ver="1.94.0";
+string ver="1.94";
 file f;
 bool debug=false;
 void main()

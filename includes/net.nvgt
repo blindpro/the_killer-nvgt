@@ -301,6 +301,19 @@ string map=parsed[5];
 tp.play_3d("fall.ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
 }
 }
+else if(parsed[0]=="trackplayer")
+{
+int x=round(stn(parsed[2]),0);
+int y=round(stn(parsed[3]),0);
+int z=stn(parsed[4]);
+string mp=parsed[5];
+if(mapname!=mp)
+speak("This player is on a different map. Sorry");
+else
+{
+tell_where(x,y,z,parsed[6],true);
+}
+}
 else if(parsed[0]=="facing"&&parsed.length () >1) facing=stn(parsed[1]);
 else if(parsed[0]=="land")
 {
@@ -330,11 +343,11 @@ else if(parsed[0]=="candraw")
 {
 can_draw_weapon=true;
 }
-else if(parsed[0]=="remove_obj")
+else if(parsed[0]=="remove_obj"&&parsed.length()>1)
 {
-int index = get_obj_index(stn(parsed[1]));
+int index = get_obj_index(parsed[1]);
 if (index>-1)
-remove_obj(index);
+remove_obj(parse_int(index));
 }
 else if(parsed[0]=="spawn_obj")
 {
@@ -433,6 +446,11 @@ alert=s.replace("admintell|","",false);
 tp.play_stationary("admintell.ogg",false);
 add_buffer_item("misc",alert);
 }
+}
+else if(parsed[0]=="playermenu")
+{
+string m=s.replace("playermenu|","",true);
+playerstuff=string_split(m,"\r\n",true);
 }
 else if(parsed[0]=="isadmin")
 {

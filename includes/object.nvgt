@@ -7,10 +7,10 @@ timer beeptimer;
 int beeptime=750;
 string name;
 int amount;
-int id=-1;
+int id;
 bool get;
 int slot;
-obj(int ox, int oy, int oz, string omap, string oname, int oa=1, int oid=-1)
+obj(int ox, int oy, int oz, string omap, string oname, int oa=1, int oid="")
 {
 x=ox;
 y=oy;
@@ -55,7 +55,7 @@ string[]@ parsed = obj_data[i].split("|");
 spawn_obj(stn(parsed[0]), stn(parsed[1]), stn(parsed[2]), parsed[3], parsed[4], stn(parsed[6]), stn(parsed[5]));
 }
 }
-int get_obj_index(int id)
+int get_obj_index(string id)
 {
 for(uint i = 0; i < objs.length(); i++)
 {

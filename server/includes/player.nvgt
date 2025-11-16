@@ -637,13 +637,11 @@ if(got_kicked==true)
 send_reliable(0,players[i].name+" was kicked from the server",2);
 log("eventstream",players[i].name+" was kicked from the server");
 }
-/*
 if(cheatercheck(i,lost) and !got_kicked)
 {
 write_to(players[i].name,"cheater.usr",players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit");
 send_reliable(0,players[i].name+" is a cheater!",2);
 }
-*/
 if(players[i].following!="")
 {
 int ind=get_player_index_from(players[i].following);
@@ -1349,4 +1347,30 @@ if(players[i].is_paid()&&players[i].hidden==0)
 ret.insert_last(players[i]);
 }
 return ret;
+}
+bool cheatercheck(int index, bool excludepaid=false)
+{
+if(index<0) return false;
+if(file_exists("chars/"+players[index].name+"/cheater.usr")) return false; //server already caught it in reception of close
+bool missilesnear=false;
+for(uint i=0; i<missiles.length(); i++)
+{
+int missiledist=players[index].distancecheck(missiles[i].x,missiles[i].y,missiles[i].z);
+if(missiledist<=30 and missiles[i].map==players[index].map and players[index].name==missiles[i].targetname)
+{
+missilesnear=true;
+}
+}
+bool near_ultrabomb=false;
+for(int i=0; i<ultrabombs.length(); i++)
+{
+int distance=players[index].distancecheck(ultrabombs[i].x, ultrabombs[i].y, ultrabombs[i].z);
+if(distance<80 and players[index].map==ultrabombs[i].map and ultrabombs[i].d==true) near_ultrabomb=true;
+}
+if((players[index].statchangetimer.elapsed<15000||missilesnear==true || near_ultrabomb==true))
+{
+if(!excludepaid) return true;
+else if(excludepaid&&players[index].paid==0) return true;
+}
+return false;
 }
