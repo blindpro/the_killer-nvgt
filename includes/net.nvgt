@@ -259,6 +259,13 @@ garbage_collect();
 t_net_loop_mutex.lock();
 string s;
 e = n.request(0);
+if (e.type==event_disconnect)
+{
+dlg("You have been disconnected");
+in_game=false;
+in_game1 = false;
+//prior_connected=false;
+}
 if(e.type==event_receive)
 {
 if(e.channel==0)
