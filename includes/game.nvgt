@@ -80,6 +80,23 @@ t_net_loop_mutex.unlock();
 playermenu(playerstuff);
 t_net_loop_mutex.lock(1000);
 }
+if(dlg_mode>0)
+{
+t_net_loop_mutex.unlock();
+if(dlg_mode==1)
+dlg(dlg_message);
+else if(dlg_mode==2)
+dlg_wait(dlg_message,dlg_waittime);
+else if(dlg_mode==3)
+dlg_audio(dlg_file_name, dlg_message);
+if(dlg_message=="You have been disconnected")
+in_game1=false;
+dlg_mode=0;
+dlg_file_name="";
+dlg_message="";
+dlg_waittime=0;
+t_net_loop_mutex.lock(1000);
+}
 if(key_pressed(KEY_GRAVE))
 {
 t_net_loop_mutex.unlock();

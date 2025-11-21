@@ -261,10 +261,9 @@ string s;
 e = n.request(0);
 if (e.type==event_disconnect)
 {
-dlg("You have been disconnected");
-in_game=false;
-in_game1 = false;
-//prior_connected=false;
+dlg_message="You have been disconnected";
+dlg_mode=1;
+prior_connected=false;
 }
 if(e.type==event_receive)
 {
@@ -631,7 +630,8 @@ sm.items = items;
 else if(parsed[0]=="dlg")
 {
 string alert=s.replace("dlg|","",false);
-dlg(alert);
+dlg_message=alert;
+dlg_mode=1;
 }
 else if(parsed[0]=="input")
 {
