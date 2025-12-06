@@ -341,6 +341,12 @@ else if(parsed[0]=="remcontrol")
 speak("You pull out a remote controler. Its  small with a button in the center with the letter F. You see a small flashing light indicating a remote gun is sending a signal");
 controling_remgun=true;
 }
+else if(parsed[0]=="launch_form"&&parsed.length()>=1)
+{
+string ftext = s;
+ftext = ftext.replace("launch_form|","",false);
+form_text = ftext;
+}
 else if(parsed[0]=="cannotdraw")
 {
 can_draw_weapon=false;

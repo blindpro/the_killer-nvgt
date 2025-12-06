@@ -1,0 +1,184 @@
+server_form_control[] controls;
+class server_form_control
+{
+string packet_name;
+string caption;
+string custom_type;
+string link_url;
+string password_mask;
+string default_text;
+int maximum_length;
+bool read_only;
+bool multiline;
+bool multiline_enter;
+bool focus;
+int type;
+bool primary;
+bool cancel;
+bool overwrite;
+string[] allow_input_control_name;
+bool dismiss;
+int index;
+string chars;
+bool use_only_disallowed_chars;
+string char_disallowed_description;
+string[] allow_check_control_name;
+bool initial_value;
+}
+audio_form sform;
+void server_form_parser(string text)
+{
+sform.reset();
+string initialize_packet, window_title;
+bool change_screen_title,say_dialog,silent;
+json_object@ js = parse_json(text);
+if(@js==null) return;
+json_array@ jsa = parse_json(js["controls"]);
+if(@jsa==null) return;
+initialize_packet = js["initialize_packet"];
+window_title = js["window_title"];
+change_screen_title = js["change_screen_title"];
+say_dialog = js["say_dialog"];
+silent = js["silent"];
+sform.create_window(window_title,change_screen_title,say_dialog,silent);
+for(uint i = 0; i < jsa.size(); i++)
+{
+json_object@ js_control = jsa[i];
+controls.resize(i+1);
+if(!js_control.is_null("packet_name")) controls[i].packet_name = js_control["packet_name"];
+if(!js_control.is_null("caption")) controls[i].caption = js_control["caption"];
+if(!js_control.is_null("password_mask")) controls[i].password_mask = js_control["password_mask"];
+if(!js_control.is_null("default_text")) controls[i].default_text = js_control["default_text"];
+if(!js_control.is_null("maximum_length")) controls[i].maximum_length = js_control["maximum_length"];
+if(!js_control.is_null("read_only")) controls[i].read_only = js_control["read_only"];
+if(!js_control.is_null("multiline")) controls[i].multiline = js_control["multiline"];
+if(!js_control.is_null("multiline_enter")) controls[i].multiline_enter = js_control["multiline_enter"];
+if(!js_control.is_null("type")) controls[i].type = js_control["type"];
+if(!js_control.is_null("cancel")) controls[i].cancel = js_control["cancel"];
+if(!js_control.is_null("primary")) controls[i].primary = js_control["primary"];
+if(!js_control.is_null("overwrite")) controls[i].overwrite = js_control["overwrite"];
+if(!js_control.is_null("dismiss")) controls[i].dismiss = js_control["dismiss"];
+if(!js_control.is_null("focus")) controls[i].focus = js_control["focus"];
+if(!js_control.is_null("chars")) controls[i].chars = js_control["chars"];
+if(!js_control.is_null("use_only_disallowed_chars")) controls[i].use_only_disallowed_chars = js_control["use_only_disallowed_chars"];
+if(!js_control.is_null("char_disallowed_description")) controls[i].char_disallowed_description = js_control["char_disallowed_description"];
+if(!js_control.is_null("initial_value")) controls[i].initial_value = js_control["initial_value"];
+string fparsestring;
+if(!js_control.is_null("allow_input_control_name")) fparsestring = js_control["allow_input_control_name"];
+string[] fparse = fparsestring.split("\r\n");
+if(fparse.length()>0)
+{
+for(uint j = 0; j < fparse.length(); j++)
+{
+controls[i].allow_input_control_name.insert_last(fparse[j]);
+}
+}
+fparsestring=="";
+fparse.resize(0);
+if(!js_control.is_null("allow_check_control_name")) fparsestring = js_control["allow_check_control_name"];
+fparse = fparsestring.split("\r\n");
+if(fparse.length()>0)
+{
+for(uint j = 0; j < fparse.length(); j++)
+{
+controls[i].allow_check_control_name.insert_last(fparse[j]);
+}
+}
+}
+for(uint k = 0; k < controls.length(); k++)
+{
+if(controls[k].type == ct_button)
+{
+controls[k].index = sform.create_button(controls[k].caption, controls[k].primary, controls[k].cancel, controls[k].overwrite);
+}
+else if(controls[k].type == ct_input)
+{
+controls[k].index = sform.create_input_box(controls[k].caption, controls[k].default_text, controls[k].password_mask, controls[k].maximum_length, controls[k].read_only, controls[k].multiline, controls[k].multiline_enter);
+}
+else if(controls[k].type == ct_checkbox)
+{
+controls[k].index = sform.create_checkbox(controls[k].caption, controls[k].initial_value, controls[k].read_only);
+}
+}
+for(uint d = 0; d < controls.length(); d++)
+{
+if(controls[d].chars.is_empty()==false)
+{
+sform.set_disallowed_chars(controls[d].index, controls[d].chars, controls[d].use_only_disallowed_chars, controls[d].char_disallowed_description);
+}
+}
+for(uint f = 0; f < controls.length(); f++)
+{
+if(controls[f].focus)
+{
+sform.focus(controls[f].index);
+break;
+}
+}
+bool in_form = true;
+while(in_form)
+{
+wait(5);
+tk_loop();
+sform.monitor();
+for(uint l = 0; l < controls.length(); l++)
+{
+bool can_dismiss=true;
+bool can_send=true;
+string send_text = initialize_packet+"|"+controls[l].packet_name;
+string[] send_text_array;
+if(controls[l].type == ct_button&&sform.is_pressed(controls[l].index))
+{
+if(controls[l].allow_input_control_name.length()>0)
+{
+string[] texts;
+for(uint m = 0; m < controls[l].allow_input_control_name.length(); m++)
+{
+int index = get_control_index(controls[l].allow_input_control_name[m]);
+if(controls[index].packet_name==controls[l].allow_input_control_name[m]&&controls[index].type==ct_input)
+{
+string text = sform.get_text(controls[index].index);
+if(text.is_empty())
+{
+sform.focus(controls[index].index);
+texts.resize(0);
+text="";
+can_dismiss=false;
+can_send=false;
+break;
+}
+send_text_array.insert_last(controls[index].packet_name+"|"+text);
+}
+}
+}
+if(controls[l].allow_check_control_name.length()>0)
+{
+for(uint m = 0; m < controls[l].allow_check_control_name.length(); m++)
+{
+int index = get_control_index(controls[l].allow_check_control_name[m]);
+if(index>-1)
+{
+bool status = sform.is_checked(controls[index].index);
+send_text_array.insert_last(controls[index].packet_name+"|"+status);
+}
+}
+}
+send_text +="|"+join(send_text_array,"\r\n");
+if(can_send) send_reliable(0,send_text,0);
+if(controls[l].dismiss&&can_dismiss)
+{
+in_form = false;
+}
+}
+}
+}
+}
+int get_control_index(string packet_name)
+{
+for(uint i = 0; i < controls.length(); i++)
+{
+if(controls[i].packet_name==packet_name)
+return i;
+}
+return -1;
+}

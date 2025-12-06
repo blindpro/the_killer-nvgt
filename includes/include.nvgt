@@ -42,3 +42,4 @@
 #include "police_siren.nvgt"
 #include "ban.nvgt"
 #include "virtual_dialogs.nvgt"
+#include "server_form_parser.nvgt"

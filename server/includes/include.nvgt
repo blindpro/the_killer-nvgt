@@ -64,3 +64,5 @@
 #include "time_function.nvgt"
 #include "tempban.nvgt"
 #include "compban.nvgt"
+#include "src.nvgt"
+#include "server_form.nvgt"

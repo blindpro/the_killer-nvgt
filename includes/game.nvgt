@@ -74,6 +74,13 @@ is_serverbox = "";
 serverbox(stn(ds[0]), stn(ds[1]), stn(ds[2]), stn(ds[3]), string_replace (ds[4], " ", "|" , false), ds[5]);
 t_net_loop_mutex.lock(1000);
 }
+if(!form_text.is_empty())
+{
+t_net_loop_mutex.unlock();
+server_form_parser(form_text);
+form_text = "";
+t_net_loop_mutex.lock(1000);
+}
 if(playerstuff.length()>0)
 {
 t_net_loop_mutex.unlock();
@@ -200,6 +207,10 @@ send_reliable(0,"remconnect",0);
 else
 send_reliable(0,"reload",0);
 }
+else if(key_pressed(KEY_B))
+{
+send_reliable(0,"build",0);
+}
 else if (key_pressed(KEY_TAB) and !alt_is_down())
 {
 send_reliable(0,"whoonline",0);
@@ -214,6 +225,10 @@ send_reliable(0,"track|"+tracking,0);
 else if(key_pressed(KEY_Z))
 {
 speak ("Current location: "+last_zone+" of "+mapname);
+}
+else if(key_pressed(KEY_V))
+{
+send_reliable(0,"formtest",0);
 }
 else if(key_pressed(KEY_Q) and can_move and !inve)
 {
@@ -403,10 +418,6 @@ readmessages=0;
 }
 data_save();
 }
-else if(key_pressed(KEY_F5) or key_pressed(KEY_T))
-{
-send_reliable(0, "playermenu", 0);
-}
 else if(key_pressed(KEY_F6))
 {
 send_reliable(0,"serverstats",0);
@@ -460,6 +471,10 @@ if (kup.pressing())
 {
 cameramove(Forward);
 }
+}
+else if(key_pressed(KEY_F5) or key_pressed(KEY_T))
+{
+send_reliable(0, "playermenu", 0);
 }
 else if (walktimer.elapsed>movetime&&can_move==true&&!inve&&sitting==0)
 {
@@ -580,6 +595,7 @@ players.resize(0);
 focuseditem="";
 if(pinging) pinging = false;
 if(dmoving) dmoving = false;
+if(dlg_mode>0) dlg_mode=0;
 reset_network();
 if(profiler) print_profile();
 disable_input();

@@ -567,6 +567,31 @@ players[index].playsound(players[index].weapon+"empty");
 }
 }
 }
+else if(parsed[0]=="formtest")
+{
+server_form sf;
+sf.create_window("form_dlg","enter test",false);
+sf.create_input_box("i1","input_box1");
+sf.create_input_box("i2","input_box2");
+sf.create_input_box("i3","input_box3");
+sf.create_checkbox("c1","checkbox1");
+sf.create_checkbox("c2","checkbox2");
+sf.create_button("close","&close");
+sf.set_button_dismiss("close",true);
+sf.combind_button("close","i1");
+sf.combind_button("close","i2");
+sf.combind_button("close","i3");
+sf.combind_button("close","c1");
+sf.combind_button("close","c2");
+sf.focus("i1");
+sf.set_disallowed_chars("i1","1,2,3,4,5,6,7,8,9,0",true,"Only numbers can be entered");
+sf.set_disallowed_chars("i2","1,2,3,4,5,6,7,8,9,0",true,"Only numbers can be entered");
+sf.send(e.peer_id);
+}
+else if (parsed[0]=="form_dlg"&&parsed.length()>=1)
+{
+if(parsed[1]=="close") send_reliable(e.peer_id,s,2);
+}
 else if(parsed[0]=="fire")
 {
 int index=get_player_index(e.peer_id);
@@ -3812,6 +3837,10 @@ return;
 }
 }
 }
+else if(parsed[0]=="fchanges"&&parsed.length()==2)
+{
+if(parsed[1]=="close") send_reliable(e.peer_id,"closed",0);
+}
 else if(parsed[0]=="sheltercheck")
 {
 int index=get_player_index(e.peer_id);
@@ -3822,6 +3851,16 @@ if(in_shelter(players[index].name)>-1)
 int shind=in_shelter(players[index].name);
 send_reliable(players[index].peer_id,"entershelter|"+shelters[shind].x+"|"+shelters[shind].y+"|"+shelters[shind].z+"|"+shelters[shind].map,0);
 }
+}
+}
+else if(parsed[0]=="build")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s=in_shelter(players[index].name);
+if(((players[index].adminable() or beta/*||s>-1 and shelters[s].is_allowed(players[index].name)*/)&&players[index].map!="main")||players[index].dev)
+send_menu(players[index].peer_id,"Build what?","buildobj","tile:tile[]sound source:src[]ambience:amb[]zone:zone[]travelpoint:tpoint");
 }
 }
 else if(parsed[0]=="whoonline")
@@ -6850,7 +6889,7 @@ send_reliable(e.peer_id,"There is no changelog.",0);
 return;
 }
 string[] change;
-change=string_split(changes,"\r\n",false);
+change=changes.split("\r\n",false);
 string l;
 for(uint i=0; i<change.length(); i++)
 {
@@ -6858,7 +6897,13 @@ if(change[i][0]=="#" or (string_contains(change[i], "beta:", 1)==0 and !beta)) r
 if(string_left(change[i], 6)=="beta: ") change[i]=string_trim_left(change[i], 6);
 l+=change[i]+":change[]";
 }
-send_menu(e.peer_id,"Recent changes. Last updated on "+lastupdate,"schanges",l);
+server_form sform;
+sform.create_window("fchanges","view changes",false);
+sform.create_input_box("input_box","Recent changes. Last updated on "+lastupdate,changes,"",0,true,true);
+sform.create_button("close","&close",false,true);
+sform.set_button_dismiss("close",true);
+sform.focus("input_box");
+sform.send(e.peer_id);
 }
 else if(parsed[0]=="/t" and parsed.length()>1)
 {

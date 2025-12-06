@@ -121,3 +121,4 @@ string[] fi(12);
 string[] playerstuff(0);
 string dlg_message, dlg_file_name;
 int dlg_waittime, dlg_mode; //mode: 0,none,1,void dlg(string message) 2,void dlg_wait(string message, int waittime) 3,void dlg_audio (string file_name , string message = "")
+string form_text;

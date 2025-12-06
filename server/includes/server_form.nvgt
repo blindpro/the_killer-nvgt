@@ -1,0 +1,214 @@
+/*
+enum control_types
+{
+ct_button = 0,
+ct_input,
+ct_checkbox,
+ct_progress,
+ct_status_bar,
+ct_list,
+ct_slider,
+ct_form,
+ct_keyboard_area,
+ct_link
+}
+*/
+class server_form_control
+{
+string packet_name;
+string caption;
+string custom_type;
+string link_url;
+string password_mask;
+string default_text;
+int maximum_length;
+bool read_only;
+bool multiline;
+bool multiline_enter;
+bool focus;
+int type;
+bool primary;
+bool cancel;
+bool overwrite;
+string[] allow_input_control_name;
+bool dismiss;
+string chars;
+bool use_only_disallowed_chars;
+string char_disallowed_description;
+bool initial_value;
+string[] allow_check_control_name;
+json_object@ to_json()
+{
+json_object js;
+js.set("packet_name",packet_name);
+js.set("caption",caption);
+js.set("password_mask",password_mask);
+js.set("default_text",default_text);
+js.set("maximum_length",maximum_length);
+js.set("read_only",read_only);
+js.set("multiline",multiline);
+js.set("multiline_enter",multiline_enter);
+js.set("type",type);
+js.set("primary",primary);
+js.set("cancel",cancel);
+js.set("overwrite",overwrite);
+js.set("allow_input_control_name",join(allow_input_control_name,"\r\n"));
+js.set("dismiss",dismiss);
+js.set("focus",focus);
+js.set("chars",chars);
+js.set("use_only_disallowed_chars",use_only_disallowed_chars);
+js.set("char_disallowed_description",char_disallowed_description);
+js.set("allow_check_control_name",join(allow_check_control_name,"\r\n"));
+js.set("initial_value",initial_value);
+return js;
+}
+}
+class server_form
+{
+void create_window(string initialize_packet, string window_title, bool change_screen_title = true, bool say_dialog = true, bool silent = false)
+{
+this.initialize_packet = initialize_packet;
+this.window_title = window_title;
+this.change_screen_title = change_screen_title;
+this.say_dialog = say_dialog;
+this.silent = silent;
+}
+void create_button(string packet_name, string caption, bool primary = false, bool cancel = false, bool overwrite = true)
+{
+active_controls++;
+control_counter++;
+controls.resize(control_counter+1);
+controls[control_counter].packet_name = packet_name;
+controls[control_counter].type = ct_button;
+controls[control_counter].caption = caption;
+controls[control_counter].primary = primary;
+controls[control_counter].cancel = cancel;
+controls[control_counter].overwrite = overwrite;
+}
+void set_button_dismiss(string packet_name ,bool dismiss)
+{
+for(uint i = 0; i < controls.length(); i++)
+{
+if(packet_name==controls[i].packet_name&&controls[i].type == ct_button)
+{
+controls[i].dismiss = dismiss;
+}
+}
+}
+void combind_button(string button_packet_name,string packet_name)
+{
+int index = get_controls_index(packet_name);
+int index1 = get_controls_index(button_packet_name);
+if(index<0||index1<0) return;
+for(uint i = 0; i < controls.length(); i++)
+{
+if(controls[i].packet_name == button_packet_name&&controls[i].type == ct_button)
+{
+if(controls[index].type==ct_input)
+{
+if(controls[i].allow_input_control_name.find(packet_name)==-1)
+{
+controls[i].allow_input_control_name.insert_last(packet_name);
+}
+}
+}
+if(controls[index].type==ct_checkbox)
+{
+if(controls[i].allow_check_control_name.find(packet_name)==-1)
+{
+controls[i].allow_check_control_name.insert_last(packet_name);
+}
+}
+}
+}
+void create_input_box(string packet_name,string caption, string default_text = "", string password_mask = "", int maximum_length = 0, bool read_only = false, bool multiline = false, bool multiline_enter = true)
+{
+active_controls++;
+control_counter++;
+controls.resize(control_counter+1);
+controls[control_counter].packet_name = packet_name;
+controls[control_counter].type = ct_input;
+controls[control_counter].caption = caption;
+controls[control_counter].default_text = default_text;
+controls[control_counter].password_mask = password_mask;
+controls[control_counter].maximum_length = maximum_length;
+controls[control_counter].read_only = read_only;
+controls[control_counter].multiline = multiline;
+controls[control_counter].multiline_enter = multiline_enter;
+}
+void create_checkbox(string packet_name, string caption, bool initial_value = false, bool read_only = false)
+{
+active_controls++;
+control_counter++;
+controls.resize(control_counter+1);
+controls[control_counter].packet_name = packet_name;
+controls[control_counter].caption=caption;
+controls[control_counter].initial_value=initial_value;
+controls[control_counter].read_only=read_only;
+controls[control_counter].type=ct_checkbox;
+}
+bool focus(string packet_name)
+{
+bool success;
+for(uint i = 0; i < controls.length(); i++)
+{
+if(controls[i].packet_name==packet_name)
+{
+controls[i].focus=true;
+success=true;
+}
+}
+return success;
+}
+bool set_disallowed_chars(string packet_name, string chars, bool use_only_disallowed_chars = false, string char_disallowed_description = "")
+{
+bool success;
+for(uint i = 0; i < controls.length(); i++)
+{
+if(controls[i].packet_name==packet_name)
+{
+success = true;
+controls[i].chars = chars;
+controls[i].use_only_disallowed_chars = use_only_disallowed_chars;
+controls[i].char_disallowed_description = char_disallowed_description;
+}
+}
+return success;
+}
+void send(uint peer_id)
+{
+json_object js;
+js.set("initialize_packet",initialize_packet);
+js.set("window_title",window_title);
+js.set("change_screen_title",change_screen_title);
+js.set("say_dialog",say_dialog);
+js.set("silent",silent);
+json_array jsa;
+for(uint i = 0; i < controls.length(); i++)
+{
+jsa.add(controls[i].to_json());
+}
+js.set("controls",jsa);
+string text = js.stringify();
+send_reliable(peer_id,"launch_form|"+text,0);
+}
+int get_controls_index(string packet_name)
+{
+for(uint i = 0; i < controls.length(); i++)
+{
+if(packet_name==controls[i].packet_name)
+{
+return i;
+}
+}
+return -1;
+}
+private server_form_control[] controls;
+private string window_title;
+private bool change_screen_title;
+private bool say_dialog;
+private bool silent;
+private int active_controls = 0;
+private int control_counter = -1;
+private string initialize_packet;
+}
