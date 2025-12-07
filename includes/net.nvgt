@@ -347,6 +347,10 @@ string ftext = s;
 ftext = ftext.replace("launch_form|","",false);
 form_text = ftext;
 }
+else if(parsed[0]=="form_dismiss")
+{
+in_form = false;
+}
 else if(parsed[0]=="cannotdraw")
 {
 can_draw_weapon=false;

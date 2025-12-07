@@ -194,7 +194,7 @@ if(xtimer.elapsed>2500 and x==true)
 t_net_loop_mutex.unlock();
 exitgame();
 }
-if(key_pressed(KEY_A)&&w>-1)
+if(key_pressed(KEY_A)&&w>-1&&!inve)
 {
 send_reliable(0,"ammocheck|"+weapons[w],0);
 }
@@ -204,7 +204,7 @@ if(alt_is_down())
 send_reliable(0,"air",0);
 else if(shift_is_down())
 send_reliable(0,"remconnect",0);
-else
+else if(!inve)
 send_reliable(0,"reload",0);
 }
 else if(key_pressed(KEY_B))
@@ -258,6 +258,10 @@ send_reliable(0, "invrequest", 0);
 t_net_loop_mutex.unlock();
 focuseditem=invmenu();
 t_net_loop_mutex.lock(1000);
+}
+else if(key_pressed(KEY_P) and !frozen)
+{
+send_reliable(0,"whonear",0);
 }
 else if(key_pressed(KEY_BACKSLASH))
 interrupt_buffer();
@@ -517,7 +521,7 @@ move(Right);
 }
 for(uint i = 0; i < weapon_key_codes.length(); i++)
 {
-if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon)
+if(can_move==true and alt_is_down()==false and shift_is_down()==false and firetimer.elapsed>=firetime and can_draw_weapon&&!inve)
 {
 if(key_pressed(weapon_key_codes[i])&&i<=weapons.length()-1&&i!=w)
 {
@@ -597,6 +601,7 @@ if(pinging) pinging = false;
 if(dmoving) dmoving = false;
 if(dlg_mode>0) dlg_mode=0;
 reset_network();
+in_form = false;
 if(profiler) print_profile();
 disable_input();
 while(t_net_loop.complete == false)

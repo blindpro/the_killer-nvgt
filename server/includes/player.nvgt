@@ -170,6 +170,8 @@ string weapon="",following="",follower="";
 bool following_on=false,cremguns=false;
 int invpos;
 dictionary inventory;
+server_form player_form;
+bool player_form_active, player_form_send;
 player(int px, int py, int pz, string pmap, string pname, int ppeer_id, string cid, string pver, string pip, string compt,int phid)
 {
 x=px;y=py;z=pz;map=pmap;
@@ -1018,6 +1020,12 @@ players[i].antibiotictimer.restart();
 players[i].health=antibiotic(players[i].health);
 players[i].oldhealth=players[i].health;
 }
+}
+if(players[i].player_form_active&&players[i].player_form_send)
+{
+string text = players[i].player_form.to_string();
+send_reliable(players[i].peer_id,"launch_form|"+text,0);
+players[i].player_form_send = false;
 }
 //开始
 if(players[i].invseconds>0 and players[i].invinsibility_starting==true)

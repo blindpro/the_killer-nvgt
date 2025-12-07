@@ -1,18 +1,3 @@
-/*
-enum control_types
-{
-ct_button = 0,
-ct_input,
-ct_checkbox,
-ct_progress,
-ct_status_bar,
-ct_list,
-ct_slider,
-ct_form,
-ct_keyboard_area,
-ct_link
-}
-*/
 class server_form_control
 {
 string packet_name;
@@ -31,12 +16,17 @@ bool primary;
 bool cancel;
 bool overwrite;
 string[] allow_input_control_name;
-bool dismiss;
 string chars;
 bool use_only_disallowed_chars;
 string char_disallowed_description;
 bool initial_value;
 string[] allow_check_control_name;
+double default_value;
+double minimum_value;
+double maximum_value;
+string text;
+double step_size;
+string[] allow_slider_control_name;
 json_object@ to_json()
 {
 json_object js;
@@ -53,14 +43,50 @@ js.set("primary",primary);
 js.set("cancel",cancel);
 js.set("overwrite",overwrite);
 js.set("allow_input_control_name",join(allow_input_control_name,"\r\n"));
-js.set("dismiss",dismiss);
 js.set("focus",focus);
 js.set("chars",chars);
 js.set("use_only_disallowed_chars",use_only_disallowed_chars);
 js.set("char_disallowed_description",char_disallowed_description);
 js.set("allow_check_control_name",join(allow_check_control_name,"\r\n"));
 js.set("initial_value",initial_value);
+js.set("default_value",default_value);
+js.set("minimum_value",minimum_value);
+js.set("maximum_value",maximum_value);
+js.set("text",text);
+js.set("step_size",step_size);
+js.set("allow_slider_control_name",join(allow_slider_control_name,"\r\n"));
+js.set("link_url",link_url);
 return js;
+}
+void opEqual(server_form_control@ c)
+{
+c.packet_name = packet_name;
+c.caption = caption;
+c.custom_type = custom_type;
+c.link_url = link_url;
+c.password_mask = password_mask;
+c.default_text = default_text;
+c.maximum_length = maximum_length;
+c.read_only = read_only;
+c.multiline = multiline;
+c.multiline_enter = multiline_enter;
+c.focus = focus;
+c.type = type;
+c.primary = primary;
+c.cancel = cancel;
+c.overwrite = overwrite;
+c.allow_input_control_name = allow_input_control_name;
+c.chars = chars;
+c.use_only_disallowed_chars = use_only_disallowed_chars;
+c.char_disallowed_description = char_disallowed_description;
+c.initial_value = initial_value;
+c.allow_check_control_name = allow_check_control_name;
+c.minimum_value = minimum_value;
+c.default_value = default_value;
+c.maximum_value = maximum_value;
+c.text = text;
+c.step_size = step_size;
+c.allow_slider_control_name= allow_slider_control_name;
 }
 }
 class server_form
@@ -85,16 +111,6 @@ controls[control_counter].primary = primary;
 controls[control_counter].cancel = cancel;
 controls[control_counter].overwrite = overwrite;
 }
-void set_button_dismiss(string packet_name ,bool dismiss)
-{
-for(uint i = 0; i < controls.length(); i++)
-{
-if(packet_name==controls[i].packet_name&&controls[i].type == ct_button)
-{
-controls[i].dismiss = dismiss;
-}
-}
-}
 void combind_button(string button_packet_name,string packet_name)
 {
 int index = get_controls_index(packet_name);
@@ -111,12 +127,19 @@ if(controls[i].allow_input_control_name.find(packet_name)==-1)
 controls[i].allow_input_control_name.insert_last(packet_name);
 }
 }
-}
 if(controls[index].type==ct_checkbox)
 {
 if(controls[i].allow_check_control_name.find(packet_name)==-1)
 {
 controls[i].allow_check_control_name.insert_last(packet_name);
+}
+}
+if (controls[index].type == ct_slider)
+{
+if(controls[i].allow_slider_control_name.find(packet_name)==-1)
+{
+controls[i].allow_slider_control_name.insert_last(packet_name);
+}
 }
 }
 }
@@ -147,6 +170,28 @@ controls[control_counter].initial_value=initial_value;
 controls[control_counter].read_only=read_only;
 controls[control_counter].type=ct_checkbox;
 }
+void create_link(string caption, string url)
+{
+active_controls++;
+control_counter++;
+controls.resize(control_counter+1);
+controls[control_counter].type = ct_link;
+controls[control_counter].caption = caption;
+controls[control_counter].link_url = url;
+}
+void create_slider(string packet_name, string caption, double default_value = 50, double minimum_value = 0, double maximum_value = 100, string text = "", double step_size = 1)
+{
+active_controls++;
+control_counter++;
+controls.resize(control_counter+1);
+controls[control_counter].type = ct_slider;
+controls[control_counter].packet_name = packet_name;
+controls[control_counter].minimum_value = minimum_value;
+controls[control_counter].default_value = default_value;
+controls[control_counter].maximum_value = maximum_value;
+controls[control_counter].text = text;
+controls[control_counter].step_size = step_size;
+}
 bool focus(string packet_name)
 {
 bool success;
@@ -175,7 +220,51 @@ controls[i].char_disallowed_description = char_disallowed_description;
 }
 return success;
 }
-void send(uint peer_id)
+void send(uint peer_id, bool send = true)
+{
+if(peer_id==0)
+{
+for(uint i = 0; i < players.length(); i++)
+{
+players[i].player_form = this;
+players[i].player_form_active = true;
+if(send)players[i].player_form_send = true;
+}
+}
+else
+{
+int index = get_player_index(peer_id);
+if(index>-1)
+{
+players[index].player_form = this;
+players[index].player_form_active = true;
+if(send)players[index].player_form_send = true;
+}
+}
+}
+int get_controls_index(string packet_name)
+{
+for(uint i = 0; i < controls.length(); i++)
+{
+if(packet_name==controls[i].packet_name)
+{
+return i;
+}
+}
+return -1;
+}
+void opEqual(server_form@ sf)
+{
+sf.window_title = window_title;
+sf.change_screen_title = change_screen_title;
+sf.say_dialog = say_dialog;
+sf.silent = silent;
+sf.active_controls = active_controls;
+sf.control_counter = control_counter;
+sf.initialize_packet = initialize_packet;
+sf.controls = controls;
+}
+string to_string()
 {
 json_object js;
 js.set("initialize_packet",initialize_packet);
@@ -190,25 +279,29 @@ jsa.add(controls[i].to_json());
 }
 js.set("controls",jsa);
 string text = js.stringify();
-send_reliable(peer_id,"launch_form|"+text,0);
+return text;
 }
-int get_controls_index(string packet_name)
+server_form_control[] controls;
+string window_title;
+bool change_screen_title;
+bool say_dialog;
+bool silent;
+int active_controls = 0;
+int control_counter = -1;
+string initialize_packet;
+}
+bool form_dismiss(uint peer_id)
 {
-for(uint i = 0; i < controls.length(); i++)
+bool s;
+int index = get_player_index(peer_id);
+if(index>-1)
 {
-if(packet_name==controls[i].packet_name)
+if(players[index].player_form_active)
 {
-return i;
+players[index].player_form_active = false;
+send_reliable(players[index].peer_id,"form_dismiss",0);
+s = true;
 }
 }
-return -1;
-}
-private server_form_control[] controls;
-private string window_title;
-private bool change_screen_title;
-private bool say_dialog;
-private bool silent;
-private int active_controls = 0;
-private int control_counter = -1;
-private string initialize_packet;
+return s;
 }

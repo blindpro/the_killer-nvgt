@@ -39,7 +39,7 @@ for (uint i2=0; i2<objs.length(); i2++)
 if (get_3d_distance(impact_bombs[i].x,impact_bombs[i].y,impact_bombs[i].z,objs[i2].x,objs[i2].y,objs[i2].z)<=20 and objs[i2].map==impact_bombs[i].map)
 {
 play("obj_break"+random(1,3),objs[i2].x,objs[i2].y,objs[i2].z,objs[i2].map);
-objs.remove_at(i2);
+remove_obj(i2);
 }
 }
 for (uint i2=0; i2<trees.length(); i2++)

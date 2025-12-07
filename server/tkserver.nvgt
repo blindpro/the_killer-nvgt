@@ -576,13 +576,15 @@ sf.create_input_box("i2","input_box2");
 sf.create_input_box("i3","input_box3");
 sf.create_checkbox("c1","checkbox1");
 sf.create_checkbox("c2","checkbox2");
+sf.create_link("website","https://www.google.com/");
+sf.create_slider("s1","slider1",70,20,500,"DB",0.1);
 sf.create_button("close","&close");
-sf.set_button_dismiss("close",true);
 sf.combind_button("close","i1");
 sf.combind_button("close","i2");
 sf.combind_button("close","i3");
 sf.combind_button("close","c1");
 sf.combind_button("close","c2");
+sf.combind_button("close","s1");
 sf.focus("i1");
 sf.set_disallowed_chars("i1","1,2,3,4,5,6,7,8,9,0",true,"Only numbers can be entered");
 sf.set_disallowed_chars("i2","1,2,3,4,5,6,7,8,9,0",true,"Only numbers can be entered");
@@ -591,6 +593,7 @@ sf.send(e.peer_id);
 else if (parsed[0]=="form_dlg"&&parsed.length()>=1)
 {
 if(parsed[1]=="close") send_reliable(e.peer_id,s,2);
+form_dismiss(e.peer_id);
 }
 else if(parsed[0]=="fire")
 {
@@ -1233,6 +1236,72 @@ send_reliable(players[index].peer_id, "operation canceled", 0);
 return;
 }
 }
+}
+}
+else if(parsed[0]=="whonear")
+{
+int index=get_player_index(e.peer_id);
+if(index > -1)
+{
+string s;
+for (uint i=0; i<players.length(); i++)
+{
+if(players[i].is_dead==true||in_vehicle(players[i].name)>-1||(players[i].invinsible&&!players[index].adminable())) continue;
+if (players[i].x<players[index].x+20 and players[i].x>players[index].x-20 and players[i].y<players[index].y+20 and players[i].y>players[index].y-20 and get_1d_distance(players[index].z,players[i].z)<=20 and players[i].map==players[index].map and players[i].name!=players[index].name and players[i].invisible==false)
+{
+int level=1;
+if(players[i].z>players[index].z)
+{
+level=2;
+}
+else if(players[i].z<players[index].z)
+{
+level=0;
+}
+else
+{
+level=1;
+}
+if(players[i].shielded==true)
+s+="shielded ";
+if(players[i].invinsible==true)
+s+="supernatural ";
+if(players[i].teamname!="") s+=players[i].teamname+" ";
+s+=players[i].nickname+" is ";
+if(level==2)
+{
+s+="above, ";
+}
+else if(level==0)
+{
+s+="below, ";
+}
+s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, players[i].x, players[i].y, players[index].facing))+", "+get_3d_distance(players[index].x, players[index].y, players[index].z, players[i].x, players[i].y, players[i].z)+" feet away. ";
+}
+}
+for(uint i=0; i<vs.length(); i++)
+{
+if(get_3d_distance(players[index].x,players[index].y,players[index].z,vs[i].x,vs[i].y,vs[i].z)<=30&&vs[i].map==players[index].map&&vs[i].owner!=players[index].name)
+{
+int level=1;
+if(vs[i].z>players[index].z) level=2;
+if(vs[i].z<players[index].z) level=0;
+s+=cn2n(vs[i].owner)+"'s "+vs[i].type+" is ";
+if(level==2)
+{
+s+="above, ";
+}
+else if(level==0)
+{
+s+="below, ";
+}
+s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, vs[i].x, vs[i].y, players[index].facing))+", "+get_3d_distance(players[index].x, players[index].y, players[index].z, vs[i].x, vs[i].y, vs[i].z)+" feet away. ";
+}
+}
+if(s=="")
+s="There is no one around";
+send_reliable(players[index].peer_id,s,2);
+if(in_vehicle(players[index].name)<0&&players[index].hidden==0) play("lookaround",players[index].x,players[index].y,players[index].z,players[index].map);
 }
 }
 else if(parsed[0]=="shmoneycommand" and parsed.length()>1)
@@ -3840,6 +3909,7 @@ return;
 else if(parsed[0]=="fchanges"&&parsed.length()==2)
 {
 if(parsed[1]=="close") send_reliable(e.peer_id,"closed",0);
+form_dismiss(e.peer_id);
 }
 else if(parsed[0]=="sheltercheck")
 {
@@ -6901,7 +6971,6 @@ server_form sform;
 sform.create_window("fchanges","view changes",false);
 sform.create_input_box("input_box","Recent changes. Last updated on "+lastupdate,changes,"",0,true,true);
 sform.create_button("close","&close",false,true);
-sform.set_button_dismiss("close",true);
 sform.focus("input_box");
 sform.send(e.peer_id);
 }

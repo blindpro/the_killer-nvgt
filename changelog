@@ -1,3 +1,9 @@
+2025年12月7日
+1·server_form增加链接和滑块的支持。
+2·更改炸弹的移除object方式，现在使用remove_obj函数，而不是直接使用remove_at方法。
+3·现在可以使用form_dismiss关闭用户的server_form。
+4·现在可以按p查看周围。
+5·现在不能在车辆中换武器，查看武器弹药，装但。
 2025年12月6日
 1·增加了一个server_form系统，可以在服务端创建audio_form，目前只能创建button,input_box,checkBox。
 2·changes页面以改成只读编辑框显示。
