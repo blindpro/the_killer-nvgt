@@ -1,0 +1,14 @@
+string tiletypes;
+string srctypes;
+bool load_tiletypes()
+{
+pack_file p1;
+p1.open("sounds.dat");
+if(!p1.file_exists("#tiletypes.txt")) return false;
+datastream d;
+d = p1.get_file("#tiletypes.txt","UTF8");
+alert("提示",d.read());
+p1.close();
+d.close();
+return true;
+}

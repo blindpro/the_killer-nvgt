@@ -1,3 +1,5 @@
+2025年12月14日
+1·开始构建地图构造器。注意由于pack_file::get_file方法的问题现在程序报错。等后去nvgt版本解决。
 2025年12月7日
 1·server_form增加链接和滑块的支持。
 2·更改炸弹的移除object方式，现在使用remove_obj函数，而不是直接使用remove_at方法。

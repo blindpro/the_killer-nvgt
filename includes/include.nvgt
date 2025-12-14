@@ -43,3 +43,5 @@
 #include "ban.nvgt"
 #include "virtual_dialogs.nvgt"
 #include "server_form_parser.nvgt"
+#include "map_build_ui.nvgt"
+#include "mapdata.nvgt"

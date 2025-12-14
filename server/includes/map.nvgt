@@ -519,3 +519,24 @@ final+=""+r[i]+delimiter;
 }
 return final;
 }
+void mapupdate(string map)
+{
+init_mapsystem();
+int mi=get_map_index(map);
+if(mi<0) return;
+string mdata=maps[mi].rawdata;
+string ite;
+for(uint i=0; i<sources.length(); i++)
+{
+if(sources[i].map==map)
+ite+="src:"+sources[i].lx+":"+sources[i].rx+":"+sources[i].miny+":"+sources[i].maxy+":"+sources[i].minz+":"+sources[i].maxz+":"+sources[i].soundfile+":"+sources[i].id+"\r\n";
+}
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].map==map)
+{
+players[i].map=map;
+send_reliable(players[i].peer_id, "m_data|"+mdata+"\r\n"+ite+"\r\nx:"+players[i].x+"\r\ny:"+players[i].y+"\r\nz:"+players[i].z+"\r\n", 0);
+}
+}
+}
