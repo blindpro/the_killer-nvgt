@@ -11,8 +11,8 @@ mpool.behind_pitch_decrease = 5;
 objpool.behind_pitch_decrease = 5;
 sourcepool.hrtf = false;
 distpool.hrtf = false;
-//set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
-set_sound_storage("sounds.dat");
+set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+//set_sound_storage("sounds.dat");
 data_read();
 if(is_hardbanned())
 {
@@ -21,6 +21,7 @@ int q=question("error","you are currently banned from the game. Would you like t
 if(q==1) clipboard_set_text(banid);
 exit();
 }
+load_mapbuild_resources();
 set_sound_global_hrtf(global_hrtf);
 /*
 if (currently_input_device != 1)

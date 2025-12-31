@@ -1,0 +1,72 @@
+void add_tile()
+{
+timer t;
+audio_form f;
+f.create_window("add tile",false);
+int[] inputs;
+inputs.insert_last(f.create_input_box("minimum x"));
+inputs.insert_last(f.create_input_box("maximum x"));
+inputs.insert_last(f.create_input_box("minimum y"));
+inputs.insert_last(f.create_input_box("maximum y"));
+inputs.insert_last(f.create_input_box("minimum z"));
+inputs.insert_last(f.create_input_box("maximum z"));
+int itiles = f.create_list("tiles");
+string[] tiletypes_a = tiletypes.split("\r\n");
+for(uint i = 0; i < tiletypes_a.length(); i++)
+{
+if(tiletypes_a[i]=="air") continue;
+f.add_list_item(itiles,tiletypes_a[i]);
+}
+int iok = f.create_button("&ok",true);
+int icancel = f.create_button("&cancel",false,true);
+f.focus(inputs[0]);
+while(true)
+{
+wait(5);
+f.monitor();
+tk_loop();
+if(f.is_pressed(icancel))
+{
+speak("cancel");
+break;
+}
+if(f.is_pressed(iok))
+{
+string[] coordinates;
+string tiles;
+for(uint i = 0; i < inputs.length(); i++)
+{
+string itext = f.get_text(inputs[i]);
+if(itext.is_empty())
+{
+f.focus(inputs[i]);
+break;
+}
+coordinates.insert_last(itext);
+}
+tiles = f.get_list_item(itiles,f.get_list_position(itiles));
+if(coordinates.length()==6)
+{
+send_reliable(0,"addtile|tile:"+coordinates[0]+":"+coordinates[1]+":"+coordinates[2]+":"+coordinates[3]+":"+coordinates[4]+":"+coordinates[5]+":"+tiles,0);
+break;
+}
+}
+if(f.get_current_focus()==itiles&&key_down(KEY_SPACE)&&f.get_list_position(itiles)>-1)
+{
+int pos = f.get_list_position(itiles);
+string text = f.get_list_item(itiles,pos);
+if(t.elapsed>=200)
+{
+t.restart();
+if(text.substr(0,4)=="wall")
+{
+p.play_stationary(text+".ogg",false);
+}
+else
+{
+p.play_stationary(text+"step"+random(1,5)+".ogg",false);
+}
+}
+}
+}
+}

@@ -1,14 +1,16 @@
 string tiletypes;
 string srctypes;
-bool load_tiletypes()
+bool load_mapbuild_resources()
 {
 pack_file p1;
-p1.open("sounds.dat");
-if(!p1.file_exists("#tiletypes.txt")) return false;
-datastream d;
-d = p1.get_file("#tiletypes.txt","UTF8");
-alert("提示",d.read());
+p1.open("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
+if(!p1.file_exists("#tiletypes.txt")||!p1.file_exists("#srctypes.txt")) return false;
+datastream@ tile = p1.get_file("#tiletypes.txt","UTF8");
+datastream@ src = p1.get_file("#srctypes.txt","UTF8");
+tiletypes = tile.read();
+srctypes = src.read();
 p1.close();
-d.close();
+tile.close();
+src.close();
 return true;
 }
