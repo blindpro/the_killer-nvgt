@@ -6399,6 +6399,28 @@ send_reliable(e.peer_id,"Player not found.",2);
 }
 }
 }
+else if(parsed[0]=="/untempban"&&parsed.length()==2)
+{
+int index = get_player_index(e.peer_id);
+if(index>-1)
+{
+if(players[index].adminable())
+{
+int tempban_index = get_tempban_index(parsed[1]);
+if(tempban_index>-1)
+{
+send_reliable(e.peer_id,"success",0);
+send_reliable(0,"notify|"+tempbans[tempban_index].username+"'s temporary ban was lifted by "+players[index].nickname+".",0);
+tempbans.remove_at(tempban_index);
+}
+else
+{
+send_reliable(e.peer_id,"player not found.",0);
+return;
+}
+}
+}
+}
 else if(parsed[0]=="/hardban" and parsed.length() > 1)
 {
 if(players[index].adminable())

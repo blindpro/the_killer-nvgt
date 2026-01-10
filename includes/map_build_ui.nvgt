@@ -12,6 +12,10 @@ inputs.insert_last(f.create_input_box("minimum z"));
 inputs.insert_last(f.create_input_box("maximum z"));
 int itiles = f.create_list("tiles");
 string[] tiletypes_a = tiletypes.split("\r\n");
+for(uint i = 0; i < inputs.length(); i++)
+{
+f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);
+}
 for(uint i = 0; i < tiletypes_a.length(); i++)
 {
 if(tiletypes_a[i]=="air") continue;
@@ -85,6 +89,10 @@ inputs.insert_last(f.create_input_box("minimum z"));
 inputs.insert_last(f.create_input_box("maximum z"));
 int isrcs = f.create_list("sound sources");
 string[] srctypes_a = srctypes.split("\r\n");
+for(uint i = 0; i < inputs.length(); i++)
+{
+f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);
+}
 for(uint i = 0; i < srctypes_a.length(); i++)
 {
 f.add_list_item(isrcs,srctypes_a[i]);
@@ -151,6 +159,11 @@ inputs.insert_last(f.create_input_box("maximum y"));
 inputs.insert_last(f.create_input_box("minimum z"));
 inputs.insert_last(f.create_input_box("maximum z"));
 inputs.insert_last(f.create_input_box("text of your zone"));
+for(uint i = 0; i < inputs.length(); i++)
+{
+if(i==inputs.length()-1) continue;
+f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);
+}
 int trackable = f.create_checkbox("this zone to be trackable via the grave menu");
 int iok = f.create_button("&ok",true);
 int icancel = f.create_button("&cancel",false,true);
