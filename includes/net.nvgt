@@ -624,6 +624,16 @@ distpool.play_3d(soundname+".ogg", me.x, me.y, me.z, x, y, z, facing, false);
  else if(soundmap==shmap&&inshelter==true)
 shdistpool.play_3d(soundname+".ogg", sh.x, sh.y, sh.z, x, y, z, facing, false);
 }
+else if(parsed[0]=="buildtile")
+build_mode = 1;
+else if(parsed[0]=="buildsrc")
+build_mode = 2;
+else if(parsed[0]=="buildamb")
+build_mode = 3;
+else if(parsed[0]=="buildzone")
+build_mode = 4;
+else if(parsed[0]=="buildtpoint")
+build_mode = 5;
 else if(parsed[0]=="server_quit")
 {
 in_game1 = false;

@@ -104,6 +104,12 @@ dlg_message="";
 dlg_waittime=0;
 t_net_loop_mutex.lock(1000);
 }
+if(build_mode>0)
+{
+t_net_loop_mutex.unlock();
+start_build();
+t_net_loop_mutex.lock(1000);
+}
 if(key_pressed(KEY_GRAVE))
 {
 t_net_loop_mutex.unlock();

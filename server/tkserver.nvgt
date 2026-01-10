@@ -3006,6 +3006,94 @@ f.close();
 players[index].ctext=comptext;
 }
 }
+else if(parsed[0]=="addtile")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s1=in_shelter(players[index].name);
+if(players[index].adminable()||beta||s1>-1 and shelters[s1].is_allowed(players[index].name))
+{
+string maptext=s.replace("addtile|","",false);
+file f;
+f.open("maps/"+players[index].map+".map","rb");
+string mapdata=f.read();
+f.close();
+mapdata+="\r\n"+maptext;
+f.open("maps/"+players[index].map+".map","wb");
+f.write(mapdata);
+f.close();
+send_reliable(players[index].peer_id,"Map updated",0);
+mapupdate(players[index].map);
+}
+}
+}
+else if(parsed[0]=="addsrc")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s1=in_shelter(players[index].name);
+if(players[index].adminable()||players[index].is_builder||beta||s1>-1 and shelters[s1].is_allowed(players[index].name))
+{
+string maptext=s.replace("addsrc|","",false);
+file f;
+f.open("maps/"+players[index].map+".map","rb");
+string mapdata=f.read();
+f.close();
+mapdata+="\r\n"+maptext;
+f.open("maps/"+players[index].map+".map","wb");
+f.write(mapdata);
+f.close();
+send_reliable(players[index].peer_id,"Map updated",0);
+mapupdate(players[index].map);
+}
+}
+}
+else if(parsed[0]=="addzone")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s1=in_shelter(players[index].name);
+if(players[index].adminable()||beta||s>-1 and shelters[s1].is_allowed(players[index].name))
+{
+string maptext=s.replace("addzone|","",false);
+file f;
+f.open("maps/"+players[index].map+".map","rb");
+string mapdata=f.read();
+f.close();
+mapdata+="\r\n"+maptext;
+f.open("maps/"+players[index].map+".map","wb");
+f.write(mapdata);
+f.close();
+send_reliable(players[index].peer_id,"Map updated",0);
+mapupdate(players[index].map);
+}
+}
+}
+else if(parsed[0]=="addtpoint")
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+int s1=in_shelter(players[index].name);
+if(players[index].adminable()||players[index].is_builder||beta)
+{
+string maptext=s.replace("addtpoint|","",false);
+file f;
+f.open("maps/"+players[index].map+".map","rb");
+string mapdata=f.read();
+f.close();
+mapdata+="\r\n"+maptext;
+f.open("maps/"+players[index].map+".map","wb");
+f.write(mapdata);
+f.close();
+send_reliable(players[index].peer_id,"Map updated",0);
+mapupdate(players[index].map);
+}
+}
+}
 else if(parsed[0]=="ultradev42ballsack")
 {
 int index=get_player_index(e.peer_id);
@@ -3933,6 +4021,31 @@ if(((players[index].adminable() or beta/*||s>-1 and shelters[s].is_allowed(playe
 send_menu(players[index].peer_id,"Build what?","buildobj","tile:tile[]sound source:src[]ambience:amb[]zone:zone[]travelpoint:tpoint");
 }
 }
+else if(parsed[0]=="buildobj"&&parsed.length()>1)
+{
+int index=get_player_index(e.peer_id);
+if(index>-1)
+{
+string what=parsed[1];
+if(what=="tile")
+{
+send_reliable(players[index].peer_id,"buildtile",0);
+}
+else if(what=="src")
+{
+send_reliable(players[index].peer_id,"buildsrc",0);
+}
+else if(what=="amb") send_reliable(players[index].peer_id,"buildamb",0);
+else if(what=="tpoint")
+{
+send_reliable(players[index].peer_id,"buildtpoint",0);
+}
+else if(what=="zone")
+{
+send_reliable(players[index].peer_id,"buildzone",0);
+}
+}
+}
 else if(parsed[0]=="whoonline")
 {
 int index=get_player_index(e.peer_id);
@@ -4828,14 +4941,18 @@ else
 send_reliable(players[index].peer_id,"unable to edit this map",0);
 }
 }
-/* Temporary note Yes code
 else if(parsed[0]=="/rawdata")
 {
-int s=in_shelter(players[index].name);
+int s1=in_shelter(players[index].name);
 if(players[index].adminable() or beta==true&&players[index].map!="main")
 {
 string mapname=players[index].map;
 string mapdata=string_trim_left(s,9);
+if(mapdata.is_empty())
+{
+send_reliable(e.peer_id,"update error, the map data is empty",0);
+return;
+}
 string[] lines=string_split(mapdata,"\r\n",false);
 for(uint i=0; i<lines.length(); i++)
 {
@@ -4865,7 +4982,7 @@ else if(ld[0]=="ispawn" and ld.length()<9)
 send_reliable(e.peer_id,"update error: item spawn declaration on line "+i+" has too few arguments. Syntax is ispawn:minx:maxx:miny:maxy:minz:maxz:time:maxobjs, got "+lines[i],2);
 return;
 }
-else if(!players[index].adminable()&&!players[index].is_builder&&ld[0]=="travelpoint"&&ld.length()>11&&s>-1&&shelters[s].is_allowed(players[index].name))
+else if(!players[index].adminable()&&!players[index].is_builder&&ld[0]=="travelpoint"&&ld.length()>11&&s1>-1&&shelters[s1].is_allowed(players[index].name))
 {
 send_reliable(e.peer_id,"update error: travelpoints are not allowed in shelters",2);
 return;
@@ -4921,7 +5038,6 @@ send_reliable(players[index].peer_id,"Map updated",0);
 else
 send_reliable(players[index].peer_id,"unable to edit this map",0);
 }
-*/
 else if(parsed[0]=="/last_runtime" and players[index].dev)
 {
 file r;

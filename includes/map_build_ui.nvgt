@@ -70,3 +70,201 @@ p.play_stationary(text+"step"+random(1,5)+".ogg",false);
 }
 }
 }
+void add_src(bool amb = false)
+{
+sound s;
+int history_src_list_item_index = -1;
+audio_form f;
+amb?f.create_window("add ambient",false):f.create_window("add sound source",false);
+int[] inputs;
+inputs.insert_last(f.create_input_box("minimum x"));
+inputs.insert_last(f.create_input_box("maximum x"));
+inputs.insert_last(f.create_input_box("minimum y"));
+inputs.insert_last(f.create_input_box("maximum y"));
+inputs.insert_last(f.create_input_box("minimum z"));
+inputs.insert_last(f.create_input_box("maximum z"));
+int isrcs = f.create_list("sound sources");
+string[] srctypes_a = srctypes.split("\r\n");
+for(uint i = 0; i < srctypes_a.length(); i++)
+{
+f.add_list_item(isrcs,srctypes_a[i]);
+}
+int iok = f.create_button("&ok",true);
+int icancel = f.create_button("&cancel",false,true);
+f.focus(inputs[0]);
+while(true)
+{
+wait(5);
+f.monitor();
+tk_loop();
+if(f.get_current_focus()==isrcs&&f.get_list_position(isrcs)!=history_src_list_item_index)
+{
+if(s.playing) s.stop();
+s.load(f.get_list_item(isrcs, f.get_list_position(isrcs))+".ogg");
+s.play_looped();
+history_src_list_item_index = f.get_list_position(isrcs);
+}
+if(f.get_current_focus()!=isrcs&&s.playing)
+{
+s.stop();
+history_src_list_item_index = -1;
+}
+if(f.is_pressed(icancel))
+{
+speak("cancel");
+s.close();
+break;
+}
+if(f.is_pressed(iok))
+{
+string[] coordinates;
+string srcs;
+for(uint i = 0; i < inputs.length(); i++)
+{
+string itext = f.get_text(inputs[i]);
+if(itext.is_empty())
+{
+f.focus(inputs[i]);
+break;
+}
+coordinates.insert_last(itext);
+}
+srcs = f.get_list_item(isrcs,f.get_list_position(isrcs));
+string stext = amb?"amb":"src";
+if(coordinates.length()==6)
+{
+send_reliable(0,"addsrc|"+stext+":"+coordinates[0]+":"+coordinates[1]+":"+coordinates[2]+":"+coordinates[3]+":"+coordinates[4]+":"+coordinates[5]+":"+srcs+".ogg",0);
+break;
+}
+}
+}
+}
+void add_zone()
+{
+audio_form f;
+f.create_window("add zone",false);
+int[] inputs;
+inputs.insert_last(f.create_input_box("minimum x"));
+inputs.insert_last(f.create_input_box("maximum x"));
+inputs.insert_last(f.create_input_box("minimum y"));
+inputs.insert_last(f.create_input_box("maximum y"));
+inputs.insert_last(f.create_input_box("minimum z"));
+inputs.insert_last(f.create_input_box("maximum z"));
+inputs.insert_last(f.create_input_box("text of your zone"));
+int trackable = f.create_checkbox("this zone to be trackable via the grave menu");
+int iok = f.create_button("&ok",true);
+int icancel = f.create_button("&cancel",false,true);
+f.focus(inputs[0]);
+while (true)
+{
+wait(5);
+tk_loop();
+f.monitor();
+if(f.is_pressed(icancel))
+{
+speak("canceled");
+break;
+}
+if(f.is_pressed(iok))
+{
+string[] coordinateszone;
+for(uint i = 0; i < inputs.length(); i++)
+{
+string itext = f.get_text(inputs[i]);
+if(itext.is_empty())
+{
+f.focus(inputs[i]);
+break;
+}
+coordinateszone.insert_last(itext);
+}
+bool checkbox_status = f.is_checked(trackable);
+if(coordinateszone.length()>=7)
+{
+send_reliable(0, "addzone|zone:"+coordinateszone[0]+":"+coordinateszone[1]+":"+coordinateszone[2]+":"+coordinateszone[3]+":"+coordinateszone[4]+":"+coordinateszone[5]+":"+coordinateszone[6]+(checkbox_status?":trackme":""),0);
+break;
+}
+}
+}
+}
+void add_tpoint()
+{
+audio_form f;
+f.create_window("add travelpoint",false);
+int[] inputs;
+inputs.insert_last(f.create_input_box("the left x of this travelpoint"));
+inputs.insert_last(f.create_input_box("the right x of this travelpoint"));
+inputs.insert_last(f.create_input_box("the minimum y of this travelpoint"));
+inputs.insert_last(f.create_input_box("the maximum y of this travelpoint"));
+inputs.insert_last(f.create_input_box("the bottom z of this travelpoint"));
+inputs.insert_last(f.create_input_box("the top z of this travelpoint"));
+inputs.insert_last(f.create_input_box("the map this travelpoint should move you to"));
+inputs.insert_last(f.create_input_box("the destination x"));
+inputs.insert_last(f.create_input_box("the destination y"));
+inputs.insert_last(f.create_input_box("the destination z"));
+inputs.insert_last(f.create_input_box("the text this travelpoint should speak when moving the player"));
+for(uint i = 0; i < inputs.length(); i++)
+{
+if(i==6||i==10) continue;
+f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);
+}
+int iok = f.create_button("&ok",true);
+int icancel = f.create_button("&cancel",false,true);
+f.focus(inputs[0]);
+while (true)
+{
+wait(5);
+tk_loop();
+f.monitor();
+if(f.is_pressed(icancel))
+{
+speak("canceled");
+break;
+}
+if(f.is_pressed(iok))
+{
+string[] coordinates;
+for(uint i = 0; i < inputs.length(); i++)
+{
+string itext = f.get_text(inputs[i]);
+if(itext.is_empty())
+{
+f.focus(inputs[i]);
+break;
+}
+coordinates.insert_last(itext);
+}
+if(coordinates.length()>=11)
+{
+string ttext = join(coordinates,":");
+send_reliable(0, "addtpoint|travelpoint:"+ttext,0);
+break;
+}
+}
+}
+}
+int build_mode = 0; // 0, none. 1, add tile. 2, add sound source . 3, add ambient. 4, add zone. 5, add travelpoint.
+void start_build()
+{
+if(build_mode==1)
+{
+add_tile();
+}
+if(build_mode==2)
+{
+add_src();
+}
+if(build_mode==3)
+{
+add_src(true);
+}
+if(build_mode==4)
+{
+add_zone();
+}
+if(build_mode==5)
+{
+add_tpoint();
+}
+build_mode=0;
+}
