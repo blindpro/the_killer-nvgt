@@ -23,6 +23,7 @@
 #include "player.nvgt"
 #include "net.nvgt"
 #include "inputmethod.nvgt"
+#pragma asset "lib/zdsrapi.dll"
 #pragma asset "sounds.dat"
 #include "buffer.nvgt"
 #include "dateandtime.nvgt"

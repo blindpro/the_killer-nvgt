@@ -5,6 +5,7 @@ setupmenu(true,true);
 m.add_item_tts("Connection menu","connectionmenu");
 m.add_item_tts("game settings","game settings");
 m.add_item_tts("test speaker","speaker test");
+m.add_item_tts("Click here to visit our GitHub repository.","urlo");
 m.add_item_tts("exit","exit");
 int r=m.run("Main menu",true);
 if (m.get_item_name(r)=="connectionmenu")
@@ -22,6 +23,12 @@ else if (m.get_item_name(r)=="speaker test")
 m.fade_music(10);
 speak ("Test speaker");
 dlg_audio (_get_sounds_("speaker_test.ogg"));
+mainmenu();
+}
+else if (m.get_item_name(r)=="urlo")
+{
+m.fade_music(10);
+urlopen ("https://github.com/small18/the_killer-nvgt");
 mainmenu();
 }
 else
