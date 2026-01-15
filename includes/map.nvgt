@@ -57,7 +57,7 @@ tm.reset();
 trm.reset();
 zones.resize(0);
 travel_point.resize(0);
-string[]@ map_data = data.split("\r\n");
+string[]@ map_data = split_text (data,"\r\n" , "\n");
 pos ();
 for (uint i=0; i<map_data.length(); i++)
 {

@@ -11,7 +11,7 @@ inputs.insert_last(f.create_input_box("maximum y"));
 inputs.insert_last(f.create_input_box("minimum z"));
 inputs.insert_last(f.create_input_box("maximum z"));
 int itiles = f.create_list("tiles");
-string[] tiletypes_a = tiletypes.split("\r\n");
+string[] tiletypes_a = split_text (tiletypes,"\r\n","\n");
 for(uint i = 0; i < inputs.length(); i++)
 {
 f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);
@@ -88,7 +88,7 @@ inputs.insert_last(f.create_input_box("maximum y"));
 inputs.insert_last(f.create_input_box("minimum z"));
 inputs.insert_last(f.create_input_box("maximum z"));
 int isrcs = f.create_list("sound sources");
-string[] srctypes_a = srctypes.split("\r\n");
+string[] srctypes_a = split_text (srctypes,"\r\n","\n");
 for(uint i = 0; i < inputs.length(); i++)
 {
 f.set_disallowed_chars(inputs[i],"1,2,3,4,5,6,7,8,9,0,-",true);

@@ -6,7 +6,7 @@ file f;
 f.open("dictionary.txt","rb");
 s=f.read();
 f.close();
-sl=string_split(s,"\r\n",true);
+sl=split_text (s,"\r\n","\n");
 }
 
 string speak_length(string text)

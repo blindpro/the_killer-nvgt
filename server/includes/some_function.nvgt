@@ -30,3 +30,14 @@ list+=arr[i]+", ";
 }
 return list;
 }
+
+//I don't know why GitHub changed our encoding.
+string[] split_text (string text , string split1, string split2 =string split1)
+{
+string[] list = text.split (split1);
+if (list.length() <=1)
+{
+list = text.split (split2);
+}
+return list;
+}
