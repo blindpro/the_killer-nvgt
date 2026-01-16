@@ -11,8 +11,9 @@ int maxz;
 string soundfile;
 bool paused=false;
 int id=-1;
+int volume = 0;
 bool p2;
-source(int source_lx, int source_rx, int source_miny, int source_maxy, int source_minz, int source_maxz, string file, bool source_paused=false, int source_id=-1)
+source(int source_lx, int source_rx, int source_miny, int source_maxy, int source_minz, int source_maxz, string file, bool source_paused=false, int source_id=-1 , int source_volume = 0)
 {
 lx=source_lx;
 rx = source_rx;
@@ -21,7 +22,8 @@ maxy= source_maxy;
 minz=source_minz;
 maxz=source_maxz;
 soundfile=file;
-source_sound=sourcepool.play_3d(soundfile, mr.x, mr.y, me.z, lx, miny, minz, facing , true , true);
+volume = source_volume;
+source_sound=sourcepool.play_extended(3,soundfile,null, mr.x, mr.y, me.z, lx, miny, minz, facing ,  0, 0, 0, 0, 0, 0, true ,0, 0.0,volume , 100.0, true);
 id=source_id;
 sourcepool.update_sound_3d(source_sound, lx, miny, minz);
 paused=source_paused;
@@ -129,9 +131,9 @@ ambs[i].force_paused=false;
 ambs[i].check();
 }
 }
-void spawn_source(int source_lx, int source_rx, int source_miny, int source_maxy, int source_minz, int source_maxz, string soundfile, bool paused=false, int id=-1)
+void spawn_source(int source_lx, int source_rx, int source_miny, int source_maxy, int source_minz, int source_maxz, string soundfile, bool paused=false, int id=-1,int volume = 0)
 {
-source source1(source_lx, source_rx, source_miny, source_maxy, source_minz, source_maxz, soundfile, paused, id);
+source source1(source_lx, source_rx, source_miny, source_maxy, source_minz, source_maxz, soundfile, paused, id , volume);
 sources.insert_last(source1);
 }
 void destroy_source(int id)

@@ -80,8 +80,13 @@ int miny=string_to_number(parts[3]);
 int maxy=string_to_number(parts[4]);
 int minz=string_to_number(parts[5]);
 int maxz=string_to_number(parts[6]);
+int volume=0;
+if (parts.length() >=10)
+{
+volume=string_to_number(parts[9]);
+}
 int id=-1;
-spawn_source(lx, rx, miny, maxy, minz, maxz, parts[7], false, id);
+spawn_source(lx, rx, miny, maxy, minz, maxz, parts[7], false, id , volume);
 }
 else if(parts[0]=="amb" and parts.length()>7)
 {

@@ -18,3 +18,7 @@ mpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 distpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 objpool.update_listener_3d(me.x, me.y, me.z, calculate_theta(facing));
 }
+
+int play_3d(sound_pool handle,string filename, float listener_x, float listener_y, float listener_z, float sound_x, float sound_y, float sound_z, double rotation, bool looping, bool persistent = false , int volume = 0.0) {
+	return handle.play_extended(3, filename,sound_default_pack , listener_x, listener_y, listener_z, sound_x, sound_y, sound_z, rotation, 0, 0, 0, 0, 0, 0, looping, 0, 0.0, volume, 100.0, persistent);
+}

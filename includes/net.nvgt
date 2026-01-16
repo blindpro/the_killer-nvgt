@@ -1,5 +1,5 @@
-string netaddress="127.0.0.1";
-//string netaddress="39.105.7.77";
+//string netaddress="127.0.0.1";
+string netaddress="39.105.7.77";
 uint64 netport = 10000;
 
 void testc ()
@@ -35,12 +35,15 @@ if(SCRIPT_COMPILED==false||beta==true)
 speak ("connecting to "+netaddress+"...");
 }
 else
+{
 speak ("Attempting to connect...");
+}
 if(n.active)
 {
 reset_network();
 }
 n.setup_client(500, 500);
+p.play_stationary ("connected.ogg",false);
 n.connect(netaddress, netport);
 if(get_last_error()!=0)
 {
