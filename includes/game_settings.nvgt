@@ -136,7 +136,7 @@ menu_sound.pause ();
 currently_input_device = input_device_temp;
 //set_sound_input_device (currently_input_device);
 currently_output_device = output_device_temp;
-set_sound_output_device (currently_output_device+1);
+sound_default_engine.set_device (currently_output_device);
 menutracks.resize(0);
 data_save();
 mainmenu();

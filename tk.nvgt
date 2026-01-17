@@ -29,9 +29,16 @@ if (currently_input_device != 1)
 set_sound_input_device (currently_input_device);
 }
 */
-if (currently_output_device != 1)
+if(get_sound_output_devices()[currently_output_device] != currently_output_device_name)
 {
-//set_sound_output_device (currently_output_device);
+alert("Error","The output sound device "+currently_output_device_name+" does not exist on this system anymore. Using the default.");
+currently_output_device = 0;
+currently_output_device_name = get_sound_output_devices()[currently_output_device];
+sound_default_engine.set_device(currently_output_device);
+}
+else if (currently_output_device != 0)
+{
+sound_default_engine.set_device (currently_output_device);
 }
 create_buffer("all");
 create_buffer("chats");
