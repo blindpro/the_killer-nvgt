@@ -118,7 +118,8 @@ saveloop();
 wait (5);
 try
 {
-t_net_loop_mutex.lock();
+//t_net_loop_mutex.lock();
+/*
 bodyfallloop();
 timepacketloop();
 maploop();
@@ -154,7 +155,8 @@ gameeventloop();
 gnloop();
 timeloop();
 tempbanloop();
-t_net_loop_mutex.unlock();
+*/
+//t_net_loop_mutex.unlock();
 }
 catch
 {
@@ -7464,13 +7466,13 @@ void loops()
 {
 while (true)
 {
-t_net_loop_mutex.lock();
+//t_net_loop_mutex.lock();
 try
 {
 //wait (1);
 net_loop();
-t_net_loop_mutex.unlock();
-/*
+//t_net_loop_mutex.unlock();
+
 bodyfallloop();
 timepacketloop();
 maploop();
@@ -7506,7 +7508,7 @@ gameeventloop();
 gnloop();
 timeloop();
 tempbanloop();
-*/
+
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
