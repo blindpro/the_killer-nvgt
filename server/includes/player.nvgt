@@ -4,6 +4,7 @@ string[] randsounds={"beacon","move","timebombexplodedist","ibombdist","menuente
 player@[] players();
 class player
 {
+json_object@ data = parse_json("{}");
 double x,y,z;
 string version;
 string map;
@@ -162,7 +163,7 @@ int aircraftfuel=100,aircrafthealth=25000,tankfuel=100,tankhealth=50000,pchealth
 string sellitem;
 bool should_subtract=false;
 string warning="";
-uint8 warnlevel=0;
+int warnlevel=0;
 timer warptimer;
 bool warping=false;
 uint warpstage=0;
@@ -181,7 +182,7 @@ compid=cid;
 version=pver;
 ip=pip;
 ctext=compt;
-if(file_exists("chars/"+name+"/playtime.usr"))
+//if(file_exists("chars/"+name+"/playtime.usr"))
 //playtimer.force(stn(read_from(name,"playtimer.usr")));
 hidden=phid;
 if(hidden>0) is_dead=true;
@@ -329,21 +330,17 @@ void send_inv()
 {
 string charfolder="chars/"+name;
 //if(file_exists(charfolder+"/inv.usr")==false and !sheltercheck() and has_locker(this.name)==-1)
-if(file_exists(charfolder+"/inv.usr")==false)
-file_copy("prefs/default_inv.svr",charfolder+"/inv.usr",true);
-file f;
-f.open(charfolder+"/inv.usr","rb");
-string inv=f.read();
-f.close();
+if(data.exists("inv")==false)
+data["inv"] = file_get_contents("prefs/default_inv.svr");
+string inv=data["inv"];
 //if(inv=="" and !sheltercheck() and has_locker(this.name)==-1)
 if(inv=="")
 {
+file f;
 f.open("prefs/default_inv.svr","rb");
 inv=f.read();
 f.close();
-f.open(charfolder+"/inv.usr","wb");
-f.write(inv);
-f.close();
+data["inv"]=inv;
 }
 if(inv=="") return;
 string[] invvalues=string_split(inv,"\r\n",false);
@@ -641,7 +638,7 @@ log("eventstream",players[i].name+" was kicked from the server");
 }
 if(cheatercheck(i,lost) and !got_kicked)
 {
-write_to(players[i].name,"cheater.usr",players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit");
+players[i].data["cheater"]=players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit";
 send_reliable(0,players[i].name+" is a cheater!",2);
 }
 if(players[i].following!="")
@@ -750,7 +747,8 @@ if(players[i].spammedmsgs>=10)
 {
 players[i].ds.insert_last("chat");
 send_reliable(players[i].peer_id,"You're chat feature has just been disabled! Please contact an administrator!",2);
-write_to(players[i].name,"disabled.usr",getdisables(players[i].ds));
+//write_to(players[i].name,"disabled.usr",getdisables(players[i].ds));
+players[i].data["disabled"] = getdisables(players[i].ds);
 send_reliable(0,players[i].name+" was just caught spamming and can no longer send any messages",2);
 players[i].spammedmsgs=0;
 }
@@ -887,8 +885,7 @@ players[i].cheatertimer.restart();
 send_reliable(players[i].peer_id,"You may now play again",0);
 players[i].playsound("confirmation");
 send_reliable(players[i].peer_id,"startmoving",0);
-file_delete("chars/"+players[i].name+"/cheater.usr");
-file_delete("chars/"+players[i].name+"/cheater.usr");
+players[i].data.remove("cheater");
 }
 if(players[i].firetimer.elapsed>=players[i].firetime and players[i].firing==true and players[i].weapon!="" and players[i].newb==0 and automatic(players[i].weapon)==true and players[i].get_ammo_count(players[i].weapon)>0)
 {
@@ -940,6 +937,7 @@ send_reliable(players[i].peer_id,"Your newbie flag has been disabled!",0);
 send_reliable(0,"notify|"+players[i].nickname+" is no longer a newbie!",0);
 log("eventstream","server notification: "+players[i].nickname+" is no longer a newbie!");
 file_delete("chars/"+players[i].name+"/newb.usr");
+players[i].data.remove("newb");
 }
 if(players[i].following!="")
 {
@@ -1138,8 +1136,8 @@ players[i].is_dead=true;
 players[i].deaths+=1;
 players[i].health=10000;
 players[i].oldhealth=10000;
-write_to(players[i].name,"lasthit.usr",players[i].hitby);
-write_to(players[i].name,"health.usr",players[i].health);
+//write_to(players[i].name,"lasthit.usr",players[i].hitby);
+players[i].data["health"]=players[i].health;
 players[i].statchangetimer.force(30000);
 int t=is_in_team(players[i].name);
 if(t>-1)
@@ -1313,9 +1311,10 @@ if(vs[v].owner==pname) ret+="'s "+vs[v].type;
 }
 }
 }
-if(ret==pname&&file_exists("chars/"+pname+"/nickname.usr"))
+int i =get_player_index_from (pname);
+if(ret==pname&&players[i].data.exists("nickname"))
 {
-ret=get_char_val(pname,"nickname");
+ret=players[i].data["nickname"];
 }
 return ret;
 }
@@ -1359,7 +1358,7 @@ return ret;
 bool cheatercheck(int index, bool excludepaid=false)
 {
 if(index<0) return false;
-if(file_exists("chars/"+players[index].name+"/cheater.usr")) return false; //server already caught it in reception of close
+if(players[index].data.exists("cheater")) return false; //server already caught it in reception of close
 bool missilesnear=false;
 for(uint i=0; i<missiles.length(); i++)
 {

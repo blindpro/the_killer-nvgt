@@ -1,0 +1,27 @@
+void main ()
+{
+string[] chars=find_directories("chars/*");
+for (uint i=0; i<chars.length(); i++)
+{
+change (chars[i]);
+}
+alert ("success",chars.length());
+}
+
+void change (string dir)
+{
+string[] chars=find_files("chars/"+dir+"/*");
+json_object js;
+file f;
+for (uint i=0; i<chars.length(); i++)
+{
+string name=chars[i];
+f.open ("chars/"+dir+"/"+chars[i],"rb");
+name.erase (name.length()-4,4);
+js.set (name,f.read());
+f.close ();
+}
+f.open ("chars/"+dir+".json","wb");
+f.write (js.stringify());
+f.close ();
+}

@@ -115,7 +115,51 @@ if(savetimer.elapsed>=10000&&writeprefs==1)
 savetimer.restart();
 saveloop();
 }
-refresh_window ();
+wait (5);
+try
+{
+t_net_loop_mutex.lock();
+bodyfallloop();
+timepacketloop();
+maploop();
+objloop();
+playerloop();
+weaponloop();
+shelterloop();
+teamloop();
+giftloop();
+fireloop();
+canisterloop ();
+remgunloop ();
+remote_timebombloop ();
+timebombloop ();
+treeloop ();
+shipmentloop();
+ultrabombloop ();
+vloop ();
+vendingloop ();
+grenadeloop ();
+impactbombloop ();
+wirebombloop ();
+mineloop();
+motionbombloop();
+timeitemloop();
+sbombloop();
+stickybombloop();
+horbloop();
+missileloop();
+jplayerloop();
+cmloop();
+gameeventloop();
+gnloop();
+timeloop();
+tempbanloop();
+t_net_loop_mutex.unlock();
+}
+catch
+{
+
+}
 //loops();
 if(key_pressed(KEY_ESCAPE) || s_quit)
 {
@@ -123,7 +167,7 @@ server_quit ();
 }
 if(key_pressed(KEY_S))
 {
-alert("提示",join(drinkitems,"\r\n"));
+speak(join(drinkitems,"\r\n"));
 }
 if(key_pressed(KEY_A))
 {
@@ -2625,12 +2669,9 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 string charfolder="chars/"+players[index].name;
-if(file_exists(charfolder+"/team.usr"))
+if(players[index].data.exists("team"))
 {
-file tf;
-tf.open(charfolder+"/team.usr","rb");
-string t=tf.read();
-tf.close();
+string t=players[index].data["team"];
 if(team_exists(t))
 {
 int tx=get_team_index(t);
@@ -2648,7 +2689,7 @@ if(index>-1)
 {
 string n=players[index].name;
 string charfolder="chars/"+n;
-if(file_exists(charfolder+"/admin.usr") and players[index].dev==false)
+if(players[index].data.exists("admin") and players[index].dev==false)
 {
 send_reliable(e.peer_id,"isadmin",0);
 if(players[index].name=="FrightNight") {
@@ -2990,10 +3031,8 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 string comptext=players[index].name+" ("+s.replace("compinfo|", "", false)+") from IP "+n.get_peer_address(e.peer_id)+", computer ID "+players[index].compid+"\r\n";
+players[index].data["info"]="last seen: "+get_date(true,false)+" at "+get_time(true,false)+"\r\ncomp info:\r\n"+comptext+"\r\nlocation:\r\n";
 file f;
-f.open("chars/"+players[index].name+"/info.usr","wb");
-f.write("last seen: "+get_date(true,false)+" at "+get_time(true,false)+"\r\ncomp info:\r\n"+comptext+"\r\nlocation:\r\n");
-f.close();
 f.open("compchars.log", "rb");
 string orgtext=f.read();
 f.close();
@@ -3156,17 +3195,14 @@ if(index>-1)
 {
 load_char_data(index);
 string loc;
+/*
 //loc =get_location(e.peer_id);
 //write_to(parsed[5],"location.usr",loc);
 fl.open("chars/"+parsed[5]+"/info.usr","ab");
 fl.write(loc);
 fl.close();
+*/
 index=get_player_index_from(parsed[5]);
-if(index>-1 and players[index].warnlevel>0)
-{
-send_reliable(players[index].peer_id,"play_s|warn"+players[index].warnlevel+".ogg",0);
-send_reliable(players[index].peer_id,"dlg|you have a pending warning: "+players[index].warning+". Type /warned to show you have read and understand this warning",0);
-}
 if(msounds.length()>0)
 for(uint i=0; i<msounds.length(); i++)
 {
@@ -3187,8 +3223,16 @@ if(beta==true)
 send_reliable(players[index].peer_id,"Welcome to the killer beta server! Version "+version+ "beta. Type /changes to see what's new, /rules to view rules, and /help to see available commands. Last revision of rules is "+get_file_contents("rules_revision.txt")+". Message of the day: "+motd(),2);
 }
 else
+{
 send_reliable(players[index].peer_id,"Welcome to the killer! Version "+version+". Type /changes to see what's new, /rules to view rules, and /help to see available commands. Last revision of rules is "+get_file_contents("rules_revision.txt")+". Message of the day: "+motd(),2);
+}
 send_reliable(players[index].peer_id,"play_s|welcome.ogg",0);
+
+if(players[index].warnlevel>0)
+{
+send_reliable(players[index].peer_id,"play_s|warn"+players[index].warnlevel+".ogg",0);
+send_reliable(players[index].peer_id,"dlg|you have a pending warning: "+players[index].warning+". Type /warned to show you have read and understand this warning",0);
+}
 if(hide>0)
 {
 players[index].is_dead=true;
@@ -3481,7 +3525,7 @@ else if(parsed[0]=="reginfo")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-write_to(players[index].name,"reginfo.usr",string_replace(get_event_message(),"reginfo ","",false));
+players[index].data["reginfo"]=string_replace(get_event_message(),"reginfo ","",false);
 }
 }
 else if(parsed[0]=="regstatus")
@@ -3555,10 +3599,10 @@ int index=get_player_index(e.peer_id);
 if(index > -1)
 {
 log("disconnections",players[index].name+" disconnected",true,true);
-if(cheatercheck(index)||players[index].cheater==1||file_exists("chars/"+players[index].name+"/cheater.usr"))
+if(cheatercheck(index)||players[index].cheater==1||players[index].data.exists("cheater"))
 {
 create_temp_ban(players[index].name);
-write_to(players[index].name,"cheater.usr",players[index].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[index].statchangetimer.elapsed)+" of being hit");
+players[index].data["cheater"]=players[index].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[index].statchangetimer.elapsed)+" of being hit";
 send_reliable(0,players[index].name+" is a cheater!",2);
 players[index].persisttimer.restart();
 players[index].disconnected=true;
@@ -3671,7 +3715,7 @@ if(stuff<0) {}
 else
 {
 players[index].newb=0;
-file_delete("chars/"+players[index].name+"/newb.usr");
+players[index].data.remove("newb");
 move_player(players[index],shelters[stuff].map,shelters[stuff].x,shelters[stuff].y,shelters[stuff].z);
 send_reliable(players[index].peer_id,"exitshelter",0);
 return;
@@ -3842,7 +3886,7 @@ return;
 play("confirmation",players[index].x,players[index].y,players[index].z,players[index].map);
 create_team(parsed[1],players[index].name);
 players[index].teamname=parsed[1];
-write_to(players[index].name,"team.usr",players[index].teamname);
+players[index].data["team"]=players[index].teamname;
 int ts=get_team_index(parsed[1]);
 if(ts>-1)
 send_reliable(players[index].peer_id,"Team created! The password for your team is "+teams[ts].password,2);
@@ -4201,12 +4245,13 @@ send_reliable(players[index].peer_id,players[index2].ctext,2);
 }
 else if(parsed[0]=="/playtime")
 {
-string[] chars=find_directories("chars/*");
+string[] chars=find_files("chars/*");
 double finalms=0;
 for(uint i=0; i<chars.length(); i++)
 {
-if(file_exists("chars/"+chars[i]+"/playtime.usr"))
-finalms+=stn(get_char_val(chars[i],"playtime"));
+string er=chars[i];
+er.erase (er.length()-5,5);
+finalms+=stn(get_char_val(er,"playtime"));
 }
 send_reliable(players[index].peer_id,"Everyone's combined playtime is "+ms_to_readable_time(finalms),2);
 }
@@ -5053,12 +5098,10 @@ int x=get_player_index_from(parsed[1]);
 if(x>-1)
 {
 send_reliable(players[index].peer_id,"Done",0);
-file f;
-f.open("chars/"+players[x].name+"/admin.usr","wb");
-f.close();
 send_reliable(0,"notify|A new admin has been assigned! Please welcome "+players[x].name+" to the admin team!",0);
 send_reliable(players[x].peer_id,"Your status has been updated to administrator! Type /adminhelp to see more info!",2);
 players[x].is_admin=true;
+players[x].data["admin"] = "";
 }
 else
 send_reliable(players[index].peer_id,"Player not found",0);
@@ -5066,18 +5109,44 @@ send_reliable(players[index].peer_id,"Player not found",0);
 }
 else if(parsed[0]=="/adminkill"&&parsed.length()>1&&players[index].is_master())
 {
-if(!file_exists("chars/"+parsed[1]+"/admin.usr"))
+if(!file_exists("chars/"+parsed[1]+".json"))
 {
-send_reliable(e.peer_id,parsed[1]+" either is not an admin or does not exist",2);
+send_reliable(e.peer_id,parsed[1]+" doesn't  exist",2);
 return;
 }
-file_delete("chars/"+parsed[1]+"/admin.usr");
 int id=get_player_index_from(parsed[1]);
 if(id>-1)
 {
-send_reliable(0,"notify|"+parsed[1]+"'s adminship was just removed!",0);
+if(players[id].data.exists ("admin"))
+{
 players[id].is_admin=false;
+players[id].data.remove ("admin");
 players[id].title="";
+send_reliable(0,"notify|"+parsed[1]+"'s adminship was just removed!",0);
+}
+else
+{
+send_reliable(e.peer_id,parsed[1]+" is not an admin",2);
+}
+}
+else
+{
+file f;
+f.open ("chars/"+parsed[1]+".json","wb");
+json_object@ js = parse_json(f.read ());
+f.close();
+if(js.exists ("admin"))
+{
+players[id].data.remove ("admin");
+f.open ("chars/"+parsed[1]+".json","wb");
+f.write (js.stringify());
+f.close();
+send_reliable(0,"notify|"+parsed[1]+"'s adminship was just removed!",0);
+}
+else
+{
+send_reliable(e.peer_id,parsed[1]+" is not an admin",2);
+}
 }
 }
 else if(parsed[0]=="/warned"&&index>-1&&players[index].warnlevel>0)
@@ -5086,8 +5155,8 @@ send_reliable(players[index].peer_id,"play_s|dev.ogg",0);
 send_reliable(players[index].peer_id,"you have excepted your level "+players[index].warnlevel+" warning of "+players[index].warning,2);
 admintell(players[index].nickname+" ("+players[index].name+") has excepted their level "+players[index].warnlevel+" warning of "+players[index].warning);
 instant_notify(players[index].nickname+" ("+players[index].name+") has excepted their level "+players[index].warnlevel+" warning of "+players[index].warning);
-file_delete("chars/"+players[index].name+"/warning.usr");
-file_delete("chars/"+players[index].name+"/warnlevel.usr");
+players[index].data.remove("warning");
+players[index].data.remove("warnlevel");
 players[index].warning="";
 players[index].warnlevel=0;
 }
@@ -5110,8 +5179,8 @@ string warn_message=s.replace( "/warn "+parsed[1]+" "+parsed[2]+" ", "", false);
 int index2=get_player_index_from(parsed[1]);
 if(index2>-1)
 {
-write_to(players[index2].name,"warning.usr",warn_message);
-write_to(players[index2].name,"warnlevel.usr",warnlevel);
+players[index2].data["warning"]=warn_message;
+players[index2].data["warnlevel"]=warnlevel;
 players[index2].warning=warn_message;
 players[index2].warnlevel=warnlevel;
 send_reliable(players[index2].peer_id,"play_s|warn"+warnlevel+".ogg",0);
@@ -5299,7 +5368,7 @@ send_reliable(e.peer_id,"facing "+players[index].facing,2);
 }
 else if(parsed[0]=="/hideme" and players[index].adminable() and players[index].hidden==0)
 {
-write_to(players[index].name,"hidden.usr","1");
+players[index].data["hidden"]="1";
 send_reliable(players[index].peer_id,"you will be hidden the next time you log in.",2);
 }
 else if(parsed[0]=="/chat" and players[index].hidden>0)
@@ -5315,7 +5384,7 @@ send_reliable(0,"chat|"+message,1);
 }
 else if(parsed[0]=="/unhideme" and players[index].adminable() and players[index].hidden>0)
 {
-write_to(players[index].name,"hidden.usr","0");
+players[index].data["hidden"]="0";
 send_reliable(players[index].peer_id,"you will be shown as normal the next time you log in.",2);
 }
 else if(parsed[0]=="/follow"&&parsed.length()>1&&(players[index].invinsible||players[index].hidden>0))
@@ -5354,7 +5423,7 @@ return;
 }
 else
 {
-write_to(players[index].name,"eml.usr",em);
+players[index].data["eml"]=em;
 send_reliable(e.peer_id,"Ok, using "+em+" for all account related activities from now on",2);
 }
 }
@@ -5393,7 +5462,7 @@ if(parsed[1]=="yes")
 {
 voteyes+=1;
 players[index].voted=1;
-write_to(players[index].name,"voted.usr",players[index].voted);
+players[index].data["voted"]=players[index].voted;
 send_reliable(e.peer_id,"Your vote has been recorded. Thanks!",2);
 }
 if(parsed[1]=="no")
@@ -5401,7 +5470,7 @@ if(parsed[1]=="no")
 voteno+=1;
 send_reliable(e.peer_id,"Your vote has been recorded. Thanks!",2);
 players[index].voted=1;
-write_to(players[index].name,"voted.usr",players[index].voted);
+players[index].data["voted."]=players[index].voted;
 }
 }
 else
@@ -5849,7 +5918,7 @@ send_reliable(players[index].peer_id,"Sorry, this number is already in the box",
 return;
 }
 players[index].gnplaying=1;
-write_to(players[index].name,"gn.usr",players[index].gnplaying);
+players[index].data["gn"]=players[index].gnplaying;
 send_reliable(players[index].peer_id,"Thanks, your number has been submited",0);
 send_reliable(players[index].peer_id,"play_s|gnsubmitted.ogg",0);
 send_plus(players[index].peer_id,"play_s|gnpub.ogg",0);
@@ -6087,10 +6156,7 @@ else if(parsed[0]=="/saveinv")
 {
 string inv;
 inv=players[index].get_inv();
-file f;
-f.open("chars/"+players[index].name+"/back_inv.usr", "wb");
-f.write(inv);
-f.close();
+players[index].data["back_inv"] = inv;
 send_reliable(e.peer_id, "done. Your inv has been saved. ", 2);
 }
 else if(parsed[0]=="/me" and parsed.length()>1)
@@ -6467,7 +6533,7 @@ if(players[ind].ds.find(parsed[2])>-1) send_reliable(e.peer_id,"this feature has
 else 
 {
 players[ind].ds.insert_last(parsed[2]);
-write_to(players[ind].name,"disabled.usr",getdisables(players[ind].ds));
+players[ind].data["disabled"]=getdisables(players[ind].ds);
 send_reliable(players[ind].peer_id, "your "+parsed[2]+" feature has been blocked.", 0);
 admintell(players[index].name+" has disabled "+players[ind].name+"'s "+parsed[2]+" feature!");
 send_reliable(e.peer_id,"disabled "+players[ind].name+"'s "+parsed[2],2);
@@ -6492,7 +6558,7 @@ else
 {
 admintell(players[index].name+" has enabled "+players[ind].name+"'s "+parsed[2]+" feature!");
 players[ind].ds.remove_at(players[ind].ds.find(parsed[2]));
-write_to(players[ind].name,"disabled.usr",getdisables(players[ind].ds));
+players[ind].data["disabled"]=getdisables(players[ind].ds);
 send_reliable(players[ind].peer_id, "your "+parsed[2]+" has been unblocked", 0);
 send_reliable(e.peer_id,"enabled "+players[ind].name+"'s "+parsed[2],2);
 }
@@ -6706,12 +6772,14 @@ send_reliable(players[index].peer_id,message,2);
 else if(parsed[0]=="/chars")
 {
 server_menu menu;
-string[] chars=find_directories("chars/*");
+string[] chars=find_files("chars/*");
 string info;
 chartime@[] characters;
 for (uint i=0; i<chars.length(); i++)
 {
-chartime ch(chars[i],file_get_date_modified("chars/"+chars[i]+"/info.usr"));
+string er=chars[i];
+er.erase (er.length()-5,5);
+chartime ch(er,file_get_date_modified("chars/"+chars[i]));
 characters.insert_last(ch);
 }
 menu.initial_packet="char";
@@ -6842,8 +6910,8 @@ if((key=="admin" or key =="master" or key=="health" or key=="inv") and players[i
 send_reliable(players[index].peer_id,"Error: illegal key",2);
 return;
 }
+players[index2].data[key]=value;
 scd(index2);
-write_to(players[index2].name,key+".usr",value);
 load_char_data(index2,true);
 send_reliable(players[index].peer_id,"Value updated",0);
 }
@@ -6884,7 +6952,8 @@ players[index].newbtimer.restart();
 players[index].newb=2;
 players[index].playsound("newbiestopping");
 }
-/*test code
+
+/*
 else if(parsed[0]=="/ibb")
 {
 for (uint i = 0; i <= 500; i++)
@@ -7395,10 +7464,13 @@ void loops()
 {
 while (true)
 {
-//t_net_loop_mutex.lock();
+t_net_loop_mutex.lock();
 try
 {
+//wait (1);
 net_loop();
+t_net_loop_mutex.unlock();
+/*
 bodyfallloop();
 timepacketloop();
 maploop();
@@ -7434,6 +7506,7 @@ gameeventloop();
 gnloop();
 timeloop();
 tempbanloop();
+*/
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
@@ -7443,7 +7516,6 @@ catch
 {
 
 }
-//t_net_loop_mutex.unlock();
 }
 }
 void saveloop()
@@ -7465,13 +7537,13 @@ mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheh
 uint64[]@ p = n.get_peer_list();
 for (uint i =0; i < p.length(); i++)
 {
-n.send_unreliable(p[i], mess, channel);
+n.send_unreliable(p[i],mess,channel);
 }
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > tx-50 and players[i].x < tx+50 and players[i].y > ty-50 and players[i].y < ty+50 and players[i].z > tz-50 and players[i].z < tz+50 and players[i].map==tmap)
 {
-n.send_unreliable(players[i].peer_id, mess, channel);
+n.send_unreliable(players[i].peer_id,mess,channel);
 }
 }
 }
@@ -7482,7 +7554,7 @@ for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > tx-range and players[i].x < tx+range and players[i].y > ty-range and players[i].y < ty+range and players[i].z > tz-range and players[i].z < tz+range and players[i].map==tmap)
 {
-n.send_reliable(players[i].peer_id, mess, channel);
+n.send_reliable(players[i].peer_id,mess,channel);
 }
 }
 }
@@ -7498,13 +7570,13 @@ for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > x-50 and players[i].x < x+50 and players[i].y > y-50 and players[i].y < y+50 and players[i].z > z-50 and players[i].z < z+50 and players[i].map==players[index].map and i!=index)
 {
-n.send_reliable(players[i].peer_id, mess, channel);
+n.send_reliable(players[i].peer_id,mess,channel);
 }
 }
 }
 else
 {
-n.send_reliable(peer, mess, channel);
+n.send_reliable(peer,mess,channel);
 }
 }
 void send_unreliable(uint peer, string mess, uint channel, int index=-1)
@@ -7519,13 +7591,13 @@ for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > x-50 and players[i].x < x+50 and players[i].y > y-50 and players[i].y < y+50 and players[i].z > z-50 and players[i].z < z+50 and players[i].map==players[index].map and i!=index)
 {
-n.send_unreliable(players[i].peer_id, mess, channel);
+n.send_unreliable(players[i].peer_id,mess,channel);
 }
 }
 }
 else
 {
-n.send_unreliable(peer, mess, channel);
+n.send_unreliable(peer,mess,channel);
 }
 }
 void send_serverbox(int peerid, int mode=0, int maxlength=-1, int autosend=0, int keypresses=-1, string sendtext="server_box", string text="enter text")
@@ -7578,16 +7650,24 @@ add_compid(compid,u);
 }
 string charfolder="chars/"+u;
 file f, chardata;
-if(directory_exists("chars/"+u)==false)
+if(file_exists("chars/"+u+".json")==false)
 {
 send_reliable(id,"nochar",0);
 }
 else
 {
 file charfile;
-charfile.open("chars/"+u+"/password.usr","rb");
-string charpass=charfile.read();
-charfile.close();
+charfile.open("chars/"+u+".json","rb");
+string data=charfile.read ();
+charfile.close ();
+if (data == "")
+{
+send_reliable(id,"nochar",0);
+}
+json_object@ js = parse_json(data);
+try
+{
+string charpass=js["password"];
 if(charpass!=string_hash(p,2,false))
 {
 send_reliable(id,"wrongpass",0);
@@ -7602,37 +7682,32 @@ if(players[i].name==u)
 remove_player(u);
 }
 }
-if(get_file_contents(charfolder+"/map.usr")=="")
+string m;
+try
 {
-put_file_contents(charfolder+"/map.usr","main",true);
+m=js["map"];
 }
-f.open(charfolder+"/map.usr","rb");
-string m=f.read();
-f.close();
+catch
+{
+m="";
+}
+m= m==""? "main":m;
 f.open ("maps/"+m+".map","rb");
 string data = f.read();
 f.close();
 send_reliable(id,"mapname "+m,0);
-//send_reliable(id,"mdata "+data,0);
-if(get_file_contents(charfolder+"/facing.usr")=="") put_file_contents(charfolder+"/facing.usr","0",true);
-if(get_file_contents(charfolder+"/x.usr")=="") put_file_contents(charfolder+"/x.usr",""+random(0,500),true);
-if(get_file_contents(charfolder+"/y.usr")=="") put_file_contents(charfolder+"/y.usr",""+random(0,500),true);
-if(get_file_contents(charfolder+"/z.usr")=="") put_file_contents(charfolder+"/z.usr","0",true);
-f.open(charfolder+"/facing.usr","rb");
-send_reliable(id,"facing "+f.read(),0);
-f.close();
-f.open(charfolder+"/x.usr","rb");
-send_reliable(id,"x "+f.read(),0);
-f.close();
-f.open(charfolder+"/y.usr","rb");
-send_reliable(id,"y "+f.read(),0);
-f.close();
-f.open(charfolder+"/z.usr","rb");
-send_reliable(id,"z "+f.read(),0);
-f.close();
+send_reliable(id,"facing "+js["facing"],0);
+send_reliable(id,"x "+js["x"],0);
+send_reliable(id,"y "+js["y"],0);
+send_reliable(id,"z "+js["z"],0);
 send_reliable(id, "motd "+motd(), 0);
 log("connections",u+" logged in.",true,true);
 send_reliable(id, "loggedin", 0);
+}
+}
+catch
+{
+//alert (get_exception_info(),get_exception_line());
 }
 }
 }
@@ -7640,42 +7715,32 @@ send_reliable(id, "loggedin", 0);
 
 void create_char(string username, string password, string email,uint id, string compid)
 {
+json_object js;
 string ip=n.get_peer_address(id);
 string charfolder="chars/"+username;
 if(!directory_exists("chars"))
 directory_create("chars");
 if(directory_exists(charfolder)==false)
 {
-directory_create(charfolder);
+js.set ("health","10000");
+js.set ("newb","");
+js.set ("password",string_hash(password,2,false));
+js.set ("facing","0");
+js.set ("x",random(0,500));
+js.set ("y",random(0,500));
+js.set ("z",0);
+js.set ("eml",email);
 file c;
-c.open(charfolder+"/health.usr","wb");
-c.write("10000");
-c.close();
-c.open(charfolder+"/newb.usr","wb");
-c.close();
-c.open(charfolder+"/password.usr","wb");
-c.write(string_hash(password,2,false));
-c.close();
-c.open(charfolder+"/facing.usr","wb");
-c.write("0");
-c.close();
-c.open(charfolder+"/x.usr","wb");
-c.write(random(0,500));
-c.close();
-c.open(charfolder+"/y.usr","wb");
-c.write(random(0,500));
-c.close();
-c.open(charfolder+"/z.usr","wb");
-c.write("0");
-c.close();
-c.open(charfolder+"/eml.usr","wb");
-c.write(email);
-c.close();
+c.open("chars/"+username+".json","wb");
+c.write (js.stringify());
+c.close ();
 add_compid(compid,username);
 send_reliable(id,"createdchar",0);
 }
 else
+{
 send_reliable(id,"alreadyexists",0);
+}
 }
 string random_string_from_array(string[] arraystring)
 {

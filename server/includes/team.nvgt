@@ -84,7 +84,7 @@ players[index].teamname="";
 if(r==false) buffermembers.insert_last(name);
 if(r==true)
 {
-write_to(name,"team.usr","");
+players[index].data["team"]="";
 /*
 for(uint x=0; x<security_bombs.length(); x++)
 {
@@ -103,7 +103,7 @@ transmit("play_s|teamremove.ogg",false,0);
 if(r==true)
 {
 if(buffermembers.find(name)>-1) buffermembers.remove_at(buffermembers.find(name));
-write_to(name,"team.usr","");
+players[index].data["team"]="";
 /*
 for(uint x=0; x<security_bombs.length(); x++)
 {
@@ -127,7 +127,7 @@ teammembers.remove_at(t);
 transmit(name+" left the team!");
 transmit("play_s|teamleave.ogg",false,0);
 players[index].teamname="";
-write_to(players[index].name,"team.usr",players[index].teamname);
+players[index].data["team"]=players[index].teamname;
 /*
 for(uint x=0; x<security_bombs.length(); x++)
 {
@@ -195,7 +195,7 @@ security_bombs[x].teamname=players[index].teamname;
 }
 }
 */
-write_to(players[index].name,"team.usr",players[index].teamname);
+players[index].data["team"]=players[index].teamname;
 if(buffermembers.find(name)>-1) buffermembers.remove_at(buffermembers.find(name));
 if(!is_member(name)) teammembers.insert_last(name);
 }
@@ -217,7 +217,14 @@ while(teammembers.length()>0);
 }
 for(uint i=0; i<buffermembers.length (); i++)
 {
-file_delete("chars/"+buffermembers[i]+"/team.usr");
+file f;
+f.open ("chars/"+buffermembers[i]+".json","rb");
+json_object@ js = parse_json(f.read ());
+f.close();
+js.remove ("team");
+f.open ("chars/"+buffermembers[i]+".json","wb");
+f.write (js.stringify());
+f.close ();
 }
 buffermembers.resize(0);
 }
