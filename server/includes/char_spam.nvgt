@@ -1,5 +1,6 @@
 string chartrash()
 {
+/*这些以后写，而且我不认为我们需要这种功能
 int del=0;
 string names;
 string ret;
@@ -37,4 +38,6 @@ c.open("char_spam.svr","wb");
 c.write(names);
 c.close();
 return ret;
+*/
+return "";
 }

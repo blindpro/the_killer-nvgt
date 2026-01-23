@@ -135,13 +135,13 @@ return;
 members.insert_last(pl.name);
 send_reliable(0,"play_s|joinevent.ogg",0);
 send_reliable(0,pl.name+" just joined the "+eventname+" event!",2);
-write_to(pl.name,"oldx.usr",pl.x);
-write_to(pl.name,"oldy.usr",pl.y);
-write_to(pl.name,"oldz.usr",pl.z);
-write_to(pl.name,"oldmap.usr",pl.map);
+pl.data["oldx"]=pl.x;
+pl.data["oldy"]=pl.y;
+pl.data["oldz"]=pl.z;
+pl.data["oldmap"]=pl.map;
 if(can_keep_inventory==0)
 {
-write_to(pl.name,"oldinv.usr",pl.get_inv());
+pl.data["oldinv"]=pl.get_inv();
 pl.inventory.delete_all();
 }
 move_player(pl,map,joinx,joiny,joinz);
@@ -177,12 +177,12 @@ for(uint i=0; i<invstuff.length(); i++)
 string[] parsed2=string_split(invstuff[i],"=",false);
 if(parsed2.length()==2) pl.give(parsed2[0],stn(parsed2[1]));
 }
-string charfolder="chars/"+pl.name;
-file_delete(charfolder+"/oldx.usr");
-file_delete(charfolder+"/oldy.usr");
-file_delete(charfolder+"/oldz.usr");
-file_delete(charfolder+"/oldmap.usr");
-file_delete(charfolder+"/oldinv.usr");
+//string charfolder="chars/"+pl.name;
+pl.data.remove ("oldx");
+pl.data.remove ("oldy");
+pl.data.remove ("oldz");
+pl.data.remove ("oldmap");
+pl.data.remove ("oldinv");
 }
 members.remove_at(px);
 if(!silent)

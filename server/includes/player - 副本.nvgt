@@ -1,9 +1,10 @@
 string[] dontlose={"coin","tank","aircraft","police_car","ammo_shotgun","ammo_glock","ammo_sniper","ammo_ML7TinyMG","ammo_FRNTAssaultRifle","ammo_crossbow","ammo_FlameThrower","tk_dollar","tk_ultra_health_potion","tk_donation_pack","tk_warp_box_pack","tk_mini_warp_box_pack","tk_ultra_warp_box_pack","tk_dollar_pack","tk_ultra_health_potion_set","tk_shelter_pack"};
 string[] drunkmsglist={"awwwwwwwwwww","ewwwwwwwww","eeeeeeeeeee","fuck","I feel so fucked up right now","asdfasdfasdfadsfasdfasdf","zzz","lmao","roflflflflflflflflflflflflflflflflflflflflflflflflflf", "i need to puke!"};
 string[] randsounds={"beacon","move","timebombexplodedist","ibombdist","menuenter","codeclick","canisterdrop"};
-player@[] players(0);
+player@[] players();
 class player
 {
+json_object@ data = parse_json("{}");
 double x,y,z;
 string version;
 string map;
@@ -106,8 +107,8 @@ timer maptraveltimer;
 timer chattimer;
 string ammostuff;
 string muted;
-//achievements a;
-//playerweapon w(this);
+achievements a;
+playerweapon w(this);
 string zone;
 string ip;
 string vtype;
@@ -170,6 +171,8 @@ string weapon="",following="",follower="";
 bool following_on=false,cremguns=false;
 int invpos;
 dictionary inventory;
+server_form player_form;
+bool player_form_active, player_form_send;
 player(int px, int py, int pz, string pmap, string pname, int ppeer_id, string cid, string pver, string pip, string compt,int phid)
 {
 x=px;y=py;z=pz;map=pmap;
@@ -183,6 +186,115 @@ if(file_exists("chars/"+name+"/playtime.usr"))
 //playtimer.force(stn(read_from(name,"playtimer.usr")));
 hidden=phid;
 if(hidden>0) is_dead=true;
+}
+float antibiotic_hit_factor=1.5;
+void sendpacket(string packet,int chan=2,bool reliable=true)
+{
+if(reliable) send_reliable(peer_id,packet,chan);
+else send_unreliable(peer_id,packet,chan);
+}
+void hit(int mindamage, int maxdamage)
+{
+playsound("hit"+random(1,3));
+if(antibioticed==false) this.health-=random(mindamage,maxdamage);
+else this.health-=random(round(mindamage*antibiotic_hit_factor,0),round(maxdamage*antibiotic_hit_factor,0));
+}
+void stun(int ms,bool playafter=false,bool fall=false,int cooldown=0)
+{
+if(this.stunagaintimer.elapsed<=this.stunagaintime)
+{
+return;
+}
+else
+{
+this.stunagaintime=0;
+this.stunagaintimer.restart();
+}
+send_reliable(peer_id,"stopmoving",0);
+stunned=true;
+stuntime=ms;
+stuntimer.restart();
+this.stunagaintime=ms+cooldown;
+unstunplay=playafter;
+if(fall==true) {
+vo("standup");
+spawn_bodyfall(x,y,z,map,500,get_player_index_from(name));
+}
+}
+void fire_auto()
+{
+firing=true;
+}
+int warpdist=0;
+int warpmoved=0;
+vector max,warp;
+void warpcheck()
+{
+if(warpstage==0 and warptimer.elapsed>=2460)
+{
+send_reliable(peer_id,"freezestart",0);
+invinsible=true;
+playsound("wpvanish");
+send_plus(this.peer_id,"distsound|wpvanishdist|"+x+"|"+y+"|"+z+"|"+map,0);
+z+=1000;
+//send_reliable(peer_id,"move "+x+" "+y+" "+z,0);
+warpstage=1;
+warpdist=random(100,150);
+max=get_max_values(map);
+warp.x=x;
+warp.y=y;
+warp.z=z;
+send_reliable(peer_id,"play_s|wpmid.ogg",0);
+warptimer.restart();
+}
+if(warpstage==1 and warpmoved<warpdist and warptimer.elapsed<2000)
+{
+warp=move(warp.x,warp.y,facing);
+warpmoved++;
+if(warp.x>=max.x)
+{
+warp.x=max.x;
+}
+if(warp.y>=max.y)
+{
+warp.y=max.y;
+}
+if(warp.x<=0) warp.x=0;
+if(warp.y<=0) warp.y=0;
+}
+if(warpstage==1 and warptimer.elapsed>=2000)
+{
+if(warpmoved<warpdist)
+{
+do
+{
+warp=move(warp.x,warp.y,facing);
+warpmoved++;
+if(warp.x>=max.x)
+{
+warp.x=max.x;
+}
+if(warp.y>=max.y)
+{
+warp.y=max.y;
+}
+if(warp.x<=0) warp.x=0;
+if(warp.y<=0) warp.y=0;
+}
+while(warpmoved<warpdist);
+}
+warpstage=0;warpdist=0;warpmoved=0;
+warping=false;
+warp.x=round(warp.x,0);
+warp.y=round(warp.y,0);
+x=warp.x;y=warp.y;z-=1000;
+send_reliable(peer_id,"move|"+x+"|"+y+"|"+z,0);
+invinsible=false;
+send_reliable(peer_id,"freezestop",0);
+send_reliable(peer_id,"startmoving",0);
+playsound("wpappear");
+send_plus(this.peer_id,"distsound|wpappeardist|"+x+"|"+y+"|"+z+"|"+map,0);
+}
 }
 void chat(string message)
 {
@@ -218,8 +330,8 @@ void send_inv()
 {
 string charfolder="chars/"+name;
 //if(file_exists(charfolder+"/inv.usr")==false and !sheltercheck() and has_locker(this.name)==-1)
-if(file_exists(charfolder+"/inv.usr")==false)
-file_copy("prefs/default_inv.svr",charfolder+"/inv.usr",true);
+if(data.exists("inv")==false)
+data["inv"] = file_get_contents("prefs/default_inv.svr");
 file f;
 f.open(charfolder+"/inv.usr","rb");
 string inv=f.read();
@@ -241,6 +353,39 @@ for(uint i=0; i<invvalues.length(); i++)
 string[] invparser=string_split(invvalues[i],"=",false);
 if(invparser.length()>1)
 give(invparser[0],stn(invparser[1]));
+}
+}
+dictionary ammo;
+int get_ammo_count_from(string we)
+{
+int amount=0;
+for (uint i=0; i<ammo.get_keys().length(); i++)
+{
+int a=0;
+if (ammo.get_keys()[i]==we)
+ammo.get(we,a);
+amount+=a;
+}
+return amount;
+}
+void ammo_give(string we, int amount)
+{
+int a;
+if (!ammo.exists(we))
+{
+ammo.set(we,amount);
+}
+else
+{
+ammo.get(we,a);
+if (a+amount<=0)
+ammo.delete(we);
+else
+{
+int b=(a+amount);
+ammo.delete(we);
+ammo.set(we,b);
+}
 }
 }
 void eat(string fooditem)
@@ -358,12 +503,15 @@ inventory.get(item,amount);
 return amount;
 }
 }
+void vo(string a)
+{
+send_reliable(this.peer_id,"play_s|speaker_"+a+".ogg",0);
+}
 void playsound(string sound, bool include_me=true)
 {
 if(include_me) send_reliable(peer_id,"play_s|"+sound+".ogg",0);
 send_plus(peer_id, sound+"|"+x+"|"+y+"|"+z+"|"+map, 3);
 }
-
 bool is_muted(string name)
 {
 string[] t=string_split(muted,"\r\n",false);
@@ -375,6 +523,61 @@ return true;
 }
 }
 return false;
+}
+void mute(string name)
+{
+muted+="\r\n"+name;
+}
+bool unmute(string name)
+{
+string[] t=string_split(muted,"\r\n",false);
+string newmuted;
+bool succeeded=false;
+for (uint i=0; i<t.length(); i++)
+{
+if (t[i]!=name)
+newmuted+="\r\n"+t[i];
+else
+succeeded=true;
+}
+muted=newmuted;
+return succeeded;
+}
+void get_weapon_propperties(string wname)
+{
+int walktime=100;
+int canjump=1;
+if(wname=="ML7TinyMG")
+{
+firetime=200;
+}
+if(wname=="machinegun")
+{
+firetime=300;
+}
+if(wname=="sniper")
+{
+walktime=400;
+}
+if(wname=="ML420HuntingRifle")
+{
+walktime=700;
+}
+if(wname=="FRNTAssaultRifle")
+{
+firetime=200;
+}
+send_reliable(peer_id,"walkmod|"+walktime+"|"+canjump,0);
+}
+int get_ammo_count(string w)
+{
+return get_ammo_count_from(w);
+}
+bool hasammo(string w)
+{
+if(get_item_count("ammo_"+w)<=0)
+return false;
+return true;
 }
 bool adminable()
 {
@@ -394,13 +597,35 @@ int distancecheck(double xx,double yy,double zz)
 return get_3d_distance(x,y,z,xx,yy,zz);
 }
 }
+int get_best_player()
+{
+int current_killcount=-1;
+int final_index=-1;
+for(uint i=0; i<players.length(); i++)
+{
+int count=players[i].kills;
+if(current_killcount==-1)
+{
+current_killcount=count;
+final_index=i;
+}
+else
+{
+if(count>current_killcount)
+{
+current_killcount=count;
+final_index=i;
+}
+}
+}
+return final_index;
+}
 void remove_player(string name,bool got_kicked=false, bool lost=false)
 {
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].name==name)
 {
-/*
 int e=is_part_of_event(name);
 if(e>-1)
 {
@@ -409,14 +634,12 @@ events[e].leave(players[i],true,true);
 int teamindex=is_in_team(name);
 if(teamindex>-1)
 teams[teamindex].remove_member(name,false,false);
-*/
 uint oldid=(players[i].disconnected ? 4294967294 : players[i].peer_id);
 if(got_kicked==true)
 {
 send_reliable(0,players[i].name+" was kicked from the server",2);
 log("eventstream",players[i].name+" was kicked from the server");
 }
-/*
 if(cheatercheck(i,lost) and !got_kicked)
 {
 write_to(players[i].name,"cheater.usr",players[i].name+" is a cheater! They closed the game in "+ms_to_readable_time(players[i].statchangetimer.elapsed)+" of being hit");
@@ -427,9 +650,7 @@ if(players[i].following!="")
 int ind=get_player_index_from(players[i].following);
 if(ind>-1) players[ind].following="";
 }
-*/
 disconnections++;
-/*
 for(uint j=0; j<guns.length(); j++)
 {
 int a=players[i].get_ammo_count_from(guns[j]);
@@ -438,7 +659,6 @@ if(a>0)
 players[i].give("ammo_"+guns[j],a);
 }
 }
-*/
 scd(i);
 if(players[i].hidden==0) send_reliable(0, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
 else
@@ -448,10 +668,49 @@ send_reliable(players[i].peer_id, "offline|"+players[i].x+"|"+players[i].y+"|"+p
 }
 @players[i]=null;
 players.remove_at(i);
-if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
+//if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
 continue;
 }
 }
+}
+class pld
+{
+double tx,ty,tz;
+double sx,sy,sz;
+double dist;
+int index;
+pld(player@ p1, player@ p2)
+{
+sx=p1.x;sy=p1.y;sz=p1.z;
+tx=p2.x;ty=p2.y;tz=p2.z;
+index=get_player_index_from(p2.name);
+dist=get_3d_distance(sx,sy,sz,tx,ty,tz);
+}
+int opCmp(pld@ o)
+{
+if(o.dist<dist) return -1;
+if(o.dist>dist) return 1;
+return 0;
+}
+}
+string[] nearest_player_sorted_array(player@ p)
+{
+pld@[] t;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==p.name||players[i].is_dead||players[i].invinsible||p.map!=players[i].map||players[i].hidden==1 or players[i].newb==1) continue;
+pld temp(p,players[i]);
+t.insert_last(temp);
+}
+string[] blankret;
+if(t.is_empty()) return blankret;
+t.sort_descending();
+string[] names;
+for(uint i=0; i<t.length(); i++)
+{
+names.insert_last(players[t[i].index].name);
+}
+return names;
 }
 void spawn_player(int x, int y, int z, string map, string name,int pi, string cid, string ip, string ver, string ctext,int hid)
 {
@@ -492,7 +751,8 @@ if(players[i].spammedmsgs>=10)
 {
 players[i].ds.insert_last("chat");
 send_reliable(players[i].peer_id,"You're chat feature has just been disabled! Please contact an administrator!",2);
-write_to(players[i].name,"disabled.usr",getdisables(players[i].ds));
+//write_to(players[i].name,"disabled.usr",getdisables(players[i].ds));
+players[i].data["disabled"] = getdisables(players[i].ds);
 send_reliable(0,players[i].name+" was just caught spamming and can no longer send any messages",2);
 players[i].spammedmsgs=0;
 }
@@ -504,7 +764,7 @@ players[i].storestage=2;
 players[i].playsound("storewarning");
 send_reliable(players[i].peer_id,"alert! You will be moved out of the store in the next 60 seconds. Please finish any remaining purchases!",2);
 }
-/*
+//开始
 if(players[i].storetimer.elapsed>60000 and players[i].storestage==2 and players[i].map=="store")
 {
 int newx=random(0,500);
@@ -605,7 +865,7 @@ players[i].health-=random(100,10000);
 }
 }
 }
-*/
+//结尾
 if(players[i].underwater==true and players[i].mask==0)
 {
 if(players[i].airwarntimer.elapsed>=15000)
@@ -620,7 +880,7 @@ players[i].hitby="internal:drown";
 players[i].health=0;
 }
 }
-/*
+//开始
 if(players[i].cheater==1 and players[i].cheatertimer.elapsed>=30000)
 {
 players[i].statchangetimer.restart();
@@ -636,7 +896,7 @@ if(players[i].firetimer.elapsed>=players[i].firetime and players[i].firing==true
 {
 players[i].firetimer.restart();
 players[i].playsound(players[i].weapon);
-send_reliable_x(0,"distsound "+players[i].weapon+"dist "+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
+send_reliable_x(0,"distsound|"+players[i].weapon+"dist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
 if(hasammo(players[i].weapon)==true)
 {
 players[i].ammo_give(players[i].weapon,-1);
@@ -655,7 +915,7 @@ send_reliable(players[i].peer_id,"all your remote guns have disconnected!",2);
 if(players[i].health<1500 and players[i].lowhealth==false)
 {
 players[i].lowhealth=true;
-send_reliable(players[i].peer_id,"lowhealth "+players[i].health,0);
+send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
 players[i].bleedsound=spawn_moving_sound("bleeding.ogg",players[i].x,players[i].y,players[i].z,players[i].map);
 players[i].bleeding=true;
 }
@@ -667,7 +927,7 @@ destroy_moving_sound(players[i].bleedsound);
 players[i].bleedsound="";
 players[i].bleeding=false;
 }
-*/
+//结束
 if(players[i].newb==1 and players[i].newbtimer.elapsed>=20*60000)
 {
 players[i].newbtimer.restart();
@@ -682,8 +942,8 @@ send_reliable(players[i].peer_id,"Your newbie flag has been disabled!",0);
 send_reliable(0,"notify|"+players[i].nickname+" is no longer a newbie!",0);
 log("eventstream","server notification: "+players[i].nickname+" is no longer a newbie!");
 file_delete("chars/"+players[i].name+"/newb.usr");
+players[i].data.remove("newb");
 }
-/*
 if(players[i].following!="")
 {
 int ind=get_player_index_from(players[i].following);
@@ -719,7 +979,7 @@ else
 if(players[j].x!=players[i].x or players[j].y!=players[i].y or players[j].z!=players[i].z)
 {
 players[j].x=players[i].x;players[j].y=players[i].y;players[j].z=players[i].z;
-send_reliable(players[j].peer_id,"move "+players[j].x+" "+players[j].y+" "+players[j].z,0);
+send_reliable(players[j].peer_id,"move|"+players[j].x+"|"+players[j].y+"|"+players[j].z,0);
 }
 }
 }
@@ -735,14 +995,12 @@ if(players[i].shieldshots<0)
 {
 players[i].shieldshots=0;
 }
-*/
 if(players[i].health!=players[i].oldhealth)
 {
 players[i].statchangetimer.restart();
 players[i].oldhealth=players[i].health;
-if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth "+players[i].health,0);
+if(players[i].lowhealth==true) send_reliable(players[i].peer_id,"lowhealth|"+players[i].health,0);
 }
-/*
 if(players[i].ultrabombplacing==true)
 {
 if(players[i].ultrabombtimer.elapsed>=4921)
@@ -766,6 +1024,13 @@ players[i].health=antibiotic(players[i].health);
 players[i].oldhealth=players[i].health;
 }
 }
+if(players[i].player_form_active&&players[i].player_form_send)
+{
+string text = players[i].player_form.to_string();
+send_reliable(players[i].peer_id,"launch_form|"+text,0);
+players[i].player_form_send = false;
+}
+//开始
 if(players[i].invseconds>0 and players[i].invinsibility_starting==true)
 {
 if(players[i].invinsibilitytimer.elapsed>=750)
@@ -786,6 +1051,7 @@ send_reliable(players[i].peer_id,"stopmoving",0);
 send_reliable(players[i].peer_id,"Invinsibility started!",0);
 players[i].playsound("invstart");
 }
+//结束
 if(players[i].shieldshots>players[i].maxshields)
 {
 players[i].shieldshots=players[i].maxshields;
@@ -812,6 +1078,7 @@ players[i].antibioticed=false;
 send_reliable(players[i].peer_id,"you are at max health and you can't go any higher!",0);
 }
 }
+//开始
 if(players[i].shelter_building==true and players[i].map!="store")
 {
 if(players[i].buildtimer.elapsed>=7660)
@@ -861,13 +1128,13 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-send_reliable(0,"play_s kill.ogg",0);
+send_reliable(0,"play_s|kill.ogg",0);
 string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;
 players[i].underwater=false;
 players[i].sbombplacing=false;
 players[i].ultrabombplacing=false;
-send_reliable(0,"playerdeath "+km,0);
+send_reliable(0,"playerdeath|"+km,0);
 send_reliable(players[i].peer_id, "death", 0);
 players[i].shelter_building=false;
 players[i].is_dead=true;
@@ -908,7 +1175,7 @@ players[i].map="store";
 players[i].x=random(0,20);
 players[i].y=random(0,20);
 players[i].z=0;
-send_reliable(players[i].peer_id, "entershelter 0 100 0 main", 0);
+send_reliable(players[i].peer_id, "entershelter|0|100|0|main", 0);
 }
 if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
 string hb;
@@ -942,12 +1209,12 @@ teams[tm].teamkills+=1;
 if(players[i].should_subtract)
 {
 string[] keys=players[i].inventory.get_keys();
-for(uint j=0; j<dontlose.length; j++)
+for(uint j=0; j<dontlose.length (); j++)
 {
 int l=keys.find(dontlose[j]);
 if(l>-1) keys.remove_at(l);
 }
-if(keys.length>0)
+if(keys.length () >0)
 {
 string choice=keys[random(0,(keys.length()-1))];
 double loseperc=(random(0,5)/100.0);
@@ -957,7 +1224,7 @@ if(lost>0)
 players[i].give(choice,-lost);
 send_reliable(players[i].peer_id,"you lost "+lost+" "+choice+"s!",2);
 }
-for(uint g=0; g<guns.length; g++)
+for(uint g=0; g<guns.length (); g++)
 {
 if(players[i].get_item_count("ammo_"+guns[g])<=0) players[i].give("ammo_"+guns[g],random(50,90));
 }
@@ -972,7 +1239,7 @@ players[i].stunned=false;
 }
 scd(i);
 }
-*/
+//结束
 if( players[i].beacontimer.elapsed>=players[i].beacontime and players[i].invisible==false and players[i].is_dead==false and players[i].invinsible==false and players[i].hidden==0)
 {
 players[i].beacontimer.restart();
@@ -981,12 +1248,140 @@ for(uint pl=0; pl<players.length(); pl++)
 if(pl>(players.length()-1) or i>(players.length()-1)) return;
 if(players[pl].name!=players[i].name and players[pl].beacon>0 and players[i].distancecheck(players[pl].x,players[pl].y,players[pl].z)<=50 and players[i].map==players[pl].map)
 {
-//if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+" "+players[i].y+" "+players[i].z+" "+players[i].map,3);
-//else 
+if(are_teamed(players[i].name,players[pl].name)) send_unreliable(players[pl].peer_id,"invsecond|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
+else 
 send_unreliable(players[pl].peer_id,"beacon|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,3);
-net_loop();
+//net_loop();
 }
 }
 }
 }
+}
+string getdisables(string[] f)
+{
+/*未完成的函数
+dictionary temp;
+for(uint i=0; i<f.length; i++)
+{
+temp.set(f[i],"d");
+}
+return serialize(temp);
+*/
+return (0);
+}
+
+int antibiotic(int ch)
+{
+double limit=80000,scaler=100;
+if(ch<=5000&&ch>=3500) 
+{
+scaler=70;
+limit=40000;
+}
+else if(ch<3500&&ch>=2000)
+{
+scaler=50;
+limit=30000;
+}
+else if(ch<2000&&ch>1000)
+{
+scaler=25;
+limit=20000;
+}
+else if(ch<=1000)
+{
+scaler=15;
+limit=15000;
+}
+if(ch==0) return 10000;
+else ch+=floor((limit/ch)*scaler);
+return ch;
+}
+string cn2n(string pname,bool vi=false)
+{
+string ret=pname;
+for(uint i=0; i<players.length (); i++)
+{
+if(players[i].name==pname)
+{
+ret=players[i].nickname;
+if(vi)
+{
+/*
+for(uint v=0; v<vs.length ();; v++)
+{
+if(vs[v].owner==pname) ret+="'s "+vs[v].type;
+}
+*/
+}
+}
+}
+if(ret==pname&&file_exists("chars/"+pname+"/nickname.usr"))
+{
+ret=get_char_val(pname,"nickname");
+}
+return ret;
+}
+bool is_on_server(string playername)
+{
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].name==playername)
+{
+return true;
+}
+}
+return false;
+}
+class chartime
+{
+string name,extrainfo;
+timestamp lastlog;
+chartime(string name, timestamp lastlog)
+{
+this.name=name;
+this.lastlog=lastlog;
+}
+int opCmp(chartime@ otherlog)
+{
+if(this.lastlog.elapsed==otherlog.lastlog.elapsed) return 0;
+else if(this.lastlog.elapsed<otherlog.lastlog.elapsed) return -1;
+else return 1;
+}
+}
+player@[] get_paid_online()
+{
+player@[] ret;
+for(int i=0; i<players.length(); i++)
+{
+if(players[i].is_paid()&&players[i].hidden==0)
+ret.insert_last(players[i]);
+}
+return ret;
+}
+bool cheatercheck(int index, bool excludepaid=false)
+{
+if(index<0) return false;
+if(file_exists("chars/"+players[index].name+"/cheater.usr")) return false; //server already caught it in reception of close
+bool missilesnear=false;
+for(uint i=0; i<missiles.length(); i++)
+{
+int missiledist=players[index].distancecheck(missiles[i].x,missiles[i].y,missiles[i].z);
+if(missiledist<=30 and missiles[i].map==players[index].map and players[index].name==missiles[i].targetname)
+{
+missilesnear=true;
+}
+}
+bool near_ultrabomb=false;
+for(int i=0; i<ultrabombs.length(); i++)
+{
+int distance=players[index].distancecheck(ultrabombs[i].x, ultrabombs[i].y, ultrabombs[i].z);
+if(distance<80 and players[index].map==ultrabombs[i].map and ultrabombs[i].d==true) near_ultrabomb=true;
+}
+if((players[index].statchangetimer.elapsed<15000||missilesnear==true || near_ultrabomb==true))
+{
+if(!excludepaid) return true;
+else if(excludepaid&&players[index].paid==0) return true;
+}
+return false;
 }
