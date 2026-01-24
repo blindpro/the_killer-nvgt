@@ -465,7 +465,7 @@ if (kpgup.pressing() and camera.z<max.z-1)
 camera.z+=1;
 playcamera();
 }
-if (kleft.pressing() and camera.x>0)
+if (kleft.pressing() and camera.x>=0)
 {
 cameramove(Left);
 }
@@ -473,7 +473,7 @@ if (kright.pressing())
 {
 cameramove(Right);
 }
-if (kdown.pressing() and camera.y>0)
+if (kdown.pressing() and camera.y>=0)
 {
 cameramove(Backward);
 }
