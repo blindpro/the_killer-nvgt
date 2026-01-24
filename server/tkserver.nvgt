@@ -7722,7 +7722,7 @@ string ip=n.get_peer_address(id);
 string charfolder="chars/"+username;
 if(!directory_exists("chars"))
 directory_create("chars");
-if(directory_exists(charfolder)==false)
+if(file_exists(charfolder+".json")==false)
 {
 js.set ("health","10000");
 js.set ("newb","");
