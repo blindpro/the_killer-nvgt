@@ -23,7 +23,7 @@ minz=source_minz;
 maxz=source_maxz;
 soundfile=file;
 volume = source_volume;
-source_sound=sourcepool.play_extended(3,soundfile,null, mr.x, mr.y, me.z, lx, miny, minz, facing ,  0, 0, 0, 0, 0, 0, true ,0, 0.0,volume , 100.0, true);
+source_sound=sourcepool.play_extended(3,soundfile,null, me.x, me.y, me.z, lx, miny, minz, facing ,  0, 0, 0, 0, 0, 0, true ,0, 0.0,volume , 100.0, true);
 id=source_id;
 sourcepool.update_sound_3d(source_sound, lx, miny, minz);
 paused=source_paused;
@@ -36,7 +36,7 @@ sourcepool.update_sound_range_3d(source_sound, 0, rx-lx, 0, maxy-miny, 0, maxz-m
 }
 bool is_in_range()
 {
-return (lx<=mr.x&&rx>=mr.x&&miny<=mr.y&&maxy>=mr.y&&minz<=me.z&&maxz>=me.z);
+return (lx<=me.x&&rx>=me.x&&miny<=me.y&&maxy>=me.y&&minz<=me.z&&maxz>=me.z);
 }
 }
 class amb
@@ -50,7 +50,7 @@ minx=c1;maxx=c2;miny=c3;maxy=c4;minz=c5;maxz=c6;loop.stream(so);
 }
 bool is_in_range()
 {
-return (minx<=mr.x&&maxx>=mr.x&&miny<=mr.y&&maxy>=mr.y&&minz<=me.z&&maxz>=me.z);
+return (minx<=me.x&&maxx>=me.x&&miny<=me.y&&maxy>=me.y&&minz<=me.z&&maxz>=me.z);
 }
 void check()
 {

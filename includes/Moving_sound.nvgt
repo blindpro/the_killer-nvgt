@@ -11,7 +11,7 @@ x=c1;
 y=c2;
 z=c3;
 pitch=pi;
-if(cm==mapname) loopint=mpool.play_extended(3,soundloop,sound_default_pack,mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
+if(cm==mapname) loopint=mpool.play_extended(3,soundloop,sound_default_pack,me.x,me.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
 else loopint=-5;
 this.map=cm;
 }
@@ -20,11 +20,11 @@ void updateme(int c1, int c2,int c3,double pi)
 x=c1;
 y=c2;
 z=c3;
-if(mapname==this.map&&loopint==-5) loopint=mpool.play_extended(3,soundloop,sound_default_pack,mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
+if(mapname==this.map&&loopint==-5) loopint=mpool.play_extended(3,soundloop,sound_default_pack,me.x,me.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
 if(mapname!=this.map&&loopint!=-5) mpool.pause_sound(loopint);
 if(mapname==this.map&&loopint!=-5)
 {
-if(mpool.sound_is_active(loopint)==false) loopint=mpool.play_extended(3,soundloop,sound_default_pack,mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
+if(mpool.sound_is_active(loopint)==false) loopint=mpool.play_extended(3,soundloop,sound_default_pack,me.x,me.y,me.z,x,y,z,calculate_theta(facing),0,0,0,0,0,0,true,0,0,0,pitch,false);
 if(mpool.items[loopint].paused) mpool.resume_sound(loopint);
 mpool.update_sound_3d(loopint,x,y,z);
 if(pi!=pitch)
@@ -80,7 +80,7 @@ for(uint i=0; i<msounds.length(); i++)
 {
 if(msounds[i].map==mapname and msounds[i].loopint!=-5)
 {
-bool dist=get_total_distance(mr.x,mr.y,me.z,msounds[i].x,msounds[i].y,msounds[i].z,75);
+bool dist=get_total_distance(me.x,me.y,me.z,msounds[i].x,msounds[i].y,msounds[i].z,75);
 if(dist==false and mpool.sound_is_playing(msounds[i].loopint))
 {
 mpool.pause_sound(msounds[i].loopint);

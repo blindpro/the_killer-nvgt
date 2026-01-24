@@ -20,6 +20,7 @@ js.set ("use_screen_reader",use_sr);
 js.set("speak_interrupt",tts_default_interrupt);
 js.set("fi",join(fi,"\r\n"));
 js.set("hbanned",hbanned);
+js.set("currently_output_device_name",currently_output_device_name);
 //在这之前添加要添加的东西
 if (directory_exists(DIRECTORY_APPDATA+"TheKiller")==false)
 {
@@ -69,6 +70,7 @@ for(uint i = 0; i < fi_array.length(); i++)
 fi[i] = fi_array[i];
 }
 hbanned = js["hbanned"];
+currently_output_device_name = js["currently_output_device_name"];
 }
 catch 
 {

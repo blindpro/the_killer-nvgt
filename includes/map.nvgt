@@ -386,26 +386,26 @@ for(uint i = 0; i < objs.length(); i++)
 {
 if(objs[i].x==camera.x&&objs[i].y==camera.y&&objs[i].z==camera.z&&objs[i].map==mapname)
 {
-p.play_extended_3d("obj.ogg", mr.x, mr.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
+p.play_extended_3d("obj.ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 200.0);
 speak (objs[i].amount+objs[i].name);
 }
 }
 }
 if (gct()=="")
 {
-p.play_3d("cameraair.ogg",mr.x,mr.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+p.play_3d("cameraair.ogg",me.x,me.y,me.z,camera.x,camera.y,camera.z,calculate_theta(facing), false);
 }
 else if (gct()=="hazard")
 {
-p.play_3d("camerahazard.ogg",mr.x,mr.y,me.z,round(camera.x,0),round(camera.y,0),camera.z,calculate_theta(facing), false);
+p.play_3d("camerahazard.ogg",me.x,me.y,me.z,camera.x,camera.y,camera.z,calculate_theta(facing), false);
 }
 else if (string_contains(gct(),"wall",1)>-1)
 {
-p.play_extended_3d(gct()+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
+p.play_extended_3d(gct()+".ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
 }
 else
 {
-p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", mr.x, mr.y, me.z, round(camera.x,0), round(camera.y,0), camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
+p.play_extended_3d(gct()+"step"+random(1,5)+".ogg", me.x, me.y, me.z, camera.x, camera.y, camera.z, calculate_theta(facing), 0, 0, 0, 0, 0,0,false, 0.0, 0.0, 0.0, 80.0);
 }
 }
 int get_zone_index(string z)

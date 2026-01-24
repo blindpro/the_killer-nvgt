@@ -30,7 +30,7 @@ for(uint i = 0; i < objs1.length(); i++)
 if(objs1[i].beeptimer.elapsed>=750&&objs1[i].map==mapname)
 {
 objs1[i].beeptimer.restart();
-objpool.play_3d("obj.ogg", mr.x, mr.y, me.z, objs1[i].x, objs1[i].y, objs1[i].z, calculate_theta(facing), false);
+objpool.play_3d("obj.ogg", me.x, me.y, me.z, objs1[i].x, objs1[i].y, objs1[i].z, calculate_theta(facing), false);
 }
 }
 }

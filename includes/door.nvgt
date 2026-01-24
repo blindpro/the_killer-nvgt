@@ -32,6 +32,7 @@ doorsound=p.play_3d(ds, me.x, me.y, me.z,dx, dy, dz,calculate_theta(facing),true
 }
 void doorcheckloop()
 {
+me.x = mr.x;me.y = mr.y;
 for (uint i=0; i<doors.length(); i++)
 {
 p.update_sound_3d(doors[i].doorsound, doors[i].dx, doors[i].dy,doors[i].dz);
@@ -106,7 +107,7 @@ void doorcheck()
 {
 for (uint i=0; i<doors.length(); i++)
 {
-if (me.x==doors[i].dx and me.y==doors[i].dy and me.z==doors[i].dz and dmoving==false)
+if (mr.x==doors[i].dx and mr.y==doors[i].dy and me.z==doors[i].dz and dmoving==false)
 {
 can_move=false;
 p.play_stationary(doors[i].ds3, false);
