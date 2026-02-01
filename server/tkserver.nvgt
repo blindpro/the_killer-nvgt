@@ -446,7 +446,6 @@ send_reliable(e.peer_id,"trackplayer|"+players[index].name+"|"+players[index].x+
 }
 else if(parsed[0]=="describe" and parsed.length()>1)
 {
-//alert ("",parsed[1]);
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
@@ -7466,13 +7465,9 @@ void loops()
 {
 while (true)
 {
-//t_net_loop_mutex.lock();
 try
 {
-//wait (1);
 net_loop();
-//t_net_loop_mutex.unlock();
-
 bodyfallloop();
 timepacketloop();
 maploop();
@@ -7508,7 +7503,6 @@ gameeventloop();
 gnloop();
 timeloop();
 tempbanloop();
-
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);

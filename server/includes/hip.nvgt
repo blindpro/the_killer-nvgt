@@ -119,7 +119,7 @@ dictionary test;
 bool worked=ini_to_dict("test.ini",test);
 if(worked==false)
 {
-alert("Error","The file test.ini doesn't exist.");
+//alert("Error","The file test.ini doesn't exist.");
 }
 and the dictionary would be filled.
 This function will only convert key=value, it will not support sectioned ini files such as those seen in ISS files.

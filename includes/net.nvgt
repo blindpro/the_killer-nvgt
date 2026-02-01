@@ -1,5 +1,5 @@
 //string netaddress="127.0.0.1";
-string netaddress="39.105.7.77";
+string netaddress="pro.xztom.com";
 uint64 netport = 10000;
 
 void testc ()
@@ -15,7 +15,7 @@ if(e.type==event_connect)
 server_id=e.peer_id;
 break;
 }
-wait (5);
+//wait (5);
 }
 send_reliable (server_id,"get_map|tankfight.map" , 10);
 }
