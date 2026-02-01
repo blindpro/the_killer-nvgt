@@ -13,6 +13,11 @@ sourcepool.hrtf = false;
 distpool.hrtf = false;
 set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
 //set_sound_storage("sounds.dat");
+if(@sound_default_pack==null)
+{
+alert("error","Open sounds.pack an error has occurred");
+exit();
+}
 data_read();
 if(is_hardbanned())
 {
@@ -29,7 +34,7 @@ if (currently_input_device != 1)
 set_sound_input_device (currently_input_device);
 }
 */
-if(get_sound_output_devices()[currently_output_device] != currently_output_device_name)
+if(get_sound_output_devices().find(currently_output_device_name)==-1)
 {
 alert("Error","The output sound device "+currently_output_device_name+" does not exist on this system anymore. Using the default.");
 currently_output_device = 0;
