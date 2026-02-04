@@ -46,3 +46,6 @@
 #include "server_form_parser.nvgt"
 #include "map_build_ui.nvgt"
 #include "mapdata.nvgt"
+#include "downloader.nvgt"
+#include "dlfile.nvgt"
+#include "hip.nvgt"
