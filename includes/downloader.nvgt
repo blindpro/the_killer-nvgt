@@ -155,6 +155,7 @@ return false;
 */
 }
 download_active=true;
+/*
 if(bytes_total>0)
 {
 update_download();
@@ -163,6 +164,8 @@ else
 {
 get_headers();
 }
+*/
+update_download();
 bytes_downloaded=download.size;
 return true;
 }
@@ -245,7 +248,7 @@ return error;
 private void update_download()
 {
 //percentage=download.size/bytes_total*100;
-percentage=dl.progress;
+percentage=round(dl.progress*100,2);
 percentage=round(percentage,2);
 if(dl_content.length()>=4096)
 {
