@@ -1,0 +1,134 @@
+nuclear_bomb@[] nuclear_bombs(0);
+class nuclear_bomb
+{
+int x, y, z;
+string map, owner;
+timer explodetimer,beeptimer;
+int explodetime = 60000;
+int beeptime;
+bool explode;
+nuclear_bomb(int bx, int by, int bz, string bmap, string bowner)
+{
+x = bx;
+y = by;
+z = bz;
+map = bmap;
+owner = bowner;
+}
+}
+void nuclear_bombloop()
+{
+for(uint i = 0; i < nuclear_bombs.length(); i++)
+{
+if(!nuclear_bombs[i].explode)
+{
+nuclear_bombs[i].beeptime=nuclear_bombs[i].explodetime-nuclear_bombs[i].explodetimer.elapsed;
+nuclear_bombs[i].beeptime=nuclear_bombs[i].beeptime/50+50;
+if(nuclear_bombs[i].beeptimer.elapsed>=nuclear_bombs[i].beeptime)
+{
+nuclear_bombs[i].beeptimer.restart();
+play("nuclear_bombbeep",nuclear_bombs[i].x,nuclear_bombs[i].y,nuclear_bombs[i].z,nuclear_bombs[i].map);
+}
+if(nuclear_bombs[i].explodetimer.elapsed>=nuclear_bombs[i].explodetime)
+{
+nuclear_bombs[i].explode = true;
+}
+}
+else
+{
+sendmap("play_s|nuclear_bomb.ogg",nuclear_bombs[i].map);
+send_reliable(0,"play_s|nuclearbombdist.ogg",0);
+bool hit;
+for(uint o = 0; o < objs.length(); o++)
+{
+if(objs[o].map==nuclear_bombs[i].map)
+{
+play("obj_break"+random(1,3),objs[o].x,objs[o].y,objs[o].z,objs[o].map);
+remove_obj(o);
+}
+}
+for(uint h = 0; h < horbs.length(); h++)
+{
+if(horbs[h].map==nuclear_bombs[i].map)
+{
+horbs[h].shoot();
+}
+}
+for(uint p = 0; p < impact_bombs.length(); p++)
+{
+if(impact_bombs[p].map==nuclear_bombs[i].map)
+{
+play("ibombhit"+random(1,3),impact_bombs[p].x,impact_bombs[p].y,impact_bombs[p].z,impact_bombs[p].map);
+impact_bombs[p].health=0;
+hit=true;
+}
+}
+for(uint v = 0; v < vs.length(); v++)
+{
+if(vs[v].map==nuclear_bombs[i].map)
+{
+vs[v].hit(2000000000,nuclear_bombs[i].owner+"'s nuclear bomb");
+hit=true;
+}
+}
+for(uint i1 = 0; i1 < players.length(); i1++)
+{
+if(in_vehicle(players[i1].name)>-1 or players[i1].newb==1 or players[i1].is_dead or players[i1].invinsible) continue;
+if(players[i1].map==nuclear_bombs[i].map)
+{
+players[i1].hit(2000000000,2000000000);
+players[i1].should_subtract=true;
+players[i1].hitby = nuclear_bombs[i].owner+"'s nuclear bomb";
+hit=true;
+}
+}
+for(uint m = 0; m < mines.length(); m++)
+{
+if(mines[m].map==nuclear_bombs[i].map)
+{
+mines[m].d=true;
+hit=true;
+}
+}
+for(uint mo = 0; mo < motion_bombs.length(); mo++)
+{
+if(motion_bombs[mo].map==nuclear_bombs[i].map)
+{
+motion_bombs[mo].d=true;
+hit=true;
+}
+}
+for(uint r = 0; r < remguns.length(); r++)
+{
+if(remguns[r].map==nuclear_bombs[i].map)
+{
+play("remgunhit"+random(1,3),remguns[r].x,remguns[r].y,remguns[r].z,remguns[r].map);;
+remguns[r].hitby=nuclear_bombs[i].owner+"'s nuclear bomb";
+remguns[r].health=0;
+hit=true;
+}
+}
+for(uint s = 0; s < shelters.length(); s++)
+{
+if(shelters[s].map==nuclear_bombs[i].map)
+{
+shelters[s].hit(890000,nuclear_bombs[i].owner+"'s nuclear bomb","nuclear_bomb");
+hit=true;
+}
+}
+if(hit)
+{
+int index = get_player_index_from(nuclear_bombs[i].owner);
+if(index>-1) send_reliable(players[index].peer_id,"play_s|weaponping.ogg",0);
+}
+@nuclear_bombs[i]=null;
+nuclear_bombs.remove_at(i);
+continue;
+}
+}
+}
+void spawn_nuclear_bomb(int x, int y, int z, string map, string owner)
+{
+nuclear_bomb b(x,y,z,map,owner);
+nuclear_bombs.insert_last(b);
+}

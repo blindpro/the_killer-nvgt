@@ -1,5 +1,5 @@
-//string netaddress="127.0.0.1";
-string netaddress="pro.xztom.com";
+string netaddress="127.0.0.1";
+//string netaddress="pro.xztom.com";
 uint64 netport = 10000;
 
 void testc ()
@@ -334,6 +334,24 @@ if(parsed[1]!=name and map==mapname and inve==false)
 {
 tp.play_3d(get_tile_at(x, y, z)+"land.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
 }
+}
+else if(parsed[0]=="draw" and parsed.length()>1)
+{
+if(weapons.find(parsed[1])<0)
+{
+weapons.insert_last(parsed[1]);
+}
+int index = weapons.find(parsed[1]);
+if(index<0)
+{
+w=(weapons.length()-1);
+}
+else
+{
+w=index;
+}
+speak(weapons[w]);
+send_reliable(0,"draw|"+weapons[w],0);
 }
 else if(parsed[0]=="clip")
 {

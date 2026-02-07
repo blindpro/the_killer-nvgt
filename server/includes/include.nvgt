@@ -66,3 +66,8 @@
 #include "compban.nvgt"
 #include "src.nvgt"
 #include "server_form.nvgt"
+#include "ags.nvgt"
+#include "rocket.nvgt"
+#include "gp.nvgt"
+#include "rpg.nvgt"
+#include "nuclear_bomb.nvgt"

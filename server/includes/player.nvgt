@@ -93,6 +93,8 @@ int hidden=0;
 int cheater=0;
 int newb=0;
 int maxshields=200;
+bool usenuclear_bomb;
+timer usenuclear_bombtimer;
 timer playtimer;
 bool takeammo=false;
 bool shielded=false;
@@ -543,25 +545,96 @@ void get_weapon_propperties(string wname)
 {
 int walktime=100;
 int canjump=1;
-if(wname=="ML7TinyMG")
+if(wname=="cannon")
+{
+walktime=500;
+canjump=0;
+}
+if(wname=="hand_cannon")
+{
+walktime=350;
+}
+if(wname=="awp")
+{
+walktime=200;
+}
+if(wname=="zulfikar")
+{
+walktime=2000000000;
+canjump=0;
+}
+if(wname=="ags30")
+{
+firetime=200;
+walktime=350;
+}
+if(wname=="m134_minigun")
+{
+firetime=610;
+canjump=0;
+walktime=2000;
+}
+if(wname=="barrett_m82_sniper_rifle")
+{
+walktime=300;
+}
+if(wname=="browning_m2_heavy_50_cal_machinegun")
+{
+firetime=200;
+canjump=0;
+walktime=500;
+}
+if(wname=="m16_assault_rifle")
+{
+firetime=140;
+}
+if(wname=="browning_high_power_bda_handgun")
 {
 firetime=200;
 }
-if(wname=="machinegun")
+if(wname=="ak47_assault_rifle")
 {
 firetime=300;
 }
-if(wname=="sniper")
+if(wname=="mp5_machine_pistol")
 {
-walktime=400;
+firetime=500;
 }
-if(wname=="ML420HuntingRifle")
+if(wname=="blz83_portable_machine_gun")
 {
-walktime=700;
+firetime=490;
 }
-if(wname=="FRNTAssaultRifle")
+if(wname=="stp21_handgun")
 {
 firetime=200;
+}
+if(wname=="m4a1_assault_rifle")
+{
+firetime=350;
+}
+if(wname=="fnminimilight")
+{
+firetime=150;
+}
+if(wname=="beretta_m1951_machine_pistol")
+{
+firetime=150;
+}
+if(wname=="modern_sub_machine_gun_carbine")
+{
+firetime=100;
+}
+if(wname=="str_301_long_barreled_machine_pistol")
+{
+firetime=200;
+}
+if(wname=="crt43_automatic_shotgun")
+{
+firetime=500;
+}
+if(wname=="nak_nk1000_decimater")
+{
+walktime=350;
 }
 send_reliable(peer_id,"walkmod|"+walktime+"|"+canjump,0);
 }
@@ -843,6 +916,13 @@ players[i].drunkstage=0;
 players[i].drunk=false;
 }
 }
+if(players[i].usenuclear_bomb&&players[i].usenuclear_bombtimer.elapsed>=7100)
+{
+players[i].usenuclear_bomb = false;
+spawn_nuclear_bomb(round(players[i].x,0),round(players[i].y,0),round(players[i].z,0),players[i].map,players[i].name);
+send_reliable(players[i].peer_id,"startmoving",0);
+send_reliable(players[i].peer_id,"done",0);
+}
 if(players[i].mask==1)
 {
 if(players[i].airtimer.elapsed>=3500)
@@ -890,7 +970,7 @@ players[i].data.remove("cheater");
 if(players[i].firetimer.elapsed>=players[i].firetime and players[i].firing==true and players[i].weapon!="" and players[i].newb==0 and automatic(players[i].weapon)==true and players[i].get_ammo_count(players[i].weapon)>0)
 {
 players[i].firetimer.restart();
-players[i].playsound(players[i].weapon);
+players[i].playsound(players[i].weapon+"fire"+random(1,3));
 send_reliable_x(0,"distsound|"+players[i].weapon+"dist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0,players[i].x,players[i].y,players[i].z,players[i].map,100);
 if(hasammo(players[i].weapon)==true)
 {

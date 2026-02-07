@@ -1,0 +1,88 @@
+gp@[]gps(0);
+class gp {
+double x,y,z;
+int dir=0;
+bool explode=false;
+int range=15;
+int distance=0;
+int mindammage=1000;
+int maxdammage=110000;
+string map;
+string owner;
+int spread=10;
+gp(double gx, double gy, double gz, double gdir, string gmap, string gowner)
+{
+x=gx;
+y=gy;
+z=gz;
+dir=gdir;
+map=gmap;
+owner=gowner;
+}
+}
+
+void gploop()
+{
+for(uint j=0; j<gps.length(); j++)
+{
+play("gp30explode",gps[j].x,gps[j].y,gps[j].z,gps[j].map);
+send_reliable(0,"distsound|gp30explodedist|"+gps[j].x+"|"+gps[j].y+"|"+gps[j].z+"|"+gps[j].map,0);
+for(uint s=0; s<shelters.length(); s++)
+{
+if(get_3d_distance(gps[j].x,gps[j].y,gps[j].z,shelters[s].x,shelters[s].y,shelters[s].z)<=gps[j].range&&shelters[s].map==gps[j].map)
+shelters[s].hit(random(gps[j].mindammage,gps[j].maxdammage),gps[j].owner+"'s gp","gp30");
+}
+for(uint x=0; x<players.length(); x++)
+{
+if(in_vehicle(players[x].name)>-1 or players[x].newb==1 or players[x].is_dead or players[x].invinsible) continue;
+if(get_3d_distance(gps[j].x,gps[j].y,gps[j].z,players[x].x,players[x].y,players[x].z)<=gps[j].range and players[x].map==gps[j].map)
+{
+players[x].hit(gps[j].mindammage,gps[j].maxdammage);
+players[x].should_subtract=true;
+players[x].hitby=gps[j].owner+"'s gp30";
+players[x].playsound("stp429hit");
+}
+}
+for (uint i2=0; i2<objs.length(); i2++)
+{
+if (get_3d_distance(gps[j].x,gps[j].y,gps[j].z,objs[i2].x,objs[i2].y,objs[i2].z)<=gps[j].range and objs[i2].map==gps[j].map)
+{
+play("obj_break"+random(1,3),objs[i2].x,objs[i2].y,objs[i2].z,objs[i2].map);
+remove_obj(i2);
+}
+}
+for (uint i2=0; i2<remguns.length(); i2++)
+{
+if (get_3d_distance(gps[j].x,gps[j].y,gps[j].z,remguns[i2].x,remguns[i2].y,remguns[i2].z)<=gps[j].range and remguns[i2].map==gps[j].map)
+{
+remguns[i2].health-=random(gps[j].mindammage,gps[j].maxdammage);
+remguns[i2].hitby=gps[j].owner+"'s gp30";
+play("remgunhit"+random(1, 3),remguns[i2].x,remguns[i2].y,remguns[i2].z,remguns[i2].map);
+}
+}
+for(uint v=0; v<vs.length(); v++)
+{
+if(get_2d_distance(vs[v].x,vs[v].y,gps[j].x,gps[j].y)<=gps[j].range)
+{
+vs[v].hit(random(gps[j].mindammage,gps[j].maxdammage),gps[j].owner+"'s gp","gp30");
+}
+}
+for(uint x=0; x<impact_bombs.length(); x++)
+{
+if(get_3d_distance(gps[j].x,gps[j].y,gps[j].z,impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z)<=20 and gps[j].map==impact_bombs[x].map)
+{
+play("ibombhit"+random(1,3),impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,impact_bombs[x].map);
+impact_bombs[x].health-=random(gps[j].mindammage,gps[j].maxdammage);
+}
+}
+@gps[j]=null;
+gps.remove_at(j);
+continue;
+}
+}
+
+void spawn_gp(double x, double y, double z, double dir, string map, string owner)
+{
+gp f1(x, y, z, dir, map, owner);
+gps.insert_last(f1);
+}

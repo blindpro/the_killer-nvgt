@@ -20,7 +20,8 @@ int writeprefs=1;
 int chatting=1;
 int objgrabs=0, objspawns=0;
 string adminlog;
-string[] guns={"crossbow","ML7TinyMG","shotgun","ML420HuntingRifle","glock","FlameThrower","FRNTAssaultRifle","sniper"};
+string[] guns={"crossbow","sky_28_laser","ags30","glock_17_pistol","beretta_m1951_machine_pistol","sig_p226_combat_pistol","modern_sub_machine_gun_carbine","cop_357_derringer_pistol","m79_grenade_launcher","stp21_handgun","str_301_long_barreled_machine_pistol","fnminimilight","beretta_nano_pocket_pistol","mlk_207_combat_rifle","colt_ar_15_assault_rifle","stp106_long_barreled_pistol","nak_nk1000_decimater","barrett_m82_sniper_rifle","cyanide_pistol","m16_assault_rifle","str_32_pump_action_shotgun","crt43_automatic_shotgun","pistol","shotgun","gp30","throwing_knives","hand_cannon","sky_327_laser_cannon","taser","rpg7","rocket_launcher","gauss","cannon","awp","sniper","zulfikar","storm_sniper","m24_sniper_rifle","ak47_assault_rifle","blz83_portable_machine_gun","browning_high_power_bda_handgun","browning_m2_heavy_50_cal_machinegun","colt_python_revolver","flameburst_mini_flame_thrower","m4a1_assault_rifle","m134_minigun","m1208_shotgun","mlk_203_combat_pistol","mp5_machine_pistol"};
+string[] cold_weapons={"knife","spiked_chain_mace","studded_boots","spiked_bat","steal_warhammer","small_iron_club","small_sabre","crt17_combat_knife","small_hammer","small_dagger","machete","sky_429_laser_shotgun","sky_372_laser_machinegun","sky_386_laser_assault_rifle","sky_286_laser_pistol","rusty_scalpel","large_iron_club","nunchaku","crow_bar","rusty_axe","long_sword","iron_shovel","scissor_blade","garden_spade","hammer","golden_war_axe","brass_knuckles","broken_rifle","feet","fists","short_sword","spear"};
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
@@ -666,7 +667,7 @@ if(players[index].map=="jail")
 return;
 }
 spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
-play(wname, players[index].x, players[index].y, players[index].z, players[index].map);
+play(wname+"fire"+random(1,3), players[index].x, players[index].y, players[index].z, players[index].map);
 send_reliable(0,"distsound|"+wname+"dist|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map,0);
 if(hasammo(wname)==true)
 {
@@ -1791,6 +1792,11 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
+if(guns.find(wname)>-1 || cold_weapons.find(wname)>-1)
+{
+if( players[index].weapon==wname||players[index].sitting==1||in_vehicle(players[index].name)>-1||players[index].reloading ||wname=="feet" || wname=="fists") return;
+send_reliable(players[index].peer_id,"draw|"+wname,0);
+}
 if(wname=="mine")
 {
 if(players[index].map!="store")
@@ -1855,6 +1861,17 @@ takeobj=true;
 }
 }
 }
+else if(wname=="nuclear_bomb")
+{
+if(!players[index].usenuclear_bomb)
+{
+players[index].usenuclear_bombtimer.restart();
+players[index].usenuclear_bomb=true;
+players[index].playsound("nuclearbombplace");
+send_reliable(players[index].peer_id,"stopmoving",0);
+takeobj=true;
+}
+}
 else if(wname=="health_dart")
 {
 if(players[index].stunthrowtimer.elapsed>=7500)
@@ -1864,6 +1881,43 @@ play("stun_dartthrow",players[index].x,players[index].y,players[index].z,players
 spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
 takeobj = true;
 }
+}
+else if(wname=="weapon_pack")
+{
+uint total = 0;
+for(uint i = 0; i < guns.length(); i++)
+{
+if(players[index].inventory.exists(guns[i])) continue;
+players[index].give(guns[i],1);
+total++;
+}
+for(uint j = 0; j < cold_weapons.length(); j++)
+{
+if(players[index].inventory.exists(cold_weapons[j]) || cold_weapons[j]=="feet" || cold_weapons[j]=="fists") continue;
+players[index].give(cold_weapons[j],1);
+total++;
+}
+if(total>0)
+{
+send_reliable(0,players[index].nickname+" just opened a weapon pack. they got "+total+" weapons.",2);
+send_reliable(0,"play_s|packopen.ogg",0);
+send_reliable(0,"play_s|event.ogg",0);
+takeobj=true;
+}
+else
+{
+send_reliable(players[index].peer_id,"No weapons available",0);
+}
+}
+else if(wname=="weapon_ammo_box")
+{
+for(uint i = 0; i < guns.length(); i++)
+{
+players[index].give("ammo_"+guns[i],random(10000, 50000));
+}
+players[index].playsound("ammo_box");
+send_reliable(players[index].peer_id,"done. Ammunition for "+guns.length()+" weapons was obtained.",2);
+takeobj=true;
 }
 else if(wname=="invisibility_shield")
 {
@@ -2746,7 +2800,7 @@ if(index>-1)
 {
 if(players[index].stunned==false and players[index].firing==false and players[index].reloading==false)
 {
-if(players[index].weapon=="knife" or players[index].weapon=="fists" or players[index].weapon=="sword")
+if(cold_weapons.find(players[index].weapon)>-1)
 {
 send_reliable(players[index].peer_id,"This weapon does not take ammo",0);
 return;
@@ -7503,6 +7557,11 @@ gameeventloop();
 gnloop();
 timeloop();
 tempbanloop();
+agsloop();
+rocketloop();
+gploop();
+rpgloop();
+nuclear_bombloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
@@ -8154,9 +8213,16 @@ return -1;
 }
 bool automatic(string w)
 {
+/*
 string[] aut={"FRNTAssaultRifle","ML7TinyMG","machinegun"};
 if(aut.find(w)>-1)
-return true;
+*/
+for(uint i = 0; i < guns.length(); i++)
+{
+string text = dget_string(wdata,guns[i]);
+string[] parsed = text.split("|");
+if(w==guns[i]&&parsed[1]=="auto") return true;
+}
 return false;
 }
 bool hasammo(string w)
@@ -8288,18 +8354,89 @@ for(uint i=0; i<wpn.length(); i++)
 export_weapon(wpn[i]);
 }
 */
-wdata.set("fists","200|norm");
-wdata.set("knife","280|norm");
-wdata.set("admingun","800|norm");
-wdata.set("ML7TinyMG","150|auto");
-wdata.set("ML420HuntingRifle","2000|norm");
-wdata.set("FlameThrower","850|norm");
-wdata.set("sword","850|norm");
-wdata.set("crossbow","600|norm");
-wdata.set("glock","350|norm");
+wdata.set("sky_327_laser_cannon","3000|norm");
+wdata.set("fists","100|norm");
+wdata.set("hand_cannon","5000|norm");
+wdata.set("nak_nk1000_decimater","35|norm");
+wdata.set("mp5_machine_pistol","500|auto");
+wdata.set("colt_python_revolver","500|norm");
+wdata.set("mlk_203_combat_pistol","1500|norm");
+wdata.set("m134_minigun","610|auto");
+wdata.set("m1208_shotgun","1000|norm");
+wdata.set("flameburst_mini_flame_thrower","260|norm");
+wdata.set("small_iron_club","350|norm");
+wdata.set("browning_m2_heavy_50_cal_machinegun","200|auto");
+wdata.set("m4a1_assault_rifle","350|auto");
+wdata.set("browning_high_power_bda_handgun","200|auto");
+wdata.set("feet","400|norm");
+wdata.set("small_sabre","600|norm");
+wdata.set("small_dagger","600|norm");
+wdata.set("large_iron_club","350|norm");
+wdata.set("studded_boots","450|norm");
+wdata.set("knife","250|norm");
+wdata.set("garden_spade","1000|norm");
+wdata.set("spiked_bat","300|norm");
+wdata.set("m24_sniper_rifle","2000|norm");
+wdata.set("spiked_chain_mace","600|norm");
+wdata.set("beretta_nano_pocket_pistol","250|norm");
+wdata.set("sky_28_laser","10|norm");
+wdata.set("steal_warhammer","600|norm");
+wdata.set("barrett_m82_sniper_rifle","5500|norm");
+wdata.set("modern_sub_machine_gun_carbine","100|auto");
+wdata.set("fnminimilight","150|auto");
+wdata.set("glock_17_pistol","350|norm");
+wdata.set("beretta_m1951_machine_pistol","150|auto");
+wdata.set("sky_429_laser_shotgun","1000|norm");
+wdata.set("cop_357_derringer_pistol","550|norm");
+wdata.set("sig_p226_combat_pistol","400|norm");
+wdata.set("m79_grenade_launcher","1000|norm");
+wdata.set("crt43_automatic_shotgun","500|auto");
+wdata.set("stp21_handgun","200|auto");
+wdata.set("mlk_207_combat_rifle","300|norm");
+wdata.set("str_301_long_barreled_machine_pistol","200|auto");
+wdata.set("stp106_long_barreled_pistol","400|norm");
+wdata.set("colt_ar_15_assault_rifle","100|norm");
+wdata.set("blz83_portable_machine_gun","200|auto");
+wdata.set("cyanide_pistol","800|norm");
 wdata.set("shotgun","1500|norm");
-wdata.set("sniper","1000|norm");
-wdata.set("FRNTAssaultRifle","200|norm");
+wdata.set("ak47_assault_rifle","300|auto");
+wdata.set("str_32_pump_action_shotgun","800|norm");
+wdata.set("pistol","300|norm");
+wdata.set("sky_386_laser_assault_rifle","1000|norm");
+wdata.set("small_hammer","500|norm");
+wdata.set("crow_bar","500|norm");
+wdata.set("sky_372_laser_machinegun","200|norm");
+wdata.set("scissor_blade","200|norm");
+wdata.set("machete","300|norm");
+wdata.set("golden_war_axe","1000|norm");
+wdata.set("sky_286_laser_pistol","2000|norm");
+wdata.set("iron_shovel","750|norm");
+wdata.set("rusty_axe","700|norm");
+wdata.set("nunchaku","100|norm");
+wdata.set("rusty_scalpel","500|norm");
+wdata.set("long_sword","900|norm");
+wdata.set("hammer","700|norm");
+wdata.set("crt17_combat_knife","400|norm");
+wdata.set("broken_rifle","600|norm");
+wdata.set("stp_m4_combat_knife","350|norm");
+wdata.set("brass_knuckles","500|norm");
+wdata.set("admingun","10|norm");
+wdata.set("rpg7","2000|norm");
+wdata.set("gp30","2000|norm");
+wdata.set("rocket_launcher","5000|norm");
+wdata.set("ags30","200|auto");
+wdata.set("gauss","2000|norm");
+wdata.set("throwing_knives","500|norm");
+wdata.set("awp","3000|norm");
+wdata.set("spear","1000|norm");
+wdata.set("crossbow","500|norm");
+wdata.set("m16_assault_rifle","40|auto");
+wdata.set("taser","6000|norm");
+wdata.set("short_sword","600|norm");
+wdata.set("cannon","7000|norm");
+wdata.set("sniper","1500|norm");
+wdata.set("zulfikar","5000|norm");
+wdata.set("storm_sniper","4000|norm");
 /*
 animaltypes.insert_last("hog");
 animaltypes.insert_last("monster");
