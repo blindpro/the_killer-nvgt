@@ -97,15 +97,16 @@ if(!progress)
 error=dl_err_no_download_active;
 return false;
 }
-if(!dl.get_running())
+//if(!dl.get_running() )
+if (percentage >=100)
 {
 progress=false;
-if(dl_content.length()>0)
+//if(dl_content.length()>4096)
 {
-if(download.active)
+//if(download.active)
 {
 download.write(dl_content);
-download.close();
+download.close ();
 }
 dl_content="";
 }
@@ -250,7 +251,7 @@ private void update_download()
 //percentage=download.size/bytes_total*100;
 percentage=round(dl.progress*100,2);
 percentage=round(percentage,2);
-if(dl_content.length()>=4096)
+if(dl_content.length()>=40960)
 {
 download.write(dl_content);
 dl_content="";

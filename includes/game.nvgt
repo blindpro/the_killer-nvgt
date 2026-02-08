@@ -18,11 +18,11 @@ bool loop = true;
 in_game = true;
 in_game1 = true;
 enable_input ();
-@t_net_loop = async<int> (net_loop);
 if(profiler) start_profiling();
+@t_net_loop = async<int> (net_loop);
 while (loop)
 {
-wait (5);
+wait (1);
 t_net_loop_mutex.lock();
 if (dead)
 {

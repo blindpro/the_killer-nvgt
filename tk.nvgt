@@ -55,6 +55,6 @@ set_window_fullscreen(true);
 weapons.reserve(15);
 set_garbage_collect_mode (3);
 set_garbage_collect_auto_frequency (5000);
-dl_file("https://pan.xztom.com/pro/thekiller/tk.zip","tk.zip");
+//dl_file("https://pan.xztom.com/pro/thekiller/tk.zip","tk.zip");
 mainmenu();
 }
