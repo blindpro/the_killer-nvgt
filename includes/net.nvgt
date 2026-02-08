@@ -1,5 +1,5 @@
-string netaddress="127.0.0.1";
-//string netaddress="pro.xztom.com";
+//string netaddress="127.0.0.1";
+string netaddress="pro.xztom.com";
 uint64 netport = 10000;
 
 void testc ()
@@ -59,7 +59,7 @@ send_reliable(0, "login|"+name+"|"+pass+"|"+netver+"|"+compid, 0);
 timeouttimer.restart();
 while(true)
 {
-wait(5);
+wait(1);
 e=n.request();
 if (key_pressed(KEY_ESCAPE))
 {
@@ -270,6 +270,7 @@ prior_connected=false;
 }
 if(e.type==event_receive)
 {
+//file_put_contents("net.log", get_event_message(e.message) + "\r\n" , FILE_APPEND);
 if(e.channel==0)
 {
 s = get_event_message(e.message);

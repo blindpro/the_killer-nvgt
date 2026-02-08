@@ -7,7 +7,7 @@ string status;
 double dlpercent=-1;
 while(dl.is_active())
 {
-wait(5);
+wait(1);
 dl.monitor();
 if (key_pressed(KEY_ESCAPE))
 {
