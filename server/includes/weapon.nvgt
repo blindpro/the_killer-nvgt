@@ -1492,6 +1492,71 @@ if(get_3d_distance(rx, ry, weapons[j].z, horbs[x].x, horbs[x].y, horbs[x].z)<=we
 horbs[x].shoot();
 }
 }
+for(uint x=0; x<helicopters.length(); x++)
+{
+if(get_3d_distance(rx, ry, weapons[j].z, helicopters[x].x, helicopters[x].y, helicopters[x].z)<=weapons[j].spread and helicopters[x].map==weapons[j].map)
+{
+send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
+if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
+if(weapons[j].type=="artillery1") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
+helicopters[x].health-=random(weapons[j].mindammage, weapons[j].maxdammage);
+play("helicopterhit"+random(1, 9), rx, ry, weapons[j].z, weapons[j].map);
+helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery" ? "tank" : weapons[j].type);
+helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery1" ? "armored tank" : weapons[j].type);
+hit=true;
+if(weapons[j].type=="grenade")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="grenade_launcher")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="stp429")
+{
+spawn_stp429(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="bazooka")
+{
+spawn_bazooka(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+/*
+if(weapons[j].type=="hand_grenade")
+{
+spawn_hand_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="pipe_bomb")
+{
+spawn_pipe_bomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rocketlauncher")
+{
+spawn_rocket(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="cannon")
+{
+spawn_cannonball(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rpg7")
+{
+spawn_rpg(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+}
+}
 for(uint x=0; x<remguns.length(); x++)
 {
 if(get_3d_distance(rx, ry, weapons[j].z, remguns[x].x, remguns[x].y, remguns[x].z)<=weapons[j].spread and remguns[x].map==weapons[j].map)
