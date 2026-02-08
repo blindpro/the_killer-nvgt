@@ -1198,6 +1198,7 @@ if(players[i].health<=0)
 {
 play("death"+random(1,4),players[i].x,players[i].y,players[i].z,players[i].map);
 spawn_bodyfall(players[i].x,players[i].y,players[i].z,players[i].map,3000);
+players[i].firing=false;
 players[i].playsound("kill"+random(1,4));
 if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
