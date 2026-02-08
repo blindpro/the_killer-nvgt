@@ -270,6 +270,7 @@ prior_connected=false;
 }
 if(e.type==event_receive)
 {
+//file_put_contents("net.log", get_event_message(e.message) + "\r\n" , FILE_APPEND);
 if(e.channel==0)
 {
 s = get_event_message(e.message);

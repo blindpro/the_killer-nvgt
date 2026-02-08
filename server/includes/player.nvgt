@@ -350,7 +350,7 @@ for(uint i=0; i<invvalues.length(); i++)
 {
 string[] invparser=string_split(invvalues[i],"=",false);
 if(invparser.length()>1)
-give(invparser[0],stn(invparser[1]));
+give(invparser[0],stn(invparser[1]),i == invvalues.length()-1);
 }
 }
 dictionary ammo;
