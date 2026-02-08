@@ -1811,6 +1811,12 @@ takeobj = true;
 }
 //else takeobj=false;
 }
+else if(wname=="death_free_card")
+{
+takeobj=true;
+players[index].death_free_cards+=1;
+players[index].playsound("dfcuse");
+}
 else if(wname=="helicopter"&&players[index].helicopterspawning==false)
 {
 if(players[index].statchangetimer.elapsed<60000){
@@ -3343,7 +3349,7 @@ if(index>-1)
 {
 int v=in_vehicle(players[index].name);
 int sh=in_shelter(players[index].name);
-if(v<0&&sh<0) send_reliable(e.peer_id,"speak|"+players[index].health+" health, "+players[index].shieldshots+" shielded shots.",0);
+if(v<0&&sh<0) send_reliable(e.peer_id,"speak|"+players[index].health+" health, "+players[index].shieldshots+" shielded shots. and you have"+players[index].death_free_cards+"death_free_cards.",0);
 else if(sh>-1&&v<0) send_reliable(players[index].peer_id,"speak|this shelter has "+shelters[sh].health+" health, and you have "+players[index].health+" health, with "+players[index].shieldshots+" shielded shots",0);
 else if(v>-1) {
 int ms=vs[v].fuel*(100/0.1)*(vs[v].fueltime-(vs[v].vfueltime*(vs[v].speed-1)));

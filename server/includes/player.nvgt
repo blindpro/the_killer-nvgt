@@ -144,7 +144,7 @@ bool remconnecting=false;
 bool placing_rbomb=false;
 bool poisoned=false;
 timer poisontimer;
-int kills,deaths;
+int kills,deaths,death_free_cards;
 bool invinsible=false, invinsibility_starting=false,is_admin=false, is_builder=false, invisible=false, insz=false, is_dead=false;
 int facing=0;
 int health=10000,oldhealth;
@@ -1210,6 +1210,13 @@ players[i].invisibilitytimer.pause();
 }
 if(players[i].health<=0)
 {
+if(players[i].death_free_cards>0)
+{
+players[i].playsound("death_free_card");
+players[i].death_free_cards-=1;
+}
+else
+{
 play("death"+random(1,4),players[i].x,players[i].y,players[i].z,players[i].map);
 spawn_bodyfall(players[i].x,players[i].y,players[i].z,players[i].map,3000);
 players[i].firing=false;
@@ -1267,6 +1274,15 @@ players[i].y=random(0,20);
 players[i].z=0;
 send_reliable(players[i].peer_id, "entershelter|0|100|0|main", 0);
 }
+}
+if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
+players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
+players[i].lowhealth=false;
+send_reliable(players[i].peer_id,"goodhealth",0);
+players[i].health=10000;
+players[i].oldhealth=10000;
+//write_to(players[i].name,"lasthit.usr",players[i].hitby);
+players[i].data["health"]=players[i].health;
 if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
 string hb;
 if(string_contains(players[i].hitby,"'",1)>-1)
