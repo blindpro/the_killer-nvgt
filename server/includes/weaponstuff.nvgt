@@ -28,7 +28,16 @@ if(p.weapon=="colt_ar_15_assault_rifle") return 6221;
 if(p.weapon=="nak_nk1000_decimater") return 10112;
 if(p.weapon=="stp106_long_barreled_pistol") return 2448;
 if(p.weapon=="colt_python_revolver") return 2700;
+if(p.weapon=="beretta_m9_pistol") return 3200;
+if(p.weapon=="sky_127_laser_handgun") return 600;
+if(p.weapon=="walther_p99_handgun") return 3500;
+if(p.weapon=="dart_launcher") return 550;
+if(p.weapon=="saiga_12_5_round_shotgun") return 2000;
+if(p.weapon=="saiga_12_10_round_shotgun") return 2000;
+if(p.weapon=="saiga_12_20_round_shotgun") return 2000;
+if(p.weapon=="saiga_12_30_round_shotgun") return 2000;
 if(p.weapon=="mp5_machine_pistol") return 2700;
+if(p.weapon=="ruger_security_6_revolver") return 2510;
 if(p.weapon=="mlk_203_combat_pistol") return 2500;
 if(p.weapon=="m134_minigun") return 18600;
 if(p.weapon=="m1208_shotgun") return 6000;
@@ -52,11 +61,13 @@ if(p.weapon=="str_32_pump_action_shotgun") return 917;
 if(p.weapon=="pistol") return 3268;
 if(p.weapon=="sky_327_laser_cannon") return 5000;
 if(p.weapon=="awp") return 8218;
+if(p.weapon=="stp_s84q_automatic_suppressed_pistol") return 3600;
 if(p.weapon=="cannon") return 7140;
 if(p.weapon=="zulfikar") return 16381;
 if(p.weapon=="cannon") return 7140;
 if(p.weapon=="gp30") return 3844;
 if(p.weapon=="hand_cannon") return 4620;
+if(p.weapon=="s&w_model66_revolver") return 3343;
 if(p.weapon=="rocket_launcher") return 3433;
 if(p.weapon=="sniper") return 1673;
 if(p.weapon=="storm_sniper") return 3012;
@@ -84,17 +95,49 @@ if(p.weapon=="colt_ar_15_assault_rifle")
 {
 max_ammo=50;
 }
+if(p.weapon=="sky_127_laser_handgun")
+{
+max_ammo=30;
+}
 if(p.weapon=="sky_28_laser")
 {
 max_ammo=20;
+}
+if(p.weapon=="saiga_12_5_round_shotgun")
+{
+max_ammo=5;
+}
+if(p.weapon=="saiga_12_10_round_shotgun")
+{
+max_ammo=10;
+}
+if(p.weapon=="saiga_12_20_round_shotgun")
+{
+max_ammo=20;
+}
+if(p.weapon=="saiga_12_30_round_shotgun")
+{
+max_ammo=30;
 }
 if(p.weapon=="browning_high_power_bda_handgun")
 {
 max_ammo=100;
 }
+if(p.weapon=="walther_p99_handgun")
+{
+max_ammo=15;
+}
 if(p.weapon=="beretta_m1951_machine_pistol")
 {
 max_ammo=30;
+}
+if(p.weapon=="stp_s84q_automatic_suppressed_pistol")
+{
+max_ammo=20;
+}
+if(p.weapon=="ruger_security_6_revolver")
+{
+max_ammo=6;
 }
 if(p.weapon=="mlk_203_combat_pistol")
 {
@@ -116,9 +159,17 @@ if(p.weapon=="m4a1_assault_rifle")
 {
 max_ammo=60;
 }
+if(p.weapon=="s&w_model66_revolver")
+{
+max_ammo=6;
+}
 if(p.weapon=="fnminimilight")
 {
 max_ammo=100;
+}
+if(p.weapon=="dart_launcher")
+{
+max_ammo=1;
 }
 if(p.weapon=="glock_17_pistol")
 {
@@ -159,6 +210,10 @@ max_ammo=30;
 if(p.weapon=="ak47_assault_rifle")
 {
 max_ammo=30;
+}
+if(p.weapon=="beretta_m9_pistol")
+{
+max_ammo=9;
 }
 if(p.weapon=="crt43_automatic_shotgun")
 {

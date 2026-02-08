@@ -197,9 +197,9 @@ void sendpacket(string packet,int chan=2,bool reliable=true)
 if(reliable) send_reliable(peer_id,packet,chan);
 else send_unreliable(peer_id,packet,chan);
 }
-void hit(int mindamage, int maxdamage)
+void hit(int mindamage, int maxdamage, bool playsoundhit = true)
 {
-playsound("hit"+random(1,3));
+if(playsoundhit) playsound("hit"+random(1,3));
 if(antibioticed==false) this.health-=random(mindamage,maxdamage);
 else this.health-=random(round(mindamage*antibiotic_hit_factor,0),round(maxdamage*antibiotic_hit_factor,0));
 }
@@ -601,6 +601,10 @@ firetime=300;
 if(wname=="mp5_machine_pistol")
 {
 firetime=500;
+}
+if(wname=="stp_s84q_automatic_suppressed_pistol")
+{
+firetime=200;
 }
 if(wname=="blz83_portable_machine_gun")
 {

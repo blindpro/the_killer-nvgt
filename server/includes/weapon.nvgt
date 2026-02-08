@@ -263,7 +263,7 @@ spread=5;
 shieldhits=0;
 shieldchance=100;
 stunning=true;
-stuntime=20000;
+stuntime=5000;
 shieldhits=random(1,3);
 hitsounds=4;
 }
@@ -405,6 +405,31 @@ shieldhits=random(3,15);
 shieldchance=20;
 hitsounds=3;
 }
+else if(type=="sky_127_laser_handgun")
+{
+bullet=false;
+requires_ammo=true;
+speedtime=0;
+range=40;
+mindammage=6000;
+maxdammage=8000;
+spread=5;
+shieldchance=5;
+shieldhits=random(6,58);
+hitsounds=3;
+}
+else if(type=="dart_launcher")
+{
+bullet=false;
+requires_ammo=true;
+speedtime=0;
+range=10;
+mindammage=100;
+maxdammage=300;
+spread=3;
+shieldhits=random(1,5);
+shieldchance=30;
+}
 else if(type=="machete")
 {
 bullet=false;
@@ -470,6 +495,58 @@ shieldhits=random(100,100);
 shieldchance=10;
  hitsounds=3;
 }
+else if(type=="saiga_12_5_round_shotgun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=6500;
+maxdammage=8100;
+spread=5;
+shieldchance=5;
+shieldhits=random(8,61);
+hitsounds=3;
+}
+else if(type=="saiga_12_10_round_shotgun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=6500;
+maxdammage=8100;
+spread=5;
+shieldchance=5;
+shieldhits=random(8,61);
+hitsounds=3;
+}
+else if(type=="saiga_12_20_round_shotgun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=6500;
+maxdammage=8100;
+spread=5;
+shieldchance=5;
+shieldhits=random(8,61);
+hitsounds=3;
+}
+else if(type=="saiga_12_30_round_shotgun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=6500;
+maxdammage=8100;
+spread=5;
+shieldchance=5;
+shieldhits=random(8,61);
+hitsounds=3;
+}
 else if(type=="spiked_bat")
 {
 bullet=false;
@@ -522,6 +599,19 @@ shieldchance=5;
 shieldhits=random(2,50);
 hitsounds=3;
 }
+else if(type=="walther_p99_handgun")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=5500;
+maxdammage=6500;
+spread=5;
+shieldchance=5;
+shieldhits=random(5,60);
+hitsounds=3;
+}
 else if(type=="greatsword")
 {
 bullet=false;
@@ -548,6 +638,19 @@ shieldchance=1;
 shieldhits=random(9,13);
 hitsounds=3;
 }
+else if(type=="beretta_m9_pistol")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+spread=3;
+mindammage=3000;
+maxdammage=3500;
+shieldhits=random(3,30);
+shieldchance=3;
+hitsounds=3;
+}
 else if(type=="steal_warhammer")
 {
 bullet=false;
@@ -571,6 +674,19 @@ range=90;
 spread=6;
 shieldchance=13;
 shieldhits=random(10,100);
+}
+else if(type=="stp_s84q_automatic_suppressed_pistol")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=40;
+mindammage=3500;
+maxdammage=6500;
+spread=5;
+shieldchance=3;
+shieldhits=random(3,60);
+hitsounds=3;
 }
 else if(type=="small_sabre")
 {
@@ -598,7 +714,7 @@ shieldhits=random(3,5);
 shieldchance=6;
 hitsounds=3;
 }
-if(type=="m4a1_assault_rifle")
+else if(type=="m4a1_assault_rifle")
 {
 bullet=true;
 requires_ammo=true;
@@ -648,6 +764,19 @@ maxdammage=79000;
 spread=5;
 shieldhits=random(3,175);
 shieldchance=10;
+hitsounds=3;
+}
+else if(type=="ruger_security_6_revolver")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=30;
+mindammage=1000;
+maxdammage=4000;
+spread=2;
+shieldchance=3;
+shieldhits=random(1,20);
 hitsounds=3;
 }
 else if(type=="m16_assault_rifle")
@@ -779,6 +908,19 @@ spread=6;
 shieldhits=random(3,200);
 shieldchance=3;
 hitsounds=3;
+}
+else if(type=="s&w_model66_revolver")
+{
+bullet=true;
+requires_ammo=true;
+speedtime=0;
+range=20;
+mindammage=1000;
+maxdammage=6000;
+spread=3;
+shieldhits=random(1,36);
+shieldchance=4;
+ hitsounds=3;
 }
 else if(type=="beretta_m1951_machine_pistol")
 {
@@ -1449,6 +1591,10 @@ spawn_ags(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].ma
 if(weapons[j].type=="m79_grenade_launcher")
 {
 spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
+}
+if(weapons[j].type=="cyanide_pistol")
+{
+spawn_cyanide(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name,players[x].name);
 }
 if(weapons[j].type=="health_dart")
 {

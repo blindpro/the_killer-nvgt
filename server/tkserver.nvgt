@@ -20,8 +20,8 @@ int writeprefs=1;
 int chatting=1;
 int objgrabs=0, objspawns=0;
 string adminlog;
-string[] guns={"crossbow","sky_28_laser","ags30","glock_17_pistol","beretta_m1951_machine_pistol","sig_p226_combat_pistol","modern_sub_machine_gun_carbine","cop_357_derringer_pistol","m79_grenade_launcher","stp21_handgun","str_301_long_barreled_machine_pistol","fnminimilight","beretta_nano_pocket_pistol","mlk_207_combat_rifle","colt_ar_15_assault_rifle","stp106_long_barreled_pistol","nak_nk1000_decimater","barrett_m82_sniper_rifle","cyanide_pistol","m16_assault_rifle","str_32_pump_action_shotgun","crt43_automatic_shotgun","pistol","shotgun","gp30","throwing_knives","hand_cannon","sky_327_laser_cannon","taser","rpg7","rocket_launcher","gauss","cannon","awp","sniper","zulfikar","storm_sniper","m24_sniper_rifle","ak47_assault_rifle","blz83_portable_machine_gun","browning_high_power_bda_handgun","browning_m2_heavy_50_cal_machinegun","colt_python_revolver","flameburst_mini_flame_thrower","m4a1_assault_rifle","m134_minigun","m1208_shotgun","mlk_203_combat_pistol","mp5_machine_pistol"};
-string[] cold_weapons={"knife","spiked_chain_mace","studded_boots","spiked_bat","steal_warhammer","small_iron_club","small_sabre","crt17_combat_knife","small_hammer","small_dagger","machete","sky_429_laser_shotgun","sky_372_laser_machinegun","sky_386_laser_assault_rifle","sky_286_laser_pistol","rusty_scalpel","large_iron_club","nunchaku","crow_bar","rusty_axe","long_sword","iron_shovel","scissor_blade","garden_spade","hammer","golden_war_axe","brass_knuckles","broken_rifle","feet","fists","short_sword","spear"};
+string[] guns={"crossbow","sky_28_laser","ags30","glock_17_pistol","beretta_m1951_machine_pistol","sig_p226_combat_pistol","modern_sub_machine_gun_carbine","cop_357_derringer_pistol","m79_grenade_launcher","stp21_handgun","str_301_long_barreled_machine_pistol","fnminimilight","beretta_nano_pocket_pistol","mlk_207_combat_rifle","colt_ar_15_assault_rifle","stp106_long_barreled_pistol","nak_nk1000_decimater","barrett_m82_sniper_rifle","cyanide_pistol","m16_assault_rifle","str_32_pump_action_shotgun","crt43_automatic_shotgun","pistol","shotgun","gp30","throwing_knives","hand_cannon","sky_327_laser_cannon","taser","rpg7","rocket_launcher","gauss","cannon","awp","sniper","zulfikar","storm_sniper","m24_sniper_rifle","ak47_assault_rifle","blz83_portable_machine_gun","browning_high_power_bda_handgun","browning_m2_heavy_50_cal_machinegun","colt_python_revolver","flameburst_mini_flame_thrower","m4a1_assault_rifle","m134_minigun","m1208_shotgun","mlk_203_combat_pistol","mp5_machine_pistol","ruger_security_6_revolver","s&w_model66_revolver","saiga_12_5_round_shotgun","saiga_12_10_round_shotgun","saiga_12_20_round_shotgun","saiga_12_30_round_shotgun","sky_127_laser_handgun","stp_s84q_automatic_suppressed_pistol","dart_launcher","walther_p99_handgun","beretta_m9_pistol"};
+string[] cold_weapons={"knife","spiked_chain_mace","studded_boots","spiked_bat","steal_warhammer","small_iron_club","small_sabre","crt17_combat_knife","small_hammer","small_dagger","machete","sky_429_laser_shotgun","sky_372_laser_machinegun","sky_386_laser_assault_rifle","sky_286_laser_pistol","rusty_scalpel","large_iron_club","nunchaku","crow_bar","rusty_axe","long_sword","iron_shovel","scissor_blade","garden_spade","hammer","golden_war_axe","brass_knuckles","broken_rifle","feet","fists","short_sword","spear","stp_m4_combat_knife"};
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
@@ -1902,13 +1902,13 @@ uint total = 0;
 for(uint i = 0; i < guns.length(); i++)
 {
 if(players[index].inventory.exists(guns[i])) continue;
-players[index].give(guns[i],1);
+players[index].give(guns[i],1,false);
 total++;
 }
 for(uint j = 0; j < cold_weapons.length(); j++)
 {
 if(players[index].inventory.exists(cold_weapons[j]) || cold_weapons[j]=="feet" || cold_weapons[j]=="fists") continue;
-players[index].give(cold_weapons[j],1);
+players[index].give(cold_weapons[j],1,false);
 total++;
 }
 if(total>0)
@@ -1927,7 +1927,7 @@ else if(wname=="weapon_ammo_box")
 {
 for(uint i = 0; i < guns.length(); i++)
 {
-players[index].give("ammo_"+guns[i],random(10000, 50000));
+players[index].give("ammo_"+guns[i],random(10000, 50000),false);
 }
 players[index].playsound("ammo_box");
 send_reliable(players[index].peer_id,"done. Ammunition for "+guns.length()+" weapons was obtained.",2);
@@ -7577,6 +7577,7 @@ gploop();
 rpgloop();
 nuclear_bombloop();
 helicopterloop ();
+cyanideloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
@@ -8373,13 +8374,20 @@ wdata.set("sky_327_laser_cannon","3000|norm");
 wdata.set("fists","100|norm");
 wdata.set("hand_cannon","5000|norm");
 wdata.set("nak_nk1000_decimater","35|norm");
+wdata.set("s&w_model66_revolver","400|norm");
 wdata.set("mp5_machine_pistol","500|auto");
+wdata.set("walther_p99_handgun","500|norm");
+wdata.set("ruger_security_6_revolver","300|norm");
 wdata.set("colt_python_revolver","500|norm");
 wdata.set("mlk_203_combat_pistol","1500|norm");
 wdata.set("m134_minigun","610|auto");
 wdata.set("m1208_shotgun","1000|norm");
 wdata.set("flameburst_mini_flame_thrower","260|norm");
 wdata.set("small_iron_club","350|norm");
+wdata.set("saiga_12_5_round_shotgun","1000|norm");
+wdata.set("saiga_12_10_round_shotgun","1000|norm");
+wdata.set("saiga_12_20_round_shotgun","1000|norm");
+wdata.set("saiga_12_30_round_shotgun","1000|norm");
 wdata.set("browning_m2_heavy_50_cal_machinegun","200|auto");
 wdata.set("m4a1_assault_rifle","350|auto");
 wdata.set("browning_high_power_bda_handgun","200|auto");
@@ -8394,15 +8402,19 @@ wdata.set("spiked_bat","300|norm");
 wdata.set("m24_sniper_rifle","2000|norm");
 wdata.set("spiked_chain_mace","600|norm");
 wdata.set("beretta_nano_pocket_pistol","250|norm");
+wdata.set("beretta_m9_pistol","400|norm");
+wdata.set("dart_launcher","1000|norm");
 wdata.set("sky_28_laser","10|norm");
 wdata.set("steal_warhammer","600|norm");
 wdata.set("barrett_m82_sniper_rifle","5500|norm");
+wdata.set("stp_s84q_automatic_suppressed_pistol","200|auto");
 wdata.set("modern_sub_machine_gun_carbine","100|auto");
 wdata.set("fnminimilight","150|auto");
 wdata.set("glock_17_pistol","350|norm");
 wdata.set("beretta_m1951_machine_pistol","150|auto");
 wdata.set("sky_429_laser_shotgun","1000|norm");
 wdata.set("cop_357_derringer_pistol","550|norm");
+wdata.set("sky_127_laser_handgun","500|norm");
 wdata.set("sig_p226_combat_pistol","400|norm");
 wdata.set("m79_grenade_launcher","1000|norm");
 wdata.set("crt43_automatic_shotgun","500|auto");
