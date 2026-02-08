@@ -71,3 +71,4 @@
 #include "gp.nvgt"
 #include "rpg.nvgt"
 #include "nuclear_bomb.nvgt"
+#include "helicopter.nvgt"

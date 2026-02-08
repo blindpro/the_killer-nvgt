@@ -12,6 +12,8 @@ int missilex;
 int missiley;
 int missilez;
 int remgunid=-1;
+bool helicopterspawning;
+timer helicoptertimer;
 double air;
 int unstuntrys;
 int storestage=0;
@@ -1066,6 +1068,14 @@ send_reliable(players[i].peer_id,"Done!",0);
 send_reliable(players[i].peer_id,"startmoving",0);
 spawn_security_bomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
+else if(players[i].helicopterspawning==true and players[i].helicoptertimer.elapsed>=4400 and players[i].map!="store")
+{
+players[i].helicopterspawning=false;
+players[i].helicoptertimer.pause();
+send_reliable(players[i].peer_id,"Done!",0);
+send_reliable(players[i].peer_id,"startmoving",0);
+spawn_helicopter(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
+}
 if(players[i].shieldshots<0)
 {
 players[i].shieldshots=0;
@@ -1461,4 +1471,32 @@ if(!excludepaid) return true;
 else if(excludepaid&&players[index].paid==0) return true;
 }
 return false;
+}
+
+int get_nearest_player(int px, int py, int pz, string pmap, int pindex=-1)
+{
+int current_distance=-1;
+int final_index=-1;
+for(uint i=0; i<players.length(); i++)
+{
+if(players[i].map!=pmap or i==pindex or players[i].invisible or players[i].invinsible or players[i].is_dead and players[i].hidden!=0)
+{
+continue;
+}
+int dist=get_3d_distance(px, py, pz, players[i].x, players[i].y, players[i].z);
+if(current_distance==-1)
+{
+current_distance=dist;
+final_index=i;
+}
+else
+{
+if(dist<current_distance)
+{
+current_distance=dist;
+final_index=i;
+}
+}
+}
+return final_index;
 }
