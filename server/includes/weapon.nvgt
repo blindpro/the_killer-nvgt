@@ -1412,7 +1412,7 @@ int ry=round(weapons[j].y, 0);
 weapons[j].distance++;
 if(weapons[j].distance > weapons[j].range)
 {
-if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart")
+if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart" or weapons[j].type=="poison_dart")
 {
 play("stun_dartdrop",weapons[j].x,weapons[j].y,weapons[j].z,weapons[j].map);
 @weapons[j]=null;
@@ -1596,6 +1596,13 @@ if(weapons[j].type=="cyanide_pistol")
 players[x].cyanide=true;
 players[x].cyanidelosses=0;
 players[x].cyanidetimer.restart();
+}
+if(weapons[j].type=="poison_dart")
+{
+players[x].playsound("poisonstart");
+players[x].poisoned=true;
+players[x].poisonlosses=0;
+players[x].poisontimer.restart();
 }
 if(weapons[j].type=="health_dart")
 {
