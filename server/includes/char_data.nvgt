@@ -40,6 +40,7 @@ players [ie].data["map"]=players[ie].map;
 players [ie].data["health"]=players[ie].health;
 players [ie].data["kills"]=players[ie].kills;
 players [ie].data["deaths"]=players[ie].deaths;
+players [ie].data["death_free_cards"]=players[ie].death_free_cards;
 if(players[ie].adminable())
 {
 players [ie].data["adminflag"]=players[ie].adminflag;
@@ -125,6 +126,7 @@ players[index].langchan=players[index].data["lang"];
 try {players[index].deaths=stn(players[index].data["deaths"]);} catch {}
 try {players[index].voted=stn(players[index].data["voted"]);} catch {}
 try{players[index].kills=string_to_number(players[index].data["kills"]);} catch {}
+try{players[index].death_free_cards=string_to_number(players[index].data["death_free_cards"]);} catch {}
 try {players[index].chats=stn(players[index].data["chats"]);} catch {}
 try {players[index].shieldshots=stn(players[index].data["shields"]);} catch {}
 try
