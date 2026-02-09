@@ -236,17 +236,18 @@ mr.x=round(me.x, 0);
 mr.y=round(me.y, 0);
 if(string_contains(get_tile_at(mr.x, mr.y, me.z), "wall", 1)>-1)
 {
-if(onwall==false)
-{
-onwall=true;
-p.play_stationary(get_tile_at(mr.x, mr.y, me.z)+".ogg", false);
-send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
-}
+double nx,ny,nz;
+nx = me.x; ny = me.y; nz = me.z;
 me.x=ox;
 me.y=oy;
 mr.x=round(ox,0);
 mr.y=round(oy,0);
-send_reliable(0, "move_to|"+mr.x+"|"+mr.y+"|"+me.z, 0);
+if(onwall==false)
+{
+onwall=true;
+p.play_3d(get_tile_at(nx, ny, nz)+".ogg",mr.x , mr.y , me.z , nx , ny , nz , calculate_theta(facing), false);
+send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
+}
 }
 else
 {
