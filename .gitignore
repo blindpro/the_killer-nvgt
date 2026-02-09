@@ -9,3 +9,4 @@ packets.log
 server/packets.log
 server/profile.log
 server/compchars.log
+server/prefs/server_state.dat
