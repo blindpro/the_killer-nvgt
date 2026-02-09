@@ -52,6 +52,13 @@ int adminflag=0;
 int gnplaying=0;
 int guessnum=0;
 int deathfreecards=0;
+bool poisoned=false;
+int poisonlosses=0;
+timer poisontimer;
+timer poisondarttimer;
+bool cyanide=false;
+int cyanidelosses=0;
+timer cyanidetimer;
 int reloadtime;
 int firetime;
 int drunkacttime=random(15000, 25000);
@@ -94,7 +101,7 @@ timer interceptortimer,usetimer;
 int hidden=0;
 int cheater=0;
 int newb=0;
-int maxshields=200;
+int maxshields=500;
 bool usenuclear_bomb;
 timer usenuclear_bombtimer;
 timer playtimer;
@@ -142,8 +149,6 @@ bool can_fire_rem=true;
 bool missilespawning=false;
 bool remconnecting=false;
 bool placing_rbomb=false;
-bool poisoned=false;
-timer poisontimer;
 int kills,deaths,death_free_cards;
 bool invinsible=false, invinsibility_starting=false,is_admin=false, is_builder=false, invisible=false, insz=false, is_dead=false;
 int facing=0;
@@ -938,6 +943,7 @@ if(players[i].air>0)
 {
 players[i].air--;
 players[i].playsound("gas_mask_breathe");
+players[i].cyanide=false;
 }
 else
 {
@@ -1024,6 +1030,18 @@ send_reliable(0,"notify|"+players[i].nickname+" is no longer a newbie!",0);
 log("eventstream","server notification: "+players[i].nickname+" is no longer a newbie!");
 file_delete("chars/"+players[i].name+"/newb.usr");
 players[i].data.remove("newb");
+}
+if(players[i].cyanide==true and players[i].cyanidetimer.elapsed>=1000)
+{
+players[i].cyanidetimer.restart();
+players[i].health-=random(5000, 15000);
+play("cyanide1",players[i].x,players[i].y,players[i].z,players[i].map);
+players[i].cyanidelosses++;
+if(players[i].cyanidelosses>60)
+{
+players[i].cyanide=false;
+players[i].cyanidelosses=0;
+}
 }
 if(players[i].following!="")
 {
@@ -1157,10 +1175,10 @@ players[i].shielded=false;
 play("shieldbreak",players[i].x,players[i].y,players[i].z,players[i].map);
 }
 }
-if(players[i].health>80000)
+if(players[i].health>100000)
 {
-players[i].health=80000;
-players[i].oldhealth=80000;
+players[i].health=100000;
+players[i].oldhealth=100000;
 if(players[i].antibioticed)
 {
 players[i].antibioticed=false;
@@ -1214,12 +1232,18 @@ if(players[i].death_free_cards>0)
 {
 players[i].playsound("death_free_card");
 players[i].death_free_cards-=1;
+players[i].health=100000;
+players[i].oldhealth=100000;
 }
 else
 {
 play("death"+random(1,4),players[i].x,players[i].y,players[i].z,players[i].map);
 spawn_bodyfall(players[i].x,players[i].y,players[i].z,players[i].map,3000);
 players[i].firing=false;
+players[i].cyanide=false;
+players[i].cyanidelosses=0;
+players[i].poisoned=false;
+players[i].poisonlosses=0;
 players[i].playsound("kill"+random(1,4));
 if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
@@ -1279,8 +1303,6 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-players[i].health=10000;
-players[i].oldhealth=10000;
 //write_to(players[i].name,"lasthit.usr",players[i].hitby);
 players[i].data["health"]=players[i].health;
 if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);

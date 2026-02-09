@@ -1593,7 +1593,9 @@ spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x
 }
 if(weapons[j].type=="cyanide_pistol")
 {
-spawn_cyanide(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name,players[x].name);
+players[x].cyanide=true;
+players[x].cyanidelosses=0;
+players[x].cyanidetimer.restart();
 }
 if(weapons[j].type=="health_dart")
 {

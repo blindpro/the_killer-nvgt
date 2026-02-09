@@ -2424,7 +2424,7 @@ else if(wname=="tk_ultra_health_potion")
 {
 if(players[index].statchangetimer.elapsed<60000) return;
 players[index].playsound("ultrapotion");
-players[index].health=80000;
+players[index].health=100000;
 send_reliable(players[index].peer_id,"your health has been restored!",0);
 takeobj = true;
 }
@@ -7583,7 +7583,6 @@ gploop();
 rpgloop();
 nuclear_bombloop();
 helicopterloop ();
-cyanideloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
