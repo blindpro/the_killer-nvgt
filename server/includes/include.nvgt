@@ -72,4 +72,3 @@
 #include "rpg.nvgt"
 #include "nuclear_bomb.nvgt"
 #include "helicopter.nvgt"
-#include "cyanide.nvgt"
