@@ -1711,6 +1711,65 @@ break;
 }
 }
 }
+for(uint x=0; x<robots.length(); x++)
+{
+if (robots[x].state>=ROBOT_KILL or robots[x].map!=weapons[j].map) {continue;}
+if (get_3d_distance(rx, ry, weapons[j].z, robots[x].x, robots[x].y, robots[x].z)<=weapons[j].spread)
+{
+send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
+robots[x].hit(random(weapons[j].mindammage,weapons[j].maxdammage),weapons[j].type,weapons[j].p.name);
+hit=true;
+if(weapons[j].type=="grenade")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="grenade_launcher")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="stp429")
+{
+spawn_stp429(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="bazooka")
+{
+spawn_bazooka(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="hand_grenade")
+{
+spawn_hand_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="pipe_bomb")
+{
+spawn_pipe_bomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rocketlauncher")
+{
+spawn_rocket(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="cannon")
+{
+spawn_cannonball(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rpg7")
+{
+spawn_rpg(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+}
+}
 for(uint x=0; x<remguns.length(); x++)
 {
 if(get_3d_distance(rx, ry, weapons[j].z, remguns[x].x, remguns[x].y, remguns[x].z)<=weapons[j].spread and remguns[x].map==weapons[j].map)

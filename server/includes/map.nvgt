@@ -1,9 +1,19 @@
+enum TILETYPE
+{ TILE_NONE, TILE_TILE, TILE_WALL}
+
+enum ZONE {ZONE_LEFT, ZONE_RIGHT, ZONE_BACK, ZONE_FRONT, ZONE_LOW, ZONE_HIGH, ZONE_MAX}
 mapdata@[] maps(0);
 maptile@[] maptiles;
 class mapdata
 {
 string name;
 maptile@[] maptiles;
+int plays;
+timer playerstimer;
+string[] temprobots;
+int[] zonerobot(ZONE_MAX);
+int currobots,maxrobots,spawnrobot;
+timer robottimer;
 int fighting=1;
 mapispawn@[] mapispawns;
 string rawdata;
@@ -135,6 +145,18 @@ temp.mapobjs=string_split(itemlist,":",false);
 temp.imap=name;
 mapispawns.insert_last(temp);
 }
+else if(parsed[0]=="robots" and parsed.length()==10)
+{
+this.zonerobot[ZONE_LEFT]=string_to_number(parsed[1]);
+this.zonerobot[ZONE_RIGHT]=string_to_number(parsed[2]);
+this.zonerobot[ZONE_BACK]=string_to_number(parsed[3]);
+this.zonerobot[ZONE_FRONT]=string_to_number(parsed[4]);
+this.zonerobot[ZONE_LOW]=string_to_number(parsed[5]);
+this.zonerobot[ZONE_HIGH]=string_to_number(parsed[6]);
+this.maxrobots=string_to_number(parsed[7]);
+this.spawnrobot=string_to_number(parsed[8]);
+this.temprobots=string_split(parsed[9],",",true);
+}
 }
 }
 void loop()
@@ -143,6 +165,24 @@ for(uint i=0; i<mapispawns.length(); i++)
 {
 mapispawns[i].loop();
 }
+if (this.robottimer.elapsed>=this.spawnrobot)
+{
+this.robottimer.restart();
+if (this.currobots<this.maxrobots and this.plays>0) {
+int rid=0;
+if (this.temprobots.length()>1) {rid=random(0,this.temprobots.length()-1);}
+robot_spawn(this.temprobots[rid],random(this.zonerobot[ZONE_LEFT],zonerobot[ZONE_RIGHT]),random(zonerobot[ZONE_BACK],zonerobot[ZONE_FRONT]),random(zonerobot[ZONE_LOW],zonerobot[ZONE_HIGH]),get_map_index(this.name));
+} // if.respawn.
+} // if.robots.
+if (this.playerstimer.elapsed>=5000)
+{
+this.playerstimer.restart();
+this.plays=0;
+for (int i=0; i<players.length(); i++)
+{
+if (players[i].map==this.name) {this.plays+=1;}
+} // for.players.
+} // if.players.
 }
 }
 class maptile
@@ -539,4 +579,14 @@ players[i].map=map;
 send_reliable(players[i].peer_id, "m_data|"+mdata+"\r\n"+ite+"\r\nx:"+players[i].x+"\r\ny:"+players[i].y+"\r\nz:"+players[i].z+"\r\n", 0);
 }
 }
+}
+
+int get_tile_type (int x, int y, int z, string map)
+{
+	int mid=get_map_index(map);
+	if (mid<0) {return(TILE_NONE);}
+	string tid=get_tile_at(x,y,z,map);
+	if (tid=="") {return(TILE_NONE);}
+	if (string_left(tid,4)=="wall") {return(TILE_WALL);}
+	return(TILE_TILE);
 }

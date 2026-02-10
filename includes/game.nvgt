@@ -47,7 +47,6 @@ frozen=false;
 dead=false;
 send_reliable(0,"revive",0);
 }
-tk_loop();
 bool in_win = is_window_active();
 if (in_win != in_window)
 {
@@ -572,6 +571,7 @@ else
 {
 
 }
+tk_loop();
 t_net_loop_mutex.unlock();
 }
 }
