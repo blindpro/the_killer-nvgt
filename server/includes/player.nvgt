@@ -168,6 +168,7 @@ bool stunned=false;
 timer stuntimer;
 timer invusetimer;
 timer grenadetimer;
+timer poisondrinktimer;
 int aircraftfuel=100,aircrafthealth=25000,tankfuel=100,tankhealth=50000,pchealth=40000,pcfuel=100;
 string sellitem;
 bool should_subtract=false;
@@ -1225,6 +1226,21 @@ players[i].invisible=false;
 play("invisibility_stop",players[i].x,players[i].y,players[i].z,players[i].map);
 players[i].invisibilitytimer.restart();
 players[i].invisibilitytimer.pause();
+}
+if(players[i].poisoned==true and players[i].poisontimer.elapsed>=1000)
+{
+players[i].poisontimer.restart();
+players[i].health-=random(5000, 20000);
+//players[i].hitby=players[i].nickname+"'s poison dart";
+play("poisonhit",players[i].x,players[i].y,players[i].z,players[i].map);
+//send_reliable(players[i].peer_id,"poisoned!",0);
+players[i].poisonlosses++;
+if(players[i].poisonlosses>30)
+{
+players[i].poisoned=false;
+play("poisonstop",players[i].x,players[i].y,players[i].z,players[i].map);
+players[i].poisonlosses=0;
+}
 }
 if(players[i].health<=0)
 {

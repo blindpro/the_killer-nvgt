@@ -1419,7 +1419,7 @@ play("rico"+random(1, 5), rx, ry, weapons[j].z, weapons[j].map);
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart")
+else if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart" or weapons[j].type=="poison_dart")
 {
 play("stun_dartdrop",weapons[j].x,weapons[j].y,weapons[j].z,weapons[j].map);
 @weapons[j]=null;
@@ -1605,6 +1605,13 @@ if(weapons[j].type=="cyanide_pistol")
 players[x].cyanide=true;
 players[x].cyanidelosses=0;
 players[x].cyanidetimer.restart();
+}
+if(weapons[j].type=="poison_dart")
+{
+players[x].playsound("poisonstart");
+players[x].poisoned=true;
+players[x].poisonlosses=0;
+players[x].poisontimer.restart();
 }
 if(weapons[j].type=="health_dart")
 {

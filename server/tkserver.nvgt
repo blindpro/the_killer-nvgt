@@ -1836,6 +1836,17 @@ else if(wname=="remote_timebomb_controller")
 {
 send_serverbox(players[index].peer_id,2,-1,1,-1,"rtdcode","Enter the code for the remote timebomb or remote timebombs. Note: all bombs with this code will be detenated!");
 }
+else if(wname=="poison_dart")
+{
+if(players[index].poisondarttimer.elapsed>=1500)
+{
+takeobj=true;
+players[index].poisondarttimer.restart();
+play("stun_dartthrow",players[index].x,players[index].y,players[index].z,players[index].map);
+spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+players[index].poisondarttimer.restart();
+}
+}
 else if(wname=="motion_bomb")
 {
 if(players[index].mbombtimer.elapsed<1000)
@@ -2017,6 +2028,21 @@ return;
 players[index].mbombtimer.restart();
 takeobj=true;
 placetimebomb(players[index].x,players[index].y,players[index].z,players[index].map,players[index].name,5000);
+}
+else if(wname=="poison_drink")
+{
+if(players[index].poisondrinktimer.elapsed>=10000)
+{
+takeobj=true;
+players[index].poisondrinktimer.restart();
+players[index].poisoned=false;
+players[index].cyanide=false;
+players[index].playsound("poisondrink");
+}
+else
+{
+send_reliable(players[index].peer_id,"you cannot use this yet.",0);
+}
 }
 else if(wname=="empty_pack")
 {
