@@ -316,7 +316,7 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 if(parsed[1]=="[cncel]") return;
-double amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 parsed=string_split(parsed[0],"/",false);
 if(parsed[1]==players[index].name)
 {
@@ -963,7 +963,7 @@ return;
 }
 int s=in_shelter(players[index].name);
 int v=get_vending_index(players[index].x, players[index].y, players[index].z, players[index].map);
-int amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 if(players[index].get_item_count("coin")<amount)
 {
 send_reliable(players[index].peer_id, "not enough money", 0);
@@ -1478,7 +1478,7 @@ if(s<0)
 send_reliable(players[index].peer_id,"Sorry, an internal error happened",0);
 return;
 }
-double amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 if(amount<0)
 {
 string stuff="Sorry, can't enter negative values";
@@ -1534,7 +1534,7 @@ send_serverbox(players[index].peer_id,0,-1,1,1,"shmoneycommand",information+"\r\
 return;
 }
 string id=parsed[1];
-double amount=stn(parsed[2]);
+int64 amount=stn(parsed[2]);
 int s=in_shelter(players[index].name);
 if(s<0)
 {
@@ -1585,13 +1585,13 @@ if(parsed[1]=="[cncel]")
 send_reliable(players[index].peer_id,"Canceled!",0);
 return;
 }
-double h=stn(parsed[1]);
+int64 h=parse_double(parsed[1]);
 if(h<0)
 {
 players[index].sendpacket("Overflow error!",0);
 return;
 }
-double wood=players[index].get_item_count("wood");
+int64 wood=players[index].get_item_count("wood");
 if(wood<h)
 {
 send_reliable(players[index].peer_id,"Not enough wood!",0);
@@ -1602,11 +1602,11 @@ if(s>-1)
 {
 play("shelterfix",players[index].x,players[index].y,players[index].z,players[index].map);
 play("shelterfix",shelters[s].x,shelters[s].y,shelters[s].z,shelters[s].map);
-int rep=h*random(50,200);
-if((shelters[s].health+rep)>900000)
+int64 rep=h*random(50,200);
+if((shelters[s].health+rep)>shelters[s].maxhealth)
 {
-int delta=(shelters[s].health+rep-900000);
-int ret=round((delta/120),0);
+int64 delta=(shelters[s].health+rep-900000);
+int64 ret=round((delta/120),0);
 players[index].give("wood",ret);
 }
 shelters[s].health+=rep;
@@ -2744,7 +2744,7 @@ string items=players[index].get_inv();
 int s=in_shelter(players[index].name);
 if(s>-1)
 {
-if(shelters[s].health>800000) return;
+if(shelters[s].health==shelters[s].maxhealth) return;
 send_serverbox(players[index].peer_id,2,2,1,-1,"shelterfix","How much wood would you like to add to this shelter?");
 }
 else
@@ -5408,7 +5408,7 @@ if (players[index].inventory.get_keys().length()>0 and players[index].get_item_c
 {
 if(players[index].distancecheck(players[index2].x,players[index2].y,players[index2].z)<=5 and players[index].map==players[index2].map)
 {
-double amount=stn(parsed[3]);
+int64 amount=stn(parsed[3]);
 if(amount<=0)
 {
 send_reliable(players[index].peer_id,"An error has occured. Error region: item transfer. Error description: attempted to give non-positive number of item to a player. You're a jerk!",0);
@@ -7142,7 +7142,7 @@ if(players[index].adminable() or beta==true)
 int i=get_player_index_from(parsed[1]);
 if(i>-1)
 {
-players[i].give(parsed[2],stn(parsed[3]));
+players[i].give(parsed[2],parse_double(parsed[3]));
 send_reliable(e.peer_id,"you have sent "+parsed[3]+" "+string_replace(parsed[2],"_"," ",true)+"s to "+players[i].name,2);
 log("give",players[index].name+" just gave "+parsed[3]+" "+parsed[2]+"s to "+players[i].name+(players[index].itemtesting&&players[i].name==players[index].name ? " (while testing items),": ""),false,false);
 }
@@ -8067,11 +8067,11 @@ play("store_purchase_success",players[index].x,players[index].y,players[index].z
 }
 }
 }
-int inv_item_number(string inv, string item)
+int64 inv_item_number(string inv, string item)
 {
 string content=inv;
 string[] invvalues=string_split(content,"\r\n",false);
-int res;
+int64 res;
 for(uint i=0; i<invvalues.length(); i++)
 {
 string[] parsed=string_split(invvalues[i],"=",false);

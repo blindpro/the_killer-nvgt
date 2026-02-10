@@ -4,18 +4,18 @@ class shelter
 int x, y, z;
 string map, owner,teamname="";
 int fuel=20;
-double health=50000;
+int64 health=50000;
 string hitby="nothing";
 string soundloop;
 double facing=0;
 bool hasplayers=false;
 bool broken=false;
 bool on=true;
-int maxhealth=900000;
+int64 maxhealth=50000000000;
 string id=randomstring(8);
 string compsound;
 string sheltername;
-double coins;
+int64 coins;
 timer breakintimer;
 timer fueltimer;
 timer personchecktimer;
@@ -122,23 +122,23 @@ return true;
 return false;
 }
 dictionary inventory;
-int count_total_items()
+int64 count_total_items()
 {
-int amount=0;
+int64 amount=0;
 for (uint i=0; i<inventory.get_keys().length(); i++)
 {
-int a;
+int64 a;
 inventory.get(inventory.get_keys()[i],a);
 amount+=a;
 }
 return amount;
 }
-int get_item_count(string item)
+int64 get_item_count(string item)
 {
-int amount=0;
+int64 amount=0;
 for (uint i=0; i<inventory.get_keys().length(); i++)
 {
-int a=0;
+int64 a=0;
 if (inventory.get_keys()[i]==item)
 inventory.get(inventory.get_keys()[i],a);
 amount+=a;
@@ -155,15 +155,15 @@ ds=inventory.get_keys();
 for(uint i=0; i<ds.length(); i++)
 {
 if(!showall&&string_left(ds[i],5)=="ammo_") continue;
-int val;
+int64 val;
 inventory.get(ds[i],val);
 ss+=ds[i]+"="+val+"\r\n";
 }
 return ss;
 }
-void give(string item, double amount)
+void give(string item, int64 amount)
 {
-int a;
+int64 a;
 if (!inventory.exists(item))
 {
 inventory.set(item,amount);
@@ -175,7 +175,7 @@ if (a+amount<=0)
 inventory.delete(item);
 else
 {
-int b=(a+amount);
+int64 b=(a+amount);
 //inventory.delete(item);
 inventory.set(item,b);
 }
@@ -187,7 +187,7 @@ void neg_inv_check()
 string[] k=inventory.get_keys();
 for(uint i=0; i<k.length (); i++)
 {
-int v;
+int64 v;
 inventory.get(k[i],v);
 if(v<=0) inventory.delete(k[i]);
 }
@@ -220,7 +220,7 @@ send_reliable(players[i].peer_id,packet,channel);
 }
 }
 }
-void hit(int damage,string hb,string type="")
+void hit(int64 damage,string hb,string type="")
 {
 this.health-=damage;
 this.hitby=hb;
@@ -464,7 +464,7 @@ send_reliable(peer,"You slide the cabinet door closed",0);
 }
 //here starts the shopping cart code
 dictionary shopping_cart;
-void add_to_cart(string item, int quantity)
+void add_to_cart(string item, int64 quantity)
 {
 if(!shopping_cart.exists(item))
 {
@@ -472,7 +472,7 @@ if(quantity>0) shopping_cart.set(item, quantity);
 }
 else
 {
-int a;
+int64 a;
 string[] items=shopping_cart.get_keys();
 for(int i=0; i<items.length(); i++)
 {
@@ -483,9 +483,9 @@ if(a+quantity<=0) shopping_cart.delete(item);
 else shopping_cart.set(item, a+quantity);
 }
 }
-int get_cart_item_amount(string name)
+int64 get_cart_item_amount(string name)
 {
-int a;
+uint a;
 string[] temp=shopping_cart.get_keys();
 for(int i=0; i<temp.length(); i++)
 {
@@ -494,9 +494,9 @@ shopping_cart.get(temp[i], a);
 }
 return a;
 }
-int get_total_cart_price()
+int64 get_total_cart_price()
 {
-int final=0;
+int64 final=0;
 for(int i=0; i<shopping_cart.get_keys().length(); i++)
 {
 final+=get_shelter_price(shopping_cart.get_keys()[i], get_cart_item_amount(shopping_cart.get_keys()[i]));

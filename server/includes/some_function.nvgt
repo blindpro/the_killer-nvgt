@@ -1,6 +1,6 @@
-int stn (string number)
+int64 stn (string number)
 {
-	return string_to_number (number);
+	return parse_double (number);
 }
 string convert_to_list(string[] arr)
 {
