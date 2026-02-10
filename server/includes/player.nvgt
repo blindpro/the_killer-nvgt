@@ -150,7 +150,7 @@ bool missilespawning=false;
 bool remconnecting=false;
 bool placing_rbomb=false;
 int kills,deaths,death_free_cards;
-bool invinsible=false, invinsibility_starting=false,is_admin=false, is_builder=false, invisible=false, insz=false, is_dead=false;
+bool invinsible=false, frequency=false , invinsibility_starting=false,is_admin=false, is_builder=false, invisible=false, insz=false, is_dead=false;
 int facing=0;
 int health=10000,oldhealth;
 double chats;
@@ -1248,8 +1248,12 @@ if(players[i].death_free_cards>0)
 {
 players[i].playsound("death_free_card");
 players[i].death_free_cards-=1;
+if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
+players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
+players[i].lowhealth=false;
 players[i].health=100000;
 players[i].oldhealth=100000;
+
 }
 else
 {
@@ -1265,7 +1269,7 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-send_reliable(0,"play_s|kill.ogg",0);
+//send_reliable(0,"play_s|kill.ogg",0);
 string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;
 players[i].underwater=false;
@@ -1315,11 +1319,7 @@ players[i].z=0;
 send_reliable(players[i].peer_id, "entershelter|0|100|0|main", 0);
 }
 }
-if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
-players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
-players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-//write_to(players[i].name,"lasthit.usr",players[i].hitby);
 players[i].data["health"]=players[i].health;
 if(players[i].hitby=="a fire") add_achievement("it burns",i,"20 fire_extinguisher",true);
 string hb;

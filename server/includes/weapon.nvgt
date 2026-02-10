@@ -1410,9 +1410,16 @@ weapons[j].y=wr.y;
 int rx=round(weapons[j].x, 0);
 int ry=round(weapons[j].y, 0);
 weapons[j].distance++;
-if(weapons[j].distance > weapons[j].range)
+if(weapons[j].distance > weapons[j].range or string_left(get_tile_at(rx,ry,weapons[j].z,weapons[j].map),4)=="wall" or rx>weapons[j].maxcoords.x or ry>weapons[j].maxcoords.y or rx<0 or ry<0)
 {
-if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart" or weapons[j].type=="poison_dart")
+if(weapons[j].bullet)
+{
+play("rico"+random(1, 5), rx, ry, weapons[j].z, weapons[j].map);
+@weapons[j]=null;
+weapons.remove_at(j);
+break;
+}
+else if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart" or weapons[j].type=="poison_dart")
 {
 play("stun_dartdrop",weapons[j].x,weapons[j].y,weapons[j].z,weapons[j].map);
 @weapons[j]=null;
@@ -1504,6 +1511,7 @@ string sendtext="";
 
 if(@weapons[j].p!=null)
 {
+/*
 if(string_left(get_tile_at(rx,ry,weapons[j].z,weapons[j].map),4)=="wall" or rx>weapons[j].maxcoords.x or ry>weapons[j].maxcoords.y or rx<0 or ry<0)
 {
 if(weapons[j].bullet) play("rico"+random(1, 5), rx, ry, weapons[j].z, weapons[j].map);
@@ -1525,6 +1533,7 @@ spawn_ags(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 weapons.remove_at(j);
 continue;
 }
+*/
 for(uint x=0; x<players.length(); x++)
 {
 if(in_vehicle(players[x].name)>-1 or players[x].is_dead or players[x].invinsible or players[x].newb==1) continue;
@@ -1657,6 +1666,65 @@ helicopters[x].health-=random(weapons[j].mindammage, weapons[j].maxdammage);
 play("helicopterhit"+random(1, 9), rx, ry, weapons[j].z, weapons[j].map);
 helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery" ? "tank" : weapons[j].type);
 helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery1" ? "armored tank" : weapons[j].type);
+hit=true;
+if(weapons[j].type=="grenade")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="grenade_launcher")
+{
+spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="stp429")
+{
+spawn_stp429(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="bazooka")
+{
+spawn_bazooka(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="hand_grenade")
+{
+spawn_hand_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+if(weapons[j].type=="pipe_bomb")
+{
+spawn_pipe_bomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rocketlauncher")
+{
+spawn_rocket(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+/*
+if(weapons[j].type=="cannon")
+{
+spawn_cannonball(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+*/
+if(weapons[j].type=="rpg7")
+{
+spawn_rpg(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
+break;
+}
+}
+}
+for(uint x=0; x<robots.length(); x++)
+{
+if (robots[x].state>=ROBOT_KILL or robots[x].map!=weapons[j].map) {continue;}
+if (get_3d_distance(rx, ry, weapons[j].z, robots[x].x, robots[x].y, robots[x].z)<=weapons[j].spread)
+{
+send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
+robots[x].hit(random(weapons[j].mindammage,weapons[j].maxdammage),weapons[j].type,weapons[j].p.name);
 hit=true;
 if(weapons[j].type=="grenade")
 {

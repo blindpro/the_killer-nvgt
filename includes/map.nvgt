@@ -246,7 +246,7 @@ if(onwall==false)
 {
 onwall=true;
 p.play_3d(get_tile_at(nx, ny, nz)+".ogg",mr.x , mr.y , me.z , nx , ny , nz , calculate_theta(facing), false);
-send_reliable(0, "xplay|"+get_tile_at(mr.x,mr.y,me.z), 0);
+send_reliable(0, "xplay|"+get_tile_at(nx,ny,nz), 0);
 }
 }
 else

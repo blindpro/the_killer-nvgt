@@ -89,6 +89,7 @@ load_all_teams();
 load_changes();
 load_bombs();
 load_all_tempbans();
+load_robots();
 httpn.user_agent = "tkserver"+version;
 if(file_exists("prefs/shipments.svr")) load_shipments();
 string[] stuff=find_files("shelters/*.shelter");
@@ -7609,6 +7610,7 @@ gploop();
 rpgloop();
 nuclear_bombloop();
 helicopterloop ();
+robotsloop();
 if(players.length()<=0) {
 objs.resize(0);
 remguns.resize(0);
