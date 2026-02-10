@@ -43,6 +43,23 @@ players[x].hitby=gps[j].owner+"'s gp30";
 players[x].playsound("stp429hit");
 }
 }
+for(uint h = 0; h < helicopters.length(); h++)
+{
+if(get_3d_distance(gps[j].x,gps[j].y,gps[j].z,helicopters[h].x,helicopters[h].y,helicopters[h].z)<=gps[j].range&&gps[j].map==helicopters[h].map)
+{
+helicopters[h].health-=random(gps[j].mindammage, gps[j].maxdammage);
+play("helicopterhit"+random(1, 9), helicopters[h].x, helicopters[h].y, helicopters[h].z, helicopters[h].map);
+helicopters[h].hitby=gps[j].owner+"'s gp";
+}
+}
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].state>=ROBOT_KILL or robots[r].map!=gps[j].map) continue;
+if(get_3d_distance(gps[j].x,gps[j].y,gps[j].z,robots[r].x,robots[r].y,robots[r].z)<=gps[j].range)
+{
+robots[r].hit(random(gps[j].mindammage,gps[j].maxdammage),"gp",gps[j].owner);
+}
+}
 for (uint i2=0; i2<objs.length(); i2++)
 {
 if (get_3d_distance(gps[j].x,gps[j].y,gps[j].z,objs[i2].x,objs[i2].y,objs[i2].z)<=gps[j].range and objs[i2].map==gps[j].map)

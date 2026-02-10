@@ -36,7 +36,7 @@ send_reliable(0,"distsound|rocketdist|"+rockets[j].x+"|"+rockets[j].y+"|"+rocket
 for(uint s=0; s<shelters.length(); s++)
 {
 if(get_3d_distance(rockets[j].x,rockets[j].y,rockets[j].z,shelters[s].x,shelters[s].y,shelters[s].z)<=rockets[j].range&&shelters[s].map==rockets[j].map)
-shelters[s].hit(random(20000,40000),rockets[j].owner+"'s rocket","rocket");
+shelters[s].hit(random(200000,400000),rockets[j].owner+"'s rocket","rocket");
 }
 for(uint x=0; x<players.length(); x++)
 {
@@ -65,6 +65,23 @@ if (get_3d_distance(rockets[j].x,rockets[j].y,rockets[j].z,remguns[i2].x,remguns
 remguns[i2].health-=random(100000,200000);
 remguns[i2].hitby=rockets[j].owner+"'s rocket";
 play("remgunhit"+random(1, 3),remguns[i2].x,remguns[i2].y,remguns[i2].z,remguns[i2].map);
+}
+}
+for(uint h = 0; h < helicopters.length(); h++)
+{
+if(get_3d_distance(rockets[j].x,rockets[j].y,rockets[j].z,helicopters[h].x,helicopters[h].y,helicopters[h].z)<=rockets[j].range&&rockets[j].map==helicopters[h].map)
+{
+helicopters[h].health-=random(rockets[j].mindammage, rockets[j].maxdammage);
+play("helicopterhit"+random(1, 9), helicopters[h].x, helicopters[h].y, helicopters[h].z, helicopters[h].map);
+helicopters[h].hitby=rockets[j].owner+"'s rocket";
+}
+}
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].state>=ROBOT_KILL or robots[r].map!=rockets[j].map) continue;
+if(get_3d_distance(rockets[j].x,rockets[j].y,rockets[j].z,robots[r].x,robots[r].y,robots[r].z)<=rockets[j].range)
+{
+robots[r].hit(random(rockets[j].mindammage,rockets[j].maxdammage),"rocket",rockets[j].owner);
 }
 }
 for(uint v=0; v<vs.length(); v++)

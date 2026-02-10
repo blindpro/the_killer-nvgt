@@ -42,6 +42,23 @@ players[x].should_subtract=true;
 players[x].hitby=rpgs[j].owner+"'s rpg7";
 }
 }
+for(uint h = 0; h < helicopters.length(); h++)
+{
+if(get_3d_distance(rpgs[j].x,rpgs[j].y,rpgs[j].z,helicopters[h].x,helicopters[h].y,helicopters[h].z)<=rpgs[j].spread&&rpgs[j].map==helicopters[h].map)
+{
+helicopters[h].health-=random(rpgs[j].mindammage, rpgs[j].maxdammage);
+play("helicopterhit"+random(1, 9), helicopters[h].x, helicopters[h].y, helicopters[h].z, helicopters[h].map);
+helicopters[h].hitby=rpgs[j].owner+"'s rpg";
+}
+}
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].state>=ROBOT_KILL or robots[r].map!=rpgs[j].map) continue;
+if(get_3d_distance(rpgs[j].x,rpgs[j].y,rpgs[j].z,robots[r].x,robots[r].y,robots[r].z)<=rpgs[j].spread)
+{
+robots[r].hit(random(rpgs[j].mindammage,rpgs[j].maxdammage),"rpg",rpgs[j].owner);
+}
+}
 for (uint i2=0; i2<objs.length(); i2++)
 {
 if (get_3d_distance(rpgs[j].x,rpgs[j].y,rpgs[j].z,objs[i2].x,objs[i2].y,objs[i2].z)<=rpgs[j].range and objs[i2].map==rpgs[j].map)
