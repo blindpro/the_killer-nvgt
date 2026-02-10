@@ -51,8 +51,10 @@ f.focus(box_text);
 while (true)
 {
 wait (5);
-f.monitor();
+t_net_loop_mutex.lock ();
 tk_loop();
+t_net_loop_mutex.unlock();
+f.monitor();
 if(f.is_pressed(ok))
 {
 string text = f.get_text(box_text);
@@ -66,7 +68,7 @@ enable_input();
 return text;
 }
 }
-if(f.is_pressed(cancel))
+else if(f.is_pressed(cancel))
 {
 enable_input();
 speak ("canceled");
