@@ -112,7 +112,7 @@ for(uint s = 0; s < shelters.length(); s++)
 {
 if(shelters[s].map==nuclear_bombs[i].map)
 {
-shelters[s].hit(890000,nuclear_bombs[i].owner+"'s nuclear bomb","nuclear_bomb");
+shelters[s].hit(30000000000,nuclear_bombs[i].owner+"'s nuclear bomb","nuclear_bomb");
 hit=true;
 }
 }
@@ -149,5 +149,5 @@ continue;
 void spawn_nuclear_bomb(int x, int y, int z, string map, string owner)
 {
 nuclear_bomb b(x,y,z,map,owner);
-nuclear_bombs.insert_last(b);
+if(b.map!="store") nuclear_bombs.insert_last(b);
 }

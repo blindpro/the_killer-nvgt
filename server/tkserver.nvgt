@@ -762,13 +762,13 @@ if(string_contains(parsed[1],"[cncel]",1)>-1)
 send_reliable(players[index].peer_id,"Canceled",0);
 return;
 }
-int amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 if(amount<=0)
 {
 send_reliable(players[index].peer_id,"At least 1 item must be deposited!",0);
 return;
 }
-int has=players[index].get_item_count(players[index].shitem);
+int64 has=players[index].get_item_count(players[index].shitem);
 if(has<amount)
 {
 send_reliable(players[index].peer_id,"Error: You do not have enough "+players[index].shitem+"s!",0);
@@ -830,13 +830,13 @@ if(string_contains(parsed[1],"[cncel]",1)>-1)
 send_reliable(players[index].peer_id,"Canceled",0);
 return;
 }
-int amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 if(amount<=0)
 {
 send_reliable(players[index].peer_id,"At least 1 item must be taken out!",0);
 return;
 }
-int has=shelters[index2].get_item_count(players[index].shitem);
+int64 has=shelters[index2].get_item_count(players[index].shitem);
 if(has<amount)
 {
 send_reliable(players[index].peer_id,"Error: This shelter  does not have enough "+players[index].shitem+"s!",0);
@@ -1095,7 +1095,7 @@ return;
 }
 else
 {
-int amount=stn(parsed[2]);
+int64 amount=stn(parsed[2]);
 if(amount>shelters[s].get_cart_item_amount(parsed[1]))
 {
 send_serverbox(players[index].peer_id, 0, -1, 1, 1, "shcommand", "you don't have that many of this item on your shopping cart. \r\nwhat would you like to do now?");
@@ -1270,7 +1270,7 @@ if(s>-1)
 if(parsed[2]!="[cncel]")
 {
 shelters[s].add_to_cart(parsed[1], stn(parsed[2]));
-int num=stn(parsed[2]);
+int64 num=stn(parsed[2]);
 string result=parsed[2]+" "+parsed[1];
 if(num>2) result+="s";
 result+=" have been added to the shopping cart";
@@ -3934,16 +3934,16 @@ else if(parsed[0]=="sellamount" and parsed.length () >1)
 int index=get_player_index(e.peer_id);
 if(index<0) return;
 string item=players[index].sellitem;
-int amount=stn(parsed[1]);
+int64 amount=stn(parsed[1]);
 if(amount<=0) return;
 if(players[index].get_item_count(item)<amount)
 {
 send_reliable(players[index].peer_id,"you don't have "+amount+" "+item+"s. You only have "+players[index].get_item_count(item)+".",2);
 return;
 }
-int itemprice;
+int64 itemprice;
 sellitems.get(item,itemprice);
-int totalprice=itemprice*amount;
+int64 totalprice=itemprice*amount;
 totalprice=round((totalprice*0.75),0);
 players[index].give(item,-amount);
 players[index].give("coin",totalprice);
@@ -8026,7 +8026,7 @@ int toggle(int intt)
 if(intt==0) return 1;
 else return 0;
 }
-void purchase(string name, int amount, int index)
+void purchase(string name, int64 amount, int index)
 {
 if(index>-1)
 {
@@ -8039,15 +8039,15 @@ return;
 int itemindex=get_item_index(name);
 if(itemindex>-1)
 {
-int[] a=get_amounts();
-double totalamount=amount*a[itemindex];
+int64[] a=get_amounts();
+int64 totalamount=amount*a[itemindex];
 if(totalamount<=0)
 {
 send_reliable(players[index].peer_id,"overflow error.",2);
 play("store_error",players[index].x,players[index].y,players[index].z,players[index].map);
 return;
 }
-int coin=players[index].get_item_count("coin");
+int64 coin=players[index].get_item_count("coin");
 if(coin<totalamount)
 {
 send_reliable(players[index].peer_id,"Error. Not enough coins. You need "+totalamount+" coins and you only have "+players[index].get_item_count("coin")+".",0);
@@ -8159,9 +8159,9 @@ send_reliable(0,"server_quit",0);
 saveloop();
 exit ();
 }
-int[] get_amounts()
+int64[] get_amounts()
 {
-int[] a;
+int64[] a;
 for(int i=0; i<stores.length(); i++)
 {
 for(int i2=0; i2<stores[i].prices.length(); i2++)

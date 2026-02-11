@@ -7,10 +7,10 @@ int z;
 string name;
 string map;
 timer beeptimer, timeouttimer;
-int amount;
+int64 amount;
 int id=-1;
 bool dropped=false;
-obj(int ox, int oy, int oz, string omap, string oname, int oa=1, bool dropped=true,int oid=-1)
+obj(int ox, int oy, int oz, string omap, string oname, int64 oa=1, bool dropped=true,int oid=-1)
 {
 map=omap;
 x=ox;
@@ -173,7 +173,7 @@ break;
 }
 }
 }
-void spawn_obj(int x, int y, int z, string map, string name, int amount=1,bool dropped=false,int id=random(0,10000))
+void spawn_obj(int x, int y, int z, string map, string name, int64 amount=1,bool dropped=false,int id=random(0,10000))
 {
 obj i1(x,y,z,map, name,amount,dropped,id);
 objspawns++;
