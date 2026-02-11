@@ -24,6 +24,7 @@ while (loop)
 {
 wait (1);
 t_net_loop_mutex.lock();
+tk_loop();
 if (dead)
 {
 while(deathtimer.elapsed<5000)
@@ -571,7 +572,6 @@ else
 {
 
 }
-tk_loop();
 t_net_loop_mutex.unlock();
 }
 }

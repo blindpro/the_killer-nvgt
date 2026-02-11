@@ -9,6 +9,7 @@ int seconds=1000;
 int beeptime;
 timer beeptimer, bombtimer;
 bool d=false;
+int range = 20 , mindammage =3000 , maxdammage = 5000;  //This hit
 motion_bomb(int tx,int ty,int tz, string tmap, string towner)
 {
 owner=towner;
@@ -74,6 +75,23 @@ if (get_3d_distance(motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z,player
 {
 players[i2].hit(3000,5000);
 players[i2].hitby=motion_bombs[i].owner+"'s motion bomb";
+}
+}
+for(uint h = 0; h < helicopters.length(); h++)
+{
+if(get_3d_distance(motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z,helicopters[h].x,helicopters[h].y,helicopters[h].z)<=motion_bombs[i].range&&motion_bombs[i].map==helicopters[h].map)
+{
+helicopters[h].health-=random(motion_bombs[i].mindammage, motion_bombs[i].maxdammage);
+play("helicopterhit"+random(1, 9), helicopters[h].x, helicopters[h].y, helicopters[h].z, helicopters[h].map);
+helicopters[h].hitby=motion_bombs[i].owner+"'s motion bomb";
+}
+}
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].state>=ROBOT_KILL or robots[r].map!=motion_bombs[i].map) continue;
+if(get_3d_distance(motion_bombs[i].x,motion_bombs[i].y,motion_bombs[i].z,robots[r].x,robots[r].y,robots[r].z)<=motion_bombs[i].range)
+{
+robots[r].hit(random(motion_bombs[i].mindammage,motion_bombs[i].maxdammage),"motion_bombs",motion_bombs[i].owner);
 }
 }
 for (uint i2=0; i2<objs.length(); i2++)

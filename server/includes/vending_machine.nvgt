@@ -7,7 +7,7 @@ string dropitem;
 string mid;
 string[] vendingitems;
 int[] vendingprices;
-int coins;
+int64 coins;
 timer droptimer;
 bool droppingitem=false;
 vending_machine(int vx,int vy,int vz,string vmap)
@@ -56,7 +56,7 @@ string information="internal error!";
 send_serverbox(peer,1,-1,1,1,"vendingpress",information+"\r\nwhat would you like to do");
 return;
 }
-int vindex=stn(parsed[1])-1;
+int64 vindex=stn(parsed[1])-1;
 if(vindex+1>vendingitems.length() or vindex>vendingprices.length() or vindex<0)
 {
 string information="Error: invalid index";

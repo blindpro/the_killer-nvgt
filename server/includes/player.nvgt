@@ -734,7 +734,7 @@ if(ind>-1) players[ind].following="";
 disconnections++;
 for(uint j=0; j<guns.length(); j++)
 {
-int a=players[i].get_ammo_count_from(guns[j]);
+int64 a=players[i].get_ammo_count_from(guns[j]);
 if(a>0)
 {
 players[i].give("ammo_"+guns[j],a);
@@ -1362,7 +1362,7 @@ if(keys.length () >0)
 {
 string choice=keys[random(0,(keys.length()-1))];
 double loseperc=(random(0,5)/100.0);
-int lost=round((players[i].get_item_count(choice)*loseperc),0);
+int64 lost=round((players[i].get_item_count(choice)*loseperc),0);
 if(lost>0)
 {
 players[i].give(choice,-lost);

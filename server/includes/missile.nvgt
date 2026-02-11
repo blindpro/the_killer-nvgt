@@ -14,7 +14,8 @@ timer stimer;
 timer mtimer;
 timer intercepttimer;
 bool intercepted=false,sendback=false;
-int mtime=30;
+int mtime=30 ;
+int range = 15 , mindammage =4000 , maxdammage = 8000;
 timer xtimer;
 string mid;
 missile(int sx, int sy, int sz, int tx, int ty, int tz,string smap, player@sowner, string tname)
@@ -112,6 +113,23 @@ if(get_3d_distance(missiles[i].x,missiles[i].y,missiles[i].z,players[x].x,player
 hit+=cn2n(players[x].name)+", ";
 players[x].hitby=missiles[i].owner.name+"'s missile";
 players[x].hit(4000,8000);
+}
+}
+for(uint h = 0; h < helicopters.length(); h++)
+{
+if(get_3d_distance(missiles[i].x,missiles[i].y,missiles[i].z,helicopters[h].x,helicopters[h].y,helicopters[h].z)<=missiles[i].range&&missiles[i].map==helicopters[h].map)
+{
+helicopters[h].health-=random(missiles[i].mindammage, missiles[i].maxdammage);
+play("helicopterhit"+random(1, 9), helicopters[h].x, helicopters[h].y, helicopters[h].z, helicopters[h].map);
+helicopters[h].hitby=missiles[i].owner.name+"'s missile";
+}
+}
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].state>=ROBOT_KILL or robots[r].map!=missiles[i].map) continue;
+if(get_3d_distance(missiles[i].x,missiles[i].y,missiles[i].z,robots[r].x,robots[r].y,robots[r].z)<=missiles[i].range)
+{
+robots[r].hit(random(missiles[i].mindammage,missiles[i].maxdammage),"missile",missiles[i].owner.name);
 }
 }
 for(uint x=0; x<remguns.length(); x++)

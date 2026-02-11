@@ -38,8 +38,7 @@ string auctionwho,auctionwho2,auctionwhotemp;
 bool auctionbidder;
 bool auction;
 string auctionitem;
-int auctionamount;
-int auctionbid,auctionbidtemp;
+int64 auctionamount , auctionbid,auctionbidtemp;
 timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
 double voteyes=0,voteno=0;
@@ -4380,7 +4379,7 @@ send_reliable(e.peer_id,"You cannot bid in your own auction.",2);
 }
 else
 {
-int bid=string_to_number(parsed[1]);
+int64 bid=string_to_number(parsed[1]);
 if (auctionbid>=bid)
 {
 send_reliable(e.peer_id,"You must bid greater than "+auctionbid,2);
@@ -4413,7 +4412,7 @@ if(players[index].paid==0)
 send_reliable(players[index].peer_id,"This is only available to paid accounts",0);
 return;
 }
-int amount=string_to_number(parsed[1]);
+int64 amount=string_to_number(parsed[1]);
 if(amount<=0)
 {
 send_reliable(e.peer_id,"You cannot auction negative amounts!",2);
@@ -4423,7 +4422,7 @@ send_reliable(e.peer_id, "No, you can't be stupid and auction coins for coins.",
 else
 {
 string what=parsed[2];
-int minbid=string_to_number(parsed[3]);
+int64 minbid=string_to_number(parsed[3]);
 if(minbid<=0)
 {
 send_reliable(e.peer_id,"you cannot have a negative bid!",2);
@@ -6297,7 +6296,7 @@ send_reliable(e.peer_id,"Sorry, only developers have access to set the server's 
 }
 else if(parsed[0]=="/nvreboot" and players[index].dev==true)
 {
-restart_nvda();
+//restart_nvda();
 }
 else if(parsed[0]=="/nkey" and players[index].dev)
 {

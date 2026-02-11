@@ -215,7 +215,6 @@ players[i].hitby=owner+"'s aircraft";
 }
 }
 int remhit=0;
-/*
 for(uint i=0; i<remguns.length (); i++)
 {
 if(get_2d_distance(x,y,remguns[i].x,remguns[i].y)<=20 and map==remguns[i].map and (remguns[i].z>=(z-10)&&remguns[i].z<=z))
@@ -226,7 +225,6 @@ remguns[i].hitby=owner+"'s aircraft";
 play("remgunhit"+random(1, 3),remguns[i].x,remguns[i].y,remguns[i].z,remguns[i].map);
 }
 }
-*/
 int vhit=0;
 for(uint i=0; i<vs.length (); i++)
 {
@@ -237,7 +235,6 @@ vs[i].hit(random(2000,4000),owner+"'s aircraft","artillery");
 vhit++;
 }
 }
-/*
 for(uint j=0; j<impact_bombs.length(); j++)
 {
 if(get_2d_distance(x,y,impact_bombs[j].x,impact_bombs[j].y)<=20 and impact_bombs[j].map==map and (impact_bombs[j].z>=(z-10)&&impact_bombs[j].z<=z))
@@ -246,7 +243,6 @@ play("ibombhit"+random(1,3),impact_bombs[j].x,impact_bombs[j].y,impact_bombs[j].
 impact_bombs[j].health-=random(2000,4000);
 }
 }
-*/
 if(hit==0&&remhit==0&&vhit==0) sendint("speak hit nothing",owner);
 else if(hit>0&&remhit==0&&vhit==0) sendint("speak|hit "+hit+" players",owner);
 else if(remhit>0&&hit==0&&vhit==0) sendint("speak hit "+remhit+" remote guns",owner);

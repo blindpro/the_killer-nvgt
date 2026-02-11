@@ -29,7 +29,7 @@
 #include "fire.nvgt"
 #include "data_save.nvgt"
 #include "extrafunctions.nvgt"
-#include "restart_nvda.nvgt"
+//#include "restart_nvda.nvgt"
 #include "changes.nvgt"
 #include "canister.nvgt"
 #include "settings.nvgt"
