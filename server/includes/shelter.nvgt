@@ -276,8 +276,7 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(shelters[index].x, shelters[index].y, players[i].x, players[i].y, shelters[index].facing))+", "+get_3d_distance(shelters[index].x, shelters[index].y, shelters[index].z, players[i].x, players[i].y, shelters[index].z)+" feet away. ";
 }
 }
-/*
-for(uint i=0; i<vs.length; i++)
+for(uint i=0; i<vs.length(); i++)
 {
 if(get_3d_distance(shelters[index].x,shelters[index].y,shelters[index].z,vs[i].x,vs[i].y,vs[i].z)<=30&&vs[i].map==shelters[index].map)
 {
@@ -296,7 +295,6 @@ s+="below, ";
 s+=calculate_x_y_string(calculate_x_y_angle(shelters[index].x, shelters[index].y, players[i].x, players[i].y, shelters[index].facing))+", "+get_3d_distance(shelters[index].x, shelters[index].y, shelters[index].z, players[i].x, players[i].y, players[i].z)+" feet away. ";
 }
 }
-*/
 if(s=="")
 s="There is no one around";
 }
@@ -485,7 +483,7 @@ else shopping_cart.set(item, a+quantity);
 }
 int64 get_cart_item_amount(string name)
 {
-uint a;
+int64 a;
 string[] temp=shopping_cart.get_keys();
 for(int i=0; i<temp.length(); i++)
 {

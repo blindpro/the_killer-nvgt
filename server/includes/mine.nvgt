@@ -35,7 +35,7 @@ mines[i].d=true;
 }
 for(uint h = 0; h < helicopters.length(); h++)
 {
-if(mines[i].x==helicopters[h].x&&mines[i].y==helicopters[h].y&&mines[i].z==helicopters[h].z&&mines[i].map==helicopters[h].map)
+if(mines[i].x==round(helicopters[h].x,0)&&mines[i].y==round(helicopters[h].y,0)&&mines[i].z==round(helicopters[h].z,0)&&mines[i].map==helicopters[h].map)
 {
 mines[i].d=true;
 }
@@ -43,7 +43,7 @@ mines[i].d=true;
 for(uint r = 0; r < robots.length(); r++)
 {
 if (robots[r].state>=ROBOT_KILL or robots[r].map!=mines[i].map) continue;
-if(mines[i].x==robots[r].x&&mines[i].y==robots[r].y&&mines[i].z==robots[r].z)
+if(mines[i].x==round(robots[r].x,0)&&mines[i].y==round(robots[r].y,0)&&mines[i].z==round(robots[r].z,0))
 {
 mines[i].d=true;
 }

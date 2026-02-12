@@ -236,13 +236,20 @@ void robotsloop ()
 
 		case ROBOT_WAIT:
 			if (robots[r].movetimer.elapsed>=1000) {
-			if (robots[r].amount>0 and robots[r].loot!="" and robots[r].player!="") {
-				spawn_obj(robots[r].x, robots[r].y, robots[r].z, robots[r].map, robots[r].loots[random(0,robots[r].loots.length()-1)], random(1,robots[r].amount),true);
-				send_reliable(0, "playerdeath|"+killmsg(robots[r].name,robots[r].player,robots[r].map), 0);
+//				send_reliable(0, "playerdeath|"+killmsg(robots[r].name,robots[r].player,robots[r].map), 0);
 				string player=robots[r].player;
 				if(string_contains(player,"'",1)>-1) player=string_left(player,string_contains(player,"'",1));
 				int ind=get_player_index_from(player);
 				if(ind>-1) {
+					send_reliable(players[ind].peer_id,"you killed the "+robots[r].name,2);
+					send_reliable(players[ind].peer_id,"play_s|kill.ogg",0);
+					if (robots[r].amount>0 and robots[r].loot!="" and robots[r].player!="") {
+					{
+						string loots=robots[r].loots[random(0,robots[r].loots.length()-1)];
+						uint ramount=random(1,robots[r].amount);
+						send_reliable(players[ind].peer_id,"you got "+ramount+" "+loots+"s.",2);
+						players[ind].give(loots,ramount);
+					}
 					players[ind].kills++;
 					int tm=is_in_team(players[ind].name);
 					if(tm>-1) {

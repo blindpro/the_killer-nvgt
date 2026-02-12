@@ -1,14 +1,14 @@
 timeitem@[] timeitems(0);
 class timeitem
 {
-int amount=1;
+int64 amount=1;
 string itemtype;
 string map;
 int x,y,z;
 int spawntime;
 timer stimer;
 bool should_drop;
-timeitem(int tx, int ty, int tz, string tmap, string ttype,int tamount, int tspawntime, bool drop=false)
+timeitem(int tx, int ty, int tz, string tmap, string ttype,int64 tamount, int tspawntime, bool drop=false)
 {
 x=tx;
 y=ty;
@@ -33,7 +33,7 @@ continue;
 }
 }
 }
-void spawn_timeitem(int x,int y, int z, string map, string type,int amount=1, int ms=3000, bool should_drop=false)
+void spawn_timeitem(int x,int y, int z, string map, string type,int64 amount=1, int ms=3000, bool should_drop=false)
 {
 timeitem ti1(x,y,z,map,type,amount,ms, should_drop);
 timeitems.insert_last(ti1);
