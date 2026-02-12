@@ -169,15 +169,25 @@ void robotsloop ()
 						else play(robots[r].name+"_shoot",robots[r].x,robots[r].y,robots[r].z,robots[r].map);
 						if (players[c].is_dead) break;
 						if (absolute(robots[r].z-players[c].z)<=robots[r].spread) {
-							if (players[c].shielded) {
-								players[c].playsound("shieldhit"+random(1,2));
-	players[c].shieldshots-=square_root(robots[r].damage)/12;
-														}else{
-								if (robots[r].hits>1) play(robots[r].name+"_hit"+random(1,robots[r].hits),players[c].x,players[c].y,players[c].z,players[c].map);
-								else play(robots[r].name+"_hit",players[c].x,players[c].y,players[c].z,players[c].map);
-								players[c].hitby=robots[r].name; players[c].zone=robots[r].map;
-								players[c].hit(robots[r].mindamage,robots[r].maxdamage);
-							} // if.shild.
+							int vindex=in_vehicle(players[c].name);
+							if(vindex>-1)
+							{
+								if (robots[r].hits>1) play(robots[r].name+"_hit"+random(1,robots[r].hits),vs[vindex].x,vs[vindex].y,vs[vindex].z,vs[vindex].map);
+								else play(robots[r].name+"_hit",vs[vindex].x,vs[vindex].y,vs[vindex].z,vs[vindex].map);
+								vs[vindex].hit(random(robots[r].mindamage,robots[r].maxdamage),"the "+robots[r].name,robots[r].name);
+							}
+							else
+							{
+								if (players[c].shielded) {
+									players[c].playsound("shieldhit"+random(1,2));
+									players[c].shieldshots-=square_root(robots[r].damage)/12;
+								}else{
+									if (robots[r].hits>1) play(robots[r].name+"_hit"+random(1,robots[r].hits),players[c].x,players[c].y,players[c].z,players[c].map);
+									else play(robots[r].name+"_hit",players[c].x,players[c].y,players[c].z,players[c].map);
+									players[c].hitby=robots[r].name; players[c].zone=robots[r].map;
+									players[c].hit(robots[r].mindamage,robots[r].maxdamage);
+							}
+						} // if.shild.
 						} // if.spread.
 						break;
 					}else if (angle<180) {robots[r].look=turnright(robots[r].look,robots[r].angle/2); break;
@@ -246,6 +256,10 @@ void robotsloop ()
 					if (robots[r].amount>0 and robots[r].loot!="" and robots[r].player!="") {
 					{
 						string loots=robots[r].loots[random(0,robots[r].loots.length()-1)];
+						if(loots=="ammo")
+						{
+							loots="ammo_"+guns[random(0,guns.length()-1)];
+						}
 						uint ramount=random(1,robots[r].amount);
 						send_reliable(players[ind].peer_id,"you got "+ramount+" "+loots+"s.",2);
 						players[ind].give(loots,ramount);

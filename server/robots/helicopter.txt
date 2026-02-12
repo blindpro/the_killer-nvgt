@@ -9,6 +9,6 @@ aggro 1000
 spread 10
 angle 30
 steps 1
-loot dollar,antibiotic,ammo,dollar
+loot tk_dollar,antibiotic,ammo,dollar
 amount 40
 hits 2

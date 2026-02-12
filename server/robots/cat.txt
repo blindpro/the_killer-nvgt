@@ -9,7 +9,7 @@ aggro 1000
 spread 3
 angle 90
 steps 0
-loot ,ammo,dollar
+loot ,ammo,tk_dollar
 amount 15
 voices 7
 shoots 2

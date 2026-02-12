@@ -3498,7 +3498,7 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 string item=parsed[1];
-int itemamount=players[index].get_item_count(item);
+int64 itemamount=players[index].get_item_count(item);
 if(itemamount<=0)
 {
 players[index].sendpacket("You dont' have any "+item+"s",0);
@@ -3555,7 +3555,7 @@ int index=get_player_index(e.peer_id);
 if(index>-1)
 {
 if(players[index].paid==0) send_reliable(e.peer_id,"speak|this is only available to paid accounts",0);
-else if(auction==true) send_reliable(e.peer_id,"speak there is already an auction in progress",0);
+else if(auction==true) send_reliable(e.peer_id,"speak|there is already an auction in progress",0);
 else if(parsed[1]=="tk_dollar" or parsed[1]=="coin" or parsed[1]=="coin_pack") send_reliable(e.peer_id,"speak|You cannot auction money for money, sir.",0);
 else send_serverbox(players[index].peer_id,2,-1,1,-1,"auctioning/"+parsed[1],"How many "+parsed[1]+"s would you like to auction?");
 return;
@@ -3592,8 +3592,8 @@ else if(auction) send_reliable(e.peer_id,"speak|there is already an auction in p
 else
 {
 string what=inp[1];
-int amount=stn(inp[2]);
-int minbid=stn(inp[3]);
+int64 amount=stn(inp[2]);
+int64 minbid=stn(inp[3]);
 if (inv_item_exists(players[index].get_inv(),what))
 {
 if (players[index].get_item_count(what)>=amount)
@@ -4412,7 +4412,7 @@ if(players[index].paid==0)
 send_reliable(players[index].peer_id,"This is only available to paid accounts",0);
 return;
 }
-int64 amount=string_to_number(parsed[1]);
+int64 amount=parse_double(parsed[1]);
 if(amount<=0)
 {
 send_reliable(e.peer_id,"You cannot auction negative amounts!",2);
@@ -4422,7 +4422,7 @@ send_reliable(e.peer_id, "No, you can't be stupid and auction coins for coins.",
 else
 {
 string what=parsed[2];
-int64 minbid=string_to_number(parsed[3]);
+int64 minbid=parse_double(parsed[3]);
 if(minbid<=0)
 {
 send_reliable(e.peer_id,"you cannot have a negative bid!",2);

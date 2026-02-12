@@ -243,12 +243,12 @@ play("ibombhit"+random(1,3),impact_bombs[j].x,impact_bombs[j].y,impact_bombs[j].
 impact_bombs[j].health-=random(2000,4000);
 }
 }
-if(hit==0&&remhit==0&&vhit==0) sendint("speak hit nothing",owner);
+if(hit==0&&remhit==0&&vhit==0) sendint("speak|hit nothing",owner);
 else if(hit>0&&remhit==0&&vhit==0) sendint("speak|hit "+hit+" players",owner);
-else if(remhit>0&&hit==0&&vhit==0) sendint("speak hit "+remhit+" remote guns",owner);
+else if(remhit>0&&hit==0&&vhit==0) sendint("speak|hit "+remhit+" remote guns",owner);
 else if(remhit>0&&vhit>0&&hit==0) sendint("speak|hit "+vhit+" vehicles and "+remhit+" remote guns",owner);
 else if(hit>0&&remhit==0&&vhit>0) sendint("speak|hit "+hit+" players and "+vhit+" vehicles",owner);
-else if(vhit>0&&hit==0&&remhit==0) sendint("speak hit|"+vhit+" vehicles",owner);
+else if(vhit>0&&hit==0&&remhit==0) sendint("speak|hit|"+vhit+" vehicles",owner);
 else sendint("speak|hit "+hit+" players, "+vhit+" vehicles and "+remhit+" remote guns",owner);
 }
 }

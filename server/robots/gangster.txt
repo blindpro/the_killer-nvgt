@@ -9,7 +9,7 @@ aggro 1000
 spread 5
 angle 60
 steps 0
-loot dollar,ammo,grenade,beer_bottle
+loot tk_dollar,ammo,grenade,beer_bottle
 amount 10
 voices 14
 hits 4

@@ -9,7 +9,7 @@ aggro 1000
 spread 5
 angle 360
 steps 1
-loot dollar,ammo,air_canister
+loot tk_dollar,ammo,air_canister
 amount 30
 shoots 1
 kills 1

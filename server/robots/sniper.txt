@@ -9,7 +9,7 @@ aggro 1000
 spread 5
 angle 10
 steps 2
-loot dollar
+loot tk_dollar
 amount 1000
 kills 2
 hits 6

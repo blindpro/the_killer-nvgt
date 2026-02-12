@@ -243,7 +243,7 @@ if(index > -1)
 {
 for (uint i=0; i<players.length(); i++)
 {
-//if(players[i].is_dead==true||in_vehicle(players[i].name)>-1||(players[i].invinsible)) continue;
+if(players[i].is_dead==true||in_vehicle(players[i].name)>-1||(players[i].invinsible)) continue;
 if (players[i].x<shelters[index].x+20 and players[i].x>shelters[index].x-20 and players[i].y<shelters[index].y+20 and players[i].y>shelters[index].y-20 and players[i].z<shelters[index].z+20 and players[i].z>shelters[index].z-20 and players[i].map==shelters[index].map and players[i].invisible==false)
 {
 int level=1;

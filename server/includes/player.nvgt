@@ -1444,26 +1444,15 @@ return ch;
 string cn2n(string pname,bool vi=false)
 {
 string ret=pname;
-for(uint i=0; i<players.length (); i++)
+int index=get_player_index_from(ret);
+if(index>-1)
 {
-if(players[i].name==pname)
-{
-ret=players[i].nickname;
+ret=players[index].nickname;
 if(vi)
 {
-/*
-for(uint v=0; v<vs.length ();; v++)
-{
-if(vs[v].owner==pname) ret+="'s "+vs[v].type;
+int v = in_vehicle(pname);
+if(v>-1) ret=vs[v].owner+"'s "+vs[v].type;
 }
-*/
-}
-}
-}
-int i =get_player_index_from (pname);
-if(ret==pname&&players[i].data.exists("nickname"))
-{
-ret=players[i].data["nickname"];
 }
 return ret;
 }

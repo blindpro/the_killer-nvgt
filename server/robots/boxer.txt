@@ -9,7 +9,7 @@ aggro 30
 spread 1
 angle 50
 steps 2
-loot dollar
+loot tk_dollar
 amount 2000
 voices 2
 kills 2

@@ -9,7 +9,7 @@ aggro 1000
 spread 3
 angle 90
 steps 0
-loot dollar,ammo,grenade
+loot tk_dollar,ammo,grenade
 amount 20
 voices 15
 shoots 10

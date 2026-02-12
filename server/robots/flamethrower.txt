@@ -9,5 +9,5 @@ aggro 1000
 spread 3
 angle 45
 steps 0
-loot dollar
+loot tk_dollar
 amount 300
