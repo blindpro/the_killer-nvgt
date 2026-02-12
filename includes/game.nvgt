@@ -619,8 +619,9 @@ if(return_to_menu==true)
 mainmenu();
 }
 }
-void tk_loop()
+void tk_loop (bool is_lock = false)
 {
+if (is_lock) t_net_loop_mutex.lock();
 if (lowhealth) healthloop();
 pos();
 zone_speak (mr.x , mr.y , me.z);
@@ -664,6 +665,7 @@ pinging=false;
 p.play_stationary("pingstop.ogg",false);
 speak ("ping lost");
 }
+if (is_lock) t_net_loop_mutex.unlock();
 }
 void fallloop()
 {

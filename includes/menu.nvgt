@@ -180,7 +180,7 @@ return m.get_item_name(r);
 }
 int invclb(dynamic_menu_pro@ im, string data)
 {
-tk_loop();
+tk_loop(true);
 if(key_pressed(KEY_SPACE))
 {
 if(shift_is_down()==false&&alt_is_down())
@@ -214,7 +214,7 @@ return item1;
 }
 int netclb(dynamic_menu_pro@ m, string data)
 {
-if(n.connected_peers>0&&connected) tk_loop();
+if(n.connected_peers>0&&connected) tk_loop(true);
 copy_translation_text_loop();
 return 0;
 }
@@ -306,7 +306,7 @@ tracking=m.get_item_name(r);
 }
 int playermenu_callback(dynamic_menu_pro@ m, string data)
 {
-tk_loop();
+tk_loop(true);
 if(m.get_item_name(m.get_position())!="")
 {
 if(key_pressed(KEY_F1))

@@ -51,9 +51,8 @@ f.focus(box_text);
 while (true)
 {
 wait (5);
-t_net_loop_mutex.lock ();
-tk_loop();
-t_net_loop_mutex.unlock();
+tk_loop(true);
+
 f.monitor();
 if(f.is_pressed(ok))
 {

@@ -107,12 +107,12 @@ void vendingloop()
 {
 for(uint i=0;i<vending_machines.length();i++)
 {
-if(vending_machines[i].droppingitem==true and vending_machines[i].droptimer.elapsed>=3550)
+if(vending_machines[i].droppingitem==true)
 {
 vending_machines[i].droppingitem=false;
 vending_machines[i].vplay("drop");
 int rand=random(5,8);
-spawn_timeitem(vending_machines[i].x,vending_machines[i].y+rand,vending_machines[i].z,vending_machines[i].map,vending_machines[i].dropitem,1,900);
+spawn_timeitem(vending_machines[i].x,vending_machines[i].y+rand,vending_machines[i].z,vending_machines[i].map,vending_machines[i].dropitem,1,4450);
 }
 }
 }
