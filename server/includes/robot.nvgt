@@ -170,7 +170,7 @@ void robotsloop ()
 						if (players[c].is_dead) break;
 						if (absolute(robots[r].z-players[c].z)<=robots[r].spread) {
 							if (players[c].shielded) {
-								players[c].playsound("shieldhit"+random(1,12));
+								players[c].playsound("shieldhit"+random(1,2));
 	players[c].shieldshots-=square_root(robots[r].damage)/12;
 														}else{
 								if (robots[r].hits>1) play(robots[r].name+"_hit"+random(1,robots[r].hits),players[c].x,players[c].y,players[c].z,players[c].map);
