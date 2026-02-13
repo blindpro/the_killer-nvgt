@@ -274,7 +274,7 @@ get_characters();
 int total_keypresses=0;
 while(true)
 {
-tk_loop ();
+tk_loop (true);
 string char=get_characters();
 if(keyboard_modifiers & KEYMOD_CTRL > 0)
 {

@@ -513,10 +513,17 @@ void vo(string a)
 {
 send_reliable(this.peer_id,"play_s|speaker_"+a+".ogg",0);
 }
-void playsound(string sound, bool include_me=true)
+void playsound(string sound, bool include_me=true , bool is_dis = false)
 {
 if(include_me) send_reliable(peer_id,"play_s|"+sound+".ogg",0);
+if (!is_dis)
+{
 send_plus(peer_id, sound+"|"+x+"|"+y+"|"+z+"|"+map, 3);
+}
+else
+{
+send_plus(peer_id,"distsound"+sound+"|"+x+"|"+y+"|"+z+"|"+map, 4);
+}
 }
 bool is_muted(string name)
 {
