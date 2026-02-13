@@ -6927,6 +6927,7 @@ menu.add(info,characters[i].name);
 }
 menu.send(players[index].peer_id);
 }
+/*
 else if(parsed[0]=="/reboot")
 {
 if(players[index].adminable())
@@ -6939,7 +6940,6 @@ run(get_script_path(),"",false,false);
 exit();
 }
 }
-/*
 else if(parsed[0]=="/update")
 {
 if(players[index].dev )
@@ -7220,7 +7220,10 @@ else if(gifting==0) { send_reliable(0,"play_s|gifton.ogg",0); send_reliable(play
 }
 else if (parsed[0] == "/quit")
 {
+if(players[index].adminable()||beta==true)
+{
 s_quit = true;
+}
 }
 else if(parsed[0]=="/moveplayer" and parsed.length()>2)
 {
