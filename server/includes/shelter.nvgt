@@ -11,7 +11,7 @@ double facing=0;
 bool hasplayers=false;
 bool broken=false;
 bool on=true;
-int64 maxhealth=50000000000;
+int64 maxhealth=15000000;
 string id=randomstring(8);
 string compsound;
 string sheltername;
@@ -224,15 +224,16 @@ void hit(int64 damage,string hb,string type="")
 {
 this.health-=damage;
 this.hitby=hb;
-if(type=="" or type=="knife" or type=="crossbow" or type=="Flame_Thrower")
-{
-play_outside("hshelter_ext",x,y,z,map);
-playsound("hshelter_int");
-}
-else
+if(damage<=0) return;
+if(type=="fists"||type=="feet"||type=="grenade"||type=="artillery"||type=="hand_grenade")
 {
 play_outside(type+"hit_shelter_ext",x,y,z,map);
 playsound(type+"hit_shelter_int");
+}
+else
+{
+play_outside("hshelter_ext",x,y,z,map);
+playsound("hshelter_int");
 }
 }
 string playerscan()
@@ -604,8 +605,7 @@ if(x>-1)
 int wood=random(100,300);
 send_reliable(players[x].peer_id,"you get "+wood+" wood from the shelter's remains",2);
 players[x].give("wood",wood);
-//if(players[x].name!=shelters[i].owner) add_achievement("bring down a shelter",x,"4 wood_pack");
-/*
+if(players[x].name!=shelters[i].owner) add_achievement("bring down a shelter",x,"4 wood_pack");
 int tm=is_in_team(players[x].name);
 if(tm>-1)
 {
@@ -615,7 +615,6 @@ teams[tm].points+=5000;
 teams[tm].transmit("This team just got 5000 extra points for killing somebody else's shelter!");
 }
 }
-*/
 }
 for(uint p=0; p<players.length(); p++)
 {
@@ -639,7 +638,7 @@ return;
 shelter sh(x,y,z,map,owner,name,power);
 shelters.insert_last(sh);
 saveshelters();
-//init_mapsystem();
+init_mapsystem();
 }
 bool has_shelter(player@p)
 {

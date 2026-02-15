@@ -1668,7 +1668,7 @@ play("shelterfix",shelters[s].x,shelters[s].y,shelters[s].z,shelters[s].map);
 int64 rep=h*random(50,200);
 if((shelters[s].health+rep)>shelters[s].maxhealth)
 {
-int64 delta=(shelters[s].health+rep-900000);
+int64 delta=(shelters[s].health+rep-shelters[s].maxhealth);
 int64 ret=round((delta/120),0);
 players[index].give("wood",ret);
 }
@@ -8221,6 +8221,11 @@ void server_quit ()
 send_reliable(0,"notify|The server is shutting down",0);
 send_reliable(0,"server_quit",0);
 saveloop();
+for(uint i = 0; i < players.length(); i++)
+{
+remove_player(players[i].name);
+}
+team_save();
 exit ();
 }
 int64[] get_amounts()

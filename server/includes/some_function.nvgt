@@ -41,3 +41,13 @@ list = text.split (split2);
 }
 return list;
 }
+json_array@ vara_to_jsona(string[]@ v)
+{
+json_array a;
+for(uint i = 0; i < v.length(); i++)
+{
+a.add(v[i]);
+}
+if(a.size()<=0) return null;
+return a;
+}

@@ -193,9 +193,10 @@ void hit(int damage,string hb,string type="")
 {
 this.health-=damage;
 this.hitby=hb;
-if(hb.find("fists")>-1||hb.find("feet")>-1)
+if(damage<=0) return;
+if(type=="fists"||type=="feet"||type=="grenade"||type=="hand_grenade"||type=="artillery"||type=="cannon")
 {
-playsound("fistshit_vehicle",true,false);
+playsound(type+"hit_vehicle",true,false);
 }
 else
 {

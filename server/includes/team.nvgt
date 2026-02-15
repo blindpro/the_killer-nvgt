@@ -25,9 +25,8 @@ for(uint j=0; j<teammembers.length (); j++)
 {
 if(is_on_server(teammembers[j])==false)
 {
-if(buffermembers.find(teammembers[j])<0) buffermembers.insert_last(teammembers[j]);
+if(buffermembers.find(teammembers[j])<=0) buffermembers.insert_last(teammembers[j]);
 teammembers.remove_at(j);
-return;
 }
 }
 }
@@ -85,13 +84,11 @@ if(r==false) buffermembers.insert_last(name);
 if(r==true)
 {
 players[index].data["team"]="";
-/*
 for(uint x=0; x<security_bombs.length(); x++)
 {
 if(security_bombs[x].owner==name)
 security_bombs[x].teamname="";
 }
-*/
 }
 }
 }
@@ -104,13 +101,11 @@ if(r==true)
 {
 if(buffermembers.find(name)>-1) buffermembers.remove_at(buffermembers.find(name));
 players[index].data["team"]="";
-/*
 for(uint x=0; x<security_bombs.length(); x++)
 {
 if(security_bombs[x].owner==name)
 security_bombs[x].teamname="";
 }
-*/
 }
 return true;
 }
@@ -128,13 +123,11 @@ transmit(name+" left the team!");
 transmit("play_s|teamleave.ogg",false,0);
 players[index].teamname="";
 players[index].data["team"]=players[index].teamname;
-/*
 for(uint x=0; x<security_bombs.length(); x++)
 {
 if(security_bombs[x].owner==players[index].name)
 security_bombs[x].teamname="";
 }
-*/
 return true;
 }
 }
@@ -186,7 +179,6 @@ transmit(name+" was added to your team!");
 send_reliable(players[index].peer_id,"You have been added to the "+teamname+" team!",2);
 send_reliable(players[index].peer_id,"play_s|teamwelcome.ogg",0);
 }
-/*
 for(uint x=0; x<security_bombs.length(); x++)
 {
 if(security_bombs[x].owner==players[index].name)
@@ -194,7 +186,6 @@ if(security_bombs[x].owner==players[index].name)
 security_bombs[x].teamname=players[index].teamname;
 }
 }
-*/
 players[index].data["team"]=players[index].teamname;
 if(buffermembers.find(name)>-1) buffermembers.remove_at(buffermembers.find(name));
 if(!is_member(name)) teammembers.insert_last(name);
@@ -246,7 +237,15 @@ teams[i].points-= 20;
 }
 if(teams[i].teammembers.length ()<=0&&teams[i].buffermembers.length ()<=0)
 {
-//file_delete("teams/"+teams[i].teamname+".team");
+json_array @jsa = parse_json(file_get_contents("teams/teams.json"));
+if(@jsa==null) return;
+for(uint j = 0; j < jsa.length(); j++)
+{
+json_object@ js=parse_json(jsa[j]);
+if(@js==null) continue;
+if(js["name"]==teams[i].teamname) jsa.remove(j);
+}
+file_put_contents("teams/teams.json",jsa.stringify());
 @teams[i]=null;
 teams.remove_at(i);
 return;
@@ -329,9 +328,19 @@ if(json_o.exists("leader"))
 tl = json_o["leader"];
 create_team(t,tl);
 int x=get_team_index(t);
-teams[x].teamleader=tl;
+//teams[x].teamleader=tl;
 if(json_o.exists("teammembers"))
-teams[x].teammembers=delinear(json_o["teammembers"]);
+{
+json_array@ temp=parse_json(json_o["teammembers"]);
+if(@temp==null) return;
+if(temp.size()>0)
+{
+for(uint i = 0; i < temp.size(); i++)
+{
+teams[x].teammembers.insert_last(temp[i]);
+}
+}
+}
 for(uint i=0; i<teams[x].teammembers.length (); i++)
 {
 if(teams[x].teammembers[i]=="" or teams[x].teammembers[i]==" ") teams[x].teammembers.remove_at(i);
@@ -341,7 +350,17 @@ teams[x].maxmembers=json_o["maxmembers"];
 if(json_o.exists("points"))
 teams[x].points=json_o["points"];
 if(json_o.exists("buffermembers"))
-teams[x].buffermembers=delinear(json_o["buffermembers"]);
+{
+json_array@ temp=parse_json(json_o["buffermembers"]);
+if(@temp==null) return;
+if(temp.size()>0)
+{
+for(uint i = 0; i < temp.size(); i++)
+{
+teams[x].buffermembers.insert_last(temp[i]);
+}
+}
+}
 for(uint i=0; i<teams[x].buffermembers.length (); i++)
 {
 if(teams[x].buffermembers[i]=="" or teams[x].buffermembers[i]==" ") teams[x].buffermembers.remove_at(i);
@@ -364,11 +383,12 @@ file f;
 f.open("teams/teams.json","rb");
 string data = f.read();
 f.close();
+if(data.is_empty()) return;
+try
+{
 json_array@ json_a = parse_json(data);
 if(@json_a==null) return;
 json_object@ json_o = null;
-try
-{
 for(uint i = 0; i < json_a.size(); i++)
 {
 @json_o = json_a[i];
@@ -411,8 +431,18 @@ json_o.set("leader",teams[i].teamleader);
 json_o.set("maxmembers",teams[i].maxmembers);
 json_o.set("kills",teams[i].teamkills);
 json_o.set("points",teams[i].points);
-json_o.set("teammembers",linear(teams[i].teammembers));
-json_o.set("buffermembers",linear(teams[i].buffermembers));
+json_array teammem;
+for(uint j = 0; j < teams[i].teammembers.length(); j++)
+{
+teammem.add(teams[i].teammembers[j]);
+}
+json_o.set("teammembers",teammem);
+json_array bufmem;
+for(uint j = 0; j < teams[i].buffermembers.length(); j++)
+{
+bufmem.add(teams[i].buffermembers[j]);
+}
+json_o.set("buffermembers",bufmem);
 json_a.add(json_o);
 }
 if (!directory_exists("teams")) directory_create("teams");

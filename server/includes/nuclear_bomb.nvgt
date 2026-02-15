@@ -112,7 +112,7 @@ for(uint s = 0; s < shelters.length(); s++)
 {
 if(shelters[s].map==nuclear_bombs[i].map)
 {
-shelters[s].hit(30000000000,nuclear_bombs[i].owner+"'s nuclear bomb","nuclear_bomb");
+shelters[s].hit(shelters[s].maxhealth,nuclear_bombs[i].owner+"'s nuclear bomb","nuclear_bomb");
 hit=true;
 }
 }
