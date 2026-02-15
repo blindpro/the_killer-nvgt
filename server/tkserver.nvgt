@@ -1365,7 +1365,7 @@ else
 {
 level=1;
 }
-s+=robots[i].name+" is ";
+s+=robots[i].name+" with "+robots[i].health+" health is ";
 if(level==2)
 {
 s+="above, ";
@@ -1376,6 +1376,36 @@ s+="below, ";
 }
 int dis = get_3d_distance(players[index].x, players[index].y, players[index].z, robots[i].x, robots[i].y, robots[i].z);
 s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, robots[i].x, robots[i].y, players[index].facing))+", "+dis+" feet away. ";
+}
+}
+for (uint i=0; i<helicopters.length(); i++)
+{
+if (helicopters[i].x<players[index].x+20 and helicopters[i].x>players[index].x-20 and helicopters[i].y<players[index].y+20 and helicopters[i].y>players[index].y-20 and get_1d_distance(players[index].z,helicopters[i].z)<=20 and helicopters[i].map==players[index].map)
+{
+int level=1;
+if(helicopters[i].z>players[index].z)
+{
+level=2;
+}
+else if(helicopters[i].z<players[index].z)
+{
+level=0;
+}
+else
+{
+level=1;
+}
+s+=helicopters[i].owner+"'s helicopter with "+helicopters[i].health+" health is ";
+if(level==2)
+{
+s+="above, ";
+}
+else if(level==0)
+{
+s+="below, ";
+}
+int dis = get_3d_distance(players[index].x, players[index].y, players[index].z, helicopters[i].x, helicopters[i].y, helicopters[i].z);
+s+=calculate_x_y_string(calculate_x_y_angle(players[index].x, players[index].y, helicopters[i].x, helicopters[i].y, players[index].facing))+", "+dis+" feet away. ";
 }
 }
 if(s=="")
