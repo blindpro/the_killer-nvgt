@@ -90,7 +90,7 @@ boing=" in "+get_zone(x,y,z)+" ";
 }
 int dist=get_3d_distance(mr.x,mr.y,me.z,x,y,z);
 speak (go+go4+" ("+dist+" tiles away) "+boing+"at "+x+", "+y+", "+z);
-p.play_3d(soundname+".ogg",mr.x,mr.y,me.z,trackx,tracky,trackz,calculate_theta(facing),false);
+p.play_3d(soundname+".ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
 go="";
 }
 bool shift_is_down()
