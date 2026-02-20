@@ -14,3 +14,5 @@ sniper_ammo_pack=5
 shotgun_ammo_pack=4
 security_bomb=15
 wood_pack=10
+weapon_pack=10
+weapon_ammo_box=10
