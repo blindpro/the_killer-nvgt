@@ -43,7 +43,7 @@ timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
 double voteyes=0,voteno=0;
 http httpn;
-string minverstring="1.94.0";
+string minverstring="1.95.0";
 int activations = 0;
 int peak = 0;
 string peakreached;
