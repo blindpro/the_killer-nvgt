@@ -43,7 +43,7 @@ timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
 double voteyes=0,voteno=0;
 http httpn;
-string minverstring="1.94.0";
+string minverstring="1.95.0";
 int activations = 0;
 int peak = 0;
 string peakreached;
@@ -8716,6 +8716,7 @@ send_reliable(players[i].peer_id,"admintell|"+msg,1);
 string keycheck(string activation_key)
 {
 string ret="";
+return ret;
 string keys=url_ret("http://jennios.com/tk/activation_payments.plist");
 if(keys=="")
 {

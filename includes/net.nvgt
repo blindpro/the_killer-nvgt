@@ -804,7 +804,11 @@ tp.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), s
 else if(e.channel==4)
 {
 s = get_event_message(e.message);
-if (s=="") continue;
+if (s=="") 
+{
+t_net_loop_mutex.unlock();
+continue;
+}
 string[] parsed=s.split("|");
 if(parsed[0]=="createmsound"&&parsed.length()>=8) createmsound(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6],stn(parsed[7]));
 else if(parsed[0]=="updatemsound"&&parsed.length()>=6) updatemsound(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),stn(parsed[5]));
