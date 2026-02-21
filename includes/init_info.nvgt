@@ -42,7 +42,7 @@ uint peer_id=0;
 string ver="1.94", netver="1.94.0";
 string compid = generate_system_fingerprint("gamesaremadeforfunnotfordrama17");
 string banid = generate_system_fingerprint("gamesaremadeforfunnotfordrama17"+ver);
-bool net_debug;
+bool net_debug=true;
 bool profiler;
 string packetlog;
 string sent_packets;

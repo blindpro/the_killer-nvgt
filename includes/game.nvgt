@@ -232,10 +232,6 @@ else if(key_pressed(KEY_Z))
 {
 speak ("Current location: "+last_zone+" of "+mapname);
 }
-else if(key_pressed(KEY_V))
-{
-send_reliable(0,"formtest",0);
-}
 else if(key_pressed(KEY_Q) and can_move and !inve)
 {
 facing=snapleft(facing, getdir(facing));
