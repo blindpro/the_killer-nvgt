@@ -85,6 +85,7 @@ return 1;
 else
 return 2;
 }
+aabb trackaabb;
 void checkarroundmenu()
 {
 setupmenu();
@@ -101,7 +102,9 @@ int mres=m.run("Find what?",true);
 if(m.get_item_name(mres)=="" or m.get_item_name(mres)=="stoptrack" or mres==0)
 {
 speak ("Stopped tracking");
-trackx=-1; tracky=-1; trackz=-1; tracking="";
+trackaabb.set_min(vector(0,0,0));
+trackaabb.set_max(vector(0,0,0));
+tracking = "";
 return;
 }
 else
@@ -110,11 +113,10 @@ int z=get_zone_index(m.get_item_name(mres));
 if(z>-1)
 {
 string[] ps=string_split(zones[z],":",true);
-trackx=stn(ps[0]);
-tracky=stn(ps[2]);
-trackz=stn(ps[4]);
-tracking=ps[6];
-tell_where(trackx,tracky,trackz,"loctrack");
+trackaabb.set_min(vector(parse_double(ps[0]),parse_double(ps[2]),parse_double(ps[4])));
+trackaabb.set_max(vector(parse_double(ps[1]),parse_double(ps[3]),parse_double(ps[5])));
+tracking = ps[6];
+tell_where(trackaabb,"loctrack");
 }
 else
 {

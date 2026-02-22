@@ -269,11 +269,11 @@ else if(key_pressed(KEY_BACKSLASH))
 interrupt_buffer();
 else if(key_pressed(KEY_N))
 {
-if(trackx==-1 or tracky==-1 or trackz==-1 or tracking=="")
+if(tracking=="")
 {
 speak ("Nothing to track");
 }
-else tell_where(trackx,tracky,trackz,"loctrack");
+else tell_where(trackaabb,"loctrack");
 }
 else if(key_pressed(KEY_F))
 {
@@ -628,17 +628,22 @@ playerloop();
 msoundcheckloop();
 sirencheckloop();
 objloop();
-if(trackx!=-1&&tracky!=-1&&trackz!=-1&&tracking!="")
+if(tracking!="")
 {
-if(trackingtimer.elapsed>700)
+vector center = trackaabb.get_center();
+vector min = trackaabb.get_min();
+vector max = trackaabb.get_max();
+if(trackingtimer.elapsed>10*get_3d_distance(me.x,me.y,me.z,center.x,center.y,center.z))
 {
 trackingtimer.restart();
-p.play_3d("loctrack.ogg",mr.x,mr.y,me.z,trackx,tracky,trackz,calculate_theta(facing),false);
+trackpool.play_extended(3,"radar.ogg",sound_default_pack,me.x, me.y,me.z,min.x, min.y, min.z, calculate_theta(facing), 0, max.x-min.x, 0, max.y-min.y,0, max.z-min.z, false, 0.0, 0, 0, 100);
 }
 if(last_zone==tracking)
 {
 p.play_stationary("loctracked.ogg",false);
-trackx=-1; tracky=-1; trackz=-1; tracking="";
+trackaabb.set_min(vector(0,0,0));
+trackaabb.set_max(vector(0,0,0));
+tracking="";
 }
 }
 if(jumping==true)

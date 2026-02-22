@@ -321,7 +321,7 @@ if(mapname!=mp)
 speak("This player is on a different map. Sorry");
 else
 {
-tell_where(x,y,z,parsed[6],true);
+tell_where(aabb(vector(x,y,z),vector(x,y,z)),parsed[6],true);
 }
 }
 else if(parsed[0]=="facing"&&parsed.length () >1) facing=stn(parsed[1]);
