@@ -8,9 +8,9 @@ string name;
 string map;
 timer beeptimer, timeouttimer;
 int64 amount;
-int id=-1;
+string id;
 bool dropped=false;
-obj(int ox, int oy, int oz, string omap, string oname, int64 oa=1, bool dropped=true,int oid=-1)
+obj(int ox, int oy, int oz, string omap, string oname, int64 oa=1, bool dropped=true, string oid="")
 {
 map=omap;
 x=ox;
@@ -173,7 +173,7 @@ break;
 }
 }
 }
-void spawn_obj(int x, int y, int z, string map, string name, int64 amount=1,bool dropped=false,int id=random(0,10000))
+void spawn_obj(int x, int y, int z, string map, string name, int64 amount=1,bool dropped=false,string id=object_stamp.elapsed+random(0,9))
 {
 obj i1(x,y,z,map, name,amount,dropped,id);
 objspawns++;
@@ -197,6 +197,7 @@ spawn_obj(x,y,z,map,choices[random(0,(choices.length()-1))]);
 }
 void move_all_objs_to(int x, int y, int z, string map)
 {
+string sendtext="update_objs|";
 for(uint i=0; i<objs.length(); i++)
 {
 if(objs[i].map!="main") continue;
@@ -204,9 +205,10 @@ objs[i].x=x;
 objs[i].y=y;
 objs[i].z=z;
 objs[i].map=map;
-send_reliable(0,"clear_obj",0);
-send_reliable(0,"objrequest",0);
+sendtext+=objs[i].id+"|"+objs[i].x+"|"+objs[i].y+"|"+objs[i].z+"|"+objs[i].map;
+if(i!=objs.length()-1) sendtext+="\r\n";
 }
+send_reliable(0,sendtext,0);
 }
 int get_nearest_item_at(int x, int y, int z, string map, string type)
 {
@@ -239,7 +241,7 @@ send_reliable(0,"remove_obj|"+objs[it].id,0);
 @objs[it]=null;
 objs.remove_at(it);
 }
-int get_obj_index(int id)
+int get_obj_index(string id)
 {
 for(uint i = 0; i < objs.length(); i++)
 {
@@ -247,4 +249,23 @@ if(objs[i].id==id)
 return i;
 }
 return -1;
+}
+void move_objs_to(int x, int y, int z, string map, int itemcount)
+{
+int objgrabs=0;
+string sendtext="update_objs|";
+for(uint i=0;i<objs.length();i++)
+{
+if(objs[i].map==map and objs[i].name!="item_grabber")
+{
+objs[i].x=x;
+objs[i].y=y;
+objs[i].z=z;
+sendtext+=objs[i].id+"|"+objs[i].x+"|"+objs[i].y+"|"+objs[i].z+"|"+objs[i].map;
+if(i!=objs.length()-1) sendtext+="\r\n";
+objgrabs++;
+}
+if(objgrabs>itemcount) break;
+}
+send_reliable(0,sendtext,0);
 }

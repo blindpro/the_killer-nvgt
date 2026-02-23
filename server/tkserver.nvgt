@@ -1,5 +1,6 @@
 #include "includes\include.nvgt"
 ip_locale l;
+timestamp object_stamp;
 network n;
 network_event e;
 mutex t_net_loop_mutex;
@@ -1956,7 +1957,7 @@ takeobj=true;
 }
 }
 }
-else if(wname=="nuclear_bomb")
+else if(wname=="nuclear_bomb"&&in_vehicle(players[index].name)<0)
 {
 if(!players[index].usenuclear_bomb)
 {
@@ -1966,6 +1967,34 @@ players[index].playsound("nuclearbombplace");
 send_reliable(players[index].peer_id,"stopmoving",0);
 takeobj=true;
 }
+}
+else if(wname=="item_grabber"&&in_vehicle(players[index].name)<0)
+{
+if(players[index].itemgrabbing==true)
+{
+send_reliable(players[index].peer_id,"Because you honestly think you can use a item grabber while using an item grabber...",0);
+return;
+}
+players[index].itemgrabbingtimer.restart();
+send_reliable(players[index].peer_id, "stopmoving",0);
+players[index].itemgrabbing=true;
+players[index].give("item_grabber",-1);
+play("itemgrabberstart", players[index].x, players[index].y, players[index].z, players[index].map, index, false);
+send_reliable(0, players[index].name+" just started using an item grabber! ", 2);
+}
+else if(wname=="enemy_grabber"&&in_vehicle(players[index].name)<0)
+{
+if(players[index].enemygrabbing==true)
+{
+send_reliable(players[index].peer_id,"Because you honestly think you can use a enemy grabber while using an enemy grabber...",0);
+return;
+}
+players[index].enemygrabbingtimer.restart();
+send_reliable(players[index].peer_id, "stopmoving",0);
+players[index].enemygrabbing=true;
+players[index].give("enemy_grabber",-1);
+play("itemgrabberstart", players[index].x, players[index].y, players[index].z, players[index].map, index, false);
+send_reliable(0, players[index].name+" just started using an enemy grabber! ", 2);
 }
 else if(wname=="health_dart")
 {

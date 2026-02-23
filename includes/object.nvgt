@@ -7,10 +7,10 @@ timer beeptimer;
 int beeptime=750;
 string name;
 int amount;
-int id;
+string id;
 bool get;
 int slot;
-obj(int ox, int oy, int oz, string omap, string oname, int oa=1, int oid="")
+obj(int ox, int oy, int oz, string omap, string oname, int oa=1, string oid="")
 {
 x=ox;
 y=oy;
@@ -34,14 +34,18 @@ objpool.play_3d("obj.ogg", me.x, me.y, me.z, objs1[i].x, objs1[i].y, objs1[i].z,
 }
 }
 }
-void spawn_obj(int x, int y, int z, string map, string name,int id , int amount=1)
+void spawn_obj(int x, int y, int z, string map, string name,string id , int amount=1)
 {
+for(uint i = 0; i < objs.length(); i++)
+{
+if(objs[i].id==id) return;
+}
 obj o1(x, y, z, map, name, amount, id);
 objs.insert_last(o1);
 }
 void remove_obj(int it)
 {
-if(it>objs.length()-1) return;
+if(it>objs.length()-1||it<0) return;
 @objs[it]=null;
 objs.remove_at(it);
 }
@@ -52,7 +56,7 @@ string[]@ obj_data = data.split("\r\n");
 for(uint i = 0; i < obj_data.length(); i++)
 {
 string[]@ parsed = obj_data[i].split("|");
-spawn_obj(stn(parsed[0]), stn(parsed[1]), stn(parsed[2]), parsed[3], parsed[4], stn(parsed[6]), stn(parsed[5]));
+spawn_obj(stn(parsed[0]), stn(parsed[1]), stn(parsed[2]), parsed[3], parsed[4], parsed[6], stn(parsed[5]));
 }
 }
 int get_obj_index(string id)
@@ -65,4 +69,13 @@ return i;
 }
 }
 return -1;
+}
+void update_obj(string id, int x,int y, int z, string map)
+{
+int index = get_obj_index(id);
+if(index<0) return;
+objs[index].x=x;
+objs[index].y=y;
+objs[index].z=z;
+objs[index].map=map;
 }

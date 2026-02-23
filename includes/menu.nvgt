@@ -303,7 +303,6 @@ speak("canceled");
 else
 {
 speak("tracking "+m.get_item_name(r));
-tracking=m.get_item_name(r);
 }
 }
 int playermenu_callback(dynamic_menu_pro@ m, string data)

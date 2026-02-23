@@ -1,5 +1,5 @@
-//string netaddress="127.0.0.1";
-string netaddress="pro.xztom.com";
+string netaddress="127.0.0.1";
+//string netaddress="pro.xztom.com";
 uint64 netport = 10000;
 
 void testc ()
@@ -389,7 +389,7 @@ remove_obj(parse_int(index));
 }
 else if(parsed[0]=="spawn_obj")
 {
-spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], stn(parsed[7]), stn(parsed[6]));
+spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], parsed[7], stn(parsed[6]));
 }
 else if(parsed[0]=="load_obj" and parsed.length()>=1)
 {
@@ -558,6 +558,19 @@ add_buffer_item("misc",msg);
 else if(parsed[0]=="play_s")
 {
 tp.play_stationary(parsed[1],false);
+}
+else if(parsed[0]=="update_objs"&&parsed.length()>=2)
+{
+string text = s;
+s = s.replace("update_objs|","",false);
+string[] olines = text.split("\r\n");
+if(olines.length()==0) continue;
+for(uint i = 0; i < olines.length(); i++)
+{
+if(olines[i].is_empty()) continue;
+string[] oparsed = olines[i].split("|");
+update_obj(oparsed[0],parse_double(oparsed[1]),parse_double(oparsed[2]),parse_double(oparsed[3]),oparsed[4]);
+}
 }
 else if(parsed[0]=="pong" and pinging==true)
 {

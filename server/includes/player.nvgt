@@ -82,6 +82,10 @@ timer cheatertimer;
 timer nicktimer;
 timer newbtimer;
 timer bleedtimer;
+bool itemgrabbing=false;
+timer itemgrabbingtimer;
+bool enemygrabbing=false;
+timer enemygrabbingtimer;
 string biketile;
 string langchan="English";
 string shitem;
@@ -1125,6 +1129,32 @@ players[i].ultrabombtimer.restart();
 send_reliable(players[i].peer_id,"startmoving",0);
 spawn_ultrabomb(round(players[i].x,0),round(players[i].y,0),players[i].z,players[i].map,players[i].name);
 }
+}
+if(players[i].itemgrabbing==true and players[i].itemgrabbingtimer.elapsed>=25000)
+{
+players[i].itemgrabbing=false;
+play("itemgrabberfire",players[i].x,players[i].y,players[i].z,players[i].map);
+send_reliable(0,"distsound|itemgrabberdist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0);
+move_objs_to(players[i].x, players[i].y, players[i].z, players[i].map, random(0, 130));
+send_reliable(players[i].peer_id,"startmoving",0);
+}
+if(players[i].enemygrabbing==true and players[i].enemygrabbingtimer.elapsed>=25000)
+{
+players[i].enemygrabbing=false;
+play("itemgrabberfire",players[i].x,players[i].y,players[i].z,players[i].map);
+send_reliable(0,"distsound|itemgrabberdist|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].map,0);
+int robotgrab = 0;
+int robotcount = random(0,25);
+for(uint r = 0; r < robots.length(); r++)
+{
+if (robots[r].map!=players[i].map||robots[r].state>=ROBOT_KILL) continue;
+robots[r].x=players[i].x;
+robots[r].y=players[i].y;
+robots[r].z=players[i].z;
+robotgrab++;
+if(robotgrab>robotcount) break;
+}
+send_reliable(players[i].peer_id,"startmoving",0);
 }
 if(players[i].antibioticed==true)
 {
