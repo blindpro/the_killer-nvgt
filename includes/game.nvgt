@@ -223,10 +223,10 @@ send_reliable(0,"whoonline",0);
 }
 else if(key_pressed(KEY_W))
 {
-if(tracking=="")
+if(tracking_player=="")
 speak("Not tracking anyone");
 else
-send_reliable(0,"track|"+tracking,0);
+send_reliable(0,"track|"+tracking_player,0);
 }
 else if(key_pressed(KEY_Z))
 {

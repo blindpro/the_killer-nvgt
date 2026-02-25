@@ -92,7 +92,7 @@ if(include_locations==true)
 boing=" in "+get_zone(center.x,center.y,center.z)+" ";
 }
 int dist=get_3d_distance(mr.x,mr.y,me.z,center.x,center.y,center.z);
-speak (go+go4+" ("+dist+" tiles away) "+boing+"Starting point at "+min.x+", "+min.y+", "+min.z+", end at "+max.x+", "+max.y+", "+max.z);
+speak (go+go4+" ("+dist+" tiles away) "+boing+(min==max?" at, "+min.x+" , "+min.y+" , "+min.z:"starting point at "+min.x+", "+min.y+", "+min.z+", end at "+max.x+", "+max.y+", "+max.z));
 p.play_extended(3,soundname+".ogg",sound_default_pack,me.x, me.y,me.z,min.x, min.y, min.z, calculate_theta(facing), 0, max.x-min.x, 0, max.y-min.y,0, max.z-min.z, false, 0.0, 0, 0, 100);
 go="";
 }

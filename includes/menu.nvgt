@@ -290,8 +290,11 @@ m.enable_up_and_down=true;
 m.enable_left_and_right=true;
 m.enable_home_and_end=true;
 m.set_callback(playermenu_callback,"");
+if(!tracking_player.is_empty())
+m.add_item_tts("stop tracking "+tracking_player,"stop tracking");
 for(uint i = 0; i < users.length(); i++)
 {
+if(users[i]==tracking_player) continue;
 m.add_item_tts(users[i],users[i]);
 }
 playerstuff.resize(0);
@@ -300,9 +303,15 @@ if(m.get_item_name(r)==""||r==0)
 {
 speak("canceled");
 }
+else if(m.get_item_name(r)=="stop tracking")
+{
+speak("stop tracking "+tracking_player);
+tracking_player="";
+}
 else
 {
 speak("tracking "+m.get_item_name(r));
+tracking_player = m.get_item_name(r);
 }
 }
 int playermenu_callback(dynamic_menu_pro@ m, string data)
@@ -318,7 +327,7 @@ clipboard_set_text(m.get_item_name(m.get_position()));
 if(key_pressed(KEY_F2))
 {
 disable_input();
-string pm_text = virtual_input_box("private message","enter the message that you want to send to "+m.get_item_name(m.get_position()));
+string pm_text = input_box("enter the message that you want to send to "+m.get_item_name(m.get_position()));
 if(!pm_text.is_empty())
 send_reliable(0,"/pm "+m.get_item_name(m.get_position())+" "+pm_text,1);
 enable_input();
