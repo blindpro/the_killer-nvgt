@@ -864,6 +864,7 @@ int newy=random(0,500);
 int newz=0;
 move_player(players[i],"main",newx,newy,newz,false);
 players[i].storestage=3;
+send_reliable(players[i].peer_id,"exitshelter",0);
 }
 if(players[i].storestage==0 and players[i].storetimer.elapsed>5*60000 and players[i].map!="store")
 {

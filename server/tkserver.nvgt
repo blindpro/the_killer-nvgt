@@ -3824,7 +3824,7 @@ else if(parsed[0]=="enter")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing)
+if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing||players[index].itemgrabbing||players[index].enemygrabbing||players[index].usenuclear_bomb)
 return;
 if(round(players[index].x,0)==0 and round(players[index].y,0)==4 and players[index].z==0 and in_shelter(players[index].name)>-1)
 {
@@ -5169,7 +5169,7 @@ send_reliable(players[index].peer_id,msg,2);
 else if(parsed[0]=="/rawmap")
 {
 int s=in_shelter(players[index].name);
-if(players[index].adminable()||players[index].is_builder||beta/*||s>-1 and shelters[s].is_allowed(players[index].name)*/)
+if(players[index].adminable()||players[index].is_builder||beta/*||s>-1 and shelters[s1].is_allowed(players[index].name)*/)
 {
 string mapname=players[index].map;
 send_reliable(e.peer_id,"clip|"+get_map_text(mapname),0);
@@ -5206,12 +5206,12 @@ else if(ld[0]=="mapname"&&ld[1]!=mapname)
 send_reliable(e.peer_id,"update error: map names do not match",2);
 return;
 }
-else if(s>-1&&ld[0]=="ispawn"&&ld.length()>8)
+else if(s1>-1&&ld[0]=="ispawn"&&ld.length()>8)
 {
 send_reliable(e.peer_id,"update error: item spawning is not permitted in shelters",2);
 return;
 }
-else if(s>-1&&ld[0]=="vending_machine"&&ld.length()>3)
+else if(s1>-1&&ld[0]=="vending_machine"&&ld.length()>3)
 {
 send_reliable(e.peer_id,"update error: vending machines are not permitted in shelters",2);
 return;
