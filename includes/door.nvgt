@@ -69,6 +69,7 @@ else if (me.z<doors[i].finishz)
 me.z+=1;
 send_reliable(0,"move_to|"+me.x+"|"+me.y+"|"+me.z,0);
 }
+update_player(me.x,me.y,me.z,mapname,name);
 }
 if (doors[i].finishx==me.x and doors[i].finishy==me.y and doors[i].finishz==me.z and doors[i].moving==true)
 {

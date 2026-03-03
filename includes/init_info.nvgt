@@ -28,7 +28,7 @@ key_hold kpgup(KEY_PRIOR,300,cameraspeed);
 key_hold khome(KEY_HOME,300,100);
 key_hold kend(KEY_END,300,100);
 int cameraspeed=80;
-int beaconing=0;
+int beaconing=1;
 string mapname , lookname;
 network n;
 network_event e;

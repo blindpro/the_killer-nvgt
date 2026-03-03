@@ -3407,6 +3407,25 @@ for(uint i=0; i<sirens.length (); i++)
 {
 send_reliable(players[index].peer_id,"createsiren|"+sirens[i].id+"|"+sirens[i].soundloop+"|"+sirens[i].x+"|"+sirens[i].y+"|"+sirens[i].z+"|"+sirens[i].map,4);
 }
+if(players.length()>0)
+{
+json_array sendtext;
+for(uint i = 0; i < players.length(); i++)
+{
+if(players[i].name==players[index].name) continue;
+json_object js;
+js.set("x",players[i].x);
+js.set("y",players[i].y);
+js.set("z",players[i].z);
+js.set("map",players[i].map);
+js.set("name",players[i].name);
+js.set("hidden",players[i].hidden);
+js.set("teamname",players[i].teamname);
+js.set("peer_id",players[i].peer_id);
+sendtext.add(js);
+}
+send_reliable(players[index].peer_id,"spawn_players|"+sendtext.stringify(),0);
+}
 string text = wnames.replace(" ","|");
 send_reliable(players[index].peer_id,"weaponlist|"+text,0);
 players[index].oldhealth=players[index].health;
@@ -3748,14 +3767,12 @@ players[index].z=string_to_number(parsed[3]);
 players[index].activitytimer.restart();
 if(players[index].active==false) players[index].active=true;
 if(players[index].bleedsound!=""||players[index].lowhealth||players[index].bleeding) update_moving_sound(players[index].bleedsound,players[index].x,players[index].y,players[index].z);
-/*
 int v=in_vehicle(players[index].name);
 if(v>-1)
 {
 vs.remove_at(v);
 send_reliable(players[index].peer_id,"veunspawn",0);
 }
-*/
 string gpt=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
 int a=string_contains(gpt,"glass",1);
 int isair=string_contains(gpt,"underwater",1);
@@ -3775,7 +3792,7 @@ players[index].hitby="shards of glass";
 }
 //if(gpt!="" and players[index].dmoving==false and in_vehicle(players[index].name)<0)
 //players[index].playobjs();
-if(players[index].dmoving==false and players[index].hidden==0 and gpt!="")
+if(players[index].dmoving==false and players[index].hidden==0)
 {
 /*
 int sh=in_shelter(players[index].name);
@@ -3783,7 +3800,7 @@ if(sh>-1)
 play("shelterstep"+random(1,5),players[index].x,players[index].y,players[index].z,players[index].map,index,true,false);
 else
 */
-play(gpt+"step"+random(1,5),players[index].x,players[index].y,players[index].z,players[index].map,index,true,false);
+send_plus(players[index].peer_id,"play_step|"+(gpt.is_empty()?"[empty]":gpt)+"|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map+"|"+players[index].name,0);
 }
 }
 }

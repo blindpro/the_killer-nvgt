@@ -656,6 +656,7 @@ movetime = walktime;
 }
 if(in_map&&!following&&!frozen&&playing&&!inve&&!dmoving)
 {
+update_player(me.x,me.y,me.z,mapname,name);
 fallloop();
 fallcheck();
 fallingloop();

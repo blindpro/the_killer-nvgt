@@ -671,6 +671,10 @@ if(get_item_count("ammo_"+w)<=0)
 return false;
 return true;
 }
+void send_position(int speer_id = 0)
+{
+send_reliable(speer_id,"update_position|"+this.x+"|"+this.y+"|"+this.z+"|"+this.map+"|"+this.name,0);
+}
 bool adminable()
 {
 return (this.is_admin or this.master or this.dev);
@@ -752,12 +756,9 @@ players[i].give("ammo_"+guns[j],a);
 }
 }
 scd(i);
-if(players[i].hidden==0) send_reliable(0, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
-else
-{
+send_reliable(0, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
 if(!players[i].disconnected)
 send_reliable(players[i].peer_id, "offline|"+players[i].x+"|"+players[i].y+"|"+players[i].z+"|"+players[i].name+"|"+players[i].map, 0);
-}
 @players[i]=null;
 players.remove_at(i);
 //if(oldid!=4294967294) send_reliable(oldid,"killclient",0);
@@ -810,8 +811,7 @@ player p1(x,y,z,map,name,pi,cid,ip,ver,ctext,hid);
 players.insert_last(p1);
 int index=get_player_index_from(name);
 players[index].statchangetimer.force(100000);
-if(hid==0)
-send_reliable(0, "online|"+x+"|"+y+"|"+z+"|"+name+"|"+map,0);
+send_reliable(0, "online|"+x+"|"+y+"|"+z+"|"+name+"|"+map+"|"+pi+"|"+hid,0);
 connections++;
 }
 string[] setdisables(string temp)
@@ -1422,6 +1422,7 @@ players[i].stunned=false;
 scd(i);
 }
 //结束
+/*
 if( players[i].beacontimer.elapsed>=players[i].beacontime and players[i].invisible==false and players[i].is_dead==false and players[i].invinsible==false and players[i].hidden==0)
 {
 players[i].beacontimer.restart();
@@ -1437,6 +1438,7 @@ send_unreliable(players[pl].peer_id,"beacon|"+players[i].x+"|"+players[i].y+"|"+
 }
 }
 }
+*/
 }
 }
 string getdisables(string[] f)

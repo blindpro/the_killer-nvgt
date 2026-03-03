@@ -228,6 +228,7 @@ return;
 }
 checkaround(ox, oy);
 }
+update_player(me.x,me.y,me.z,mapname,name);
 }
 
 void checkaround(double ox, double oy)

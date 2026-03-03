@@ -492,6 +492,11 @@ vs.remove_at(i);
 return;
 }
 vs[i].loop();
+int index = get_player_index_from(vs[i].owner);
+if(index>-1)
+{
+if(vs[i].speed>=1) players[index].send_position();
+}
 }
 for(int i=0; i<players.length(); i++)
 {

@@ -7,29 +7,38 @@ int z;
 string map;
 string name;
 timer btimer;
-player(int px,int py,int pz,string pmap, string pname)
+string teamname;
+int hidden = 0;
+int peer_id;
+player(int px,int py,int pz,string pmap, string pname, int ppeer_id)
 {
 x=px;
 y=py;
 z=pz; map=pmap;
 map=pmap;
 name=pname;
+peer_id = ppeer_id;
 }
 }
 void playerloop()
 {
 for(uint i=0; i<players.length(); i++)
 {
-if(players[i].btimer.elapsed>=690 and beaconing==1 and players[i].map==mapname and players[i].name!=name)
+if(players[i].btimer.elapsed>=690 and players[i].map==mapname and players[i].name!=name and beaconing==1)
 {
 players[i].btimer.restart();
-//p.play_3d("beacon.ogg", me.x, me.y, me.z, players[i].x, players[i].y, players[i].z, calculate_theta(facing), false);
+if(are_teamed(name,players[i].name))
+p.play_3d("invsecond.ogg", me.x, me.y, me.z, players[i].x, players[i].y, players[i].z, calculate_theta(facing), false);
+else
+p.play_3d("beacon.ogg", me.x, me.y, me.z, players[i].x, players[i].y, players[i].z, calculate_theta(facing), false);
 }
 }
 }
-void spawn_player(int x,int y,int z,string map,string name)
+void spawn_player(int x,int y,int z,string map,string name, int peer_id)
 {
-player pl(x,y,z,map,name);
+int index = get_player_index_from(name);
+if(index>-1) return;
+player pl(x,y,z,map,name,peer_id);
 players.insert_last(pl);
 }
 void remove_player(string username)
@@ -67,4 +76,61 @@ if(players[i].map!=m)
 players[i].map=m;
 }
 }
+}
+int get_player_index(int peer_id)
+{
+for(uint i = 0; i < players.length(); i++)
+{
+if(players[i].peer_id==peer_id)
+{
+return i;
+}
+}
+return -1;
+}
+int get_player_index_from(string username)
+{
+for(uint i = 0; i < players.length(); i++)
+{
+if(players[i].name==username)
+{
+return i;
+}
+}
+return -1;
+}
+void load_players(string data)
+{
+if(data.is_empty()) return;
+string text = data.replace("spawn_players|","",false);
+json_array@ jsa = parse_json(text);
+if(@jsa==null) return;
+try
+{
+for(uint i = 0; i < jsa.size(); i++)
+{
+json_object@ ob = parse_json(jsa[i]);
+if(@ob==null) continue;
+spawn_player(ob["x"],ob["y"],ob["z"],ob["map"],ob["name"],ob["peer_id"]);
+int index = get_player_index_from(ob["name"]);
+if(index<0) continue;
+int hidden = ob["hidden"];
+string teamname = ob["teamname"];
+players[index].hidden=hidden;
+players[index].teamname = teamname;
+}
+}
+catch
+{
+
+}
+}
+bool are_teamed(string pn1, string pn2)
+{
+int i1 = get_player_index_from(pn1);
+int i2 = get_player_index_from(pn2);
+if(i1<0||i2<0) return false;
+if(players[i1].teamname.is_empty()||players[i2].teamname.is_empty()) return false;
+if(players[i1].teamname==players[i2].teamname) return true;
+return false;
 }
