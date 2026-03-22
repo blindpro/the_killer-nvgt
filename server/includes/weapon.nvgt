@@ -1483,6 +1483,7 @@ if(@weapons[j].p!=null)
 if(weapons[j].p.invisible==false)
 {
 weapons[j].p.invisible=true;
+send_reliable(0,"set_player_value|"+weapons[j].p.name+"|invisible|"+weapons[j].p.invisible,0);
 weapons[j].p.invisibilitytimer.restart();
 play("invisibility_start",weapons[j].p.x,weapons[j].p.y,weapons[j].p.z,weapons[j].p.map);
 @weapons[j]=null;

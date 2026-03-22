@@ -158,7 +158,6 @@ bool invinsible=false, frequency=false , invinsibility_starting=false,is_admin=f
 int facing=0;
 int health=10000,oldhealth;
 double chats;
-int beacon=1;
 timer beacontimer;
 int beacontime=600;
 string name;
@@ -248,6 +247,7 @@ if(warpstage==0 and warptimer.elapsed>=2460)
 {
 send_reliable(peer_id,"freezestart",0);
 invinsible=true;
+send_reliable(0,"set_player_value|"+this.name+"|invinsible|"+this.invinsible,0);
 playsound("wpvanish");
 send_plus(this.peer_id,"distsound|wpvanishdist|"+x+"|"+y+"|"+z+"|"+map,0);
 z+=1000;
@@ -304,6 +304,7 @@ warp.y=round(warp.y,0);
 x=warp.x;y=warp.y;z-=1000;
 send_reliable(peer_id,"move|"+x+"|"+y+"|"+z,0);
 invinsible=false;
+send_reliable(0,"set_player_value|"+this.name+"|invinsible|"+this.invinsible,0);
 send_reliable(peer_id,"freezestop",0);
 send_reliable(peer_id,"startmoving",0);
 playsound("wpappear");
@@ -831,6 +832,7 @@ continue;
 if(players[i].falling==true and players[i].falltimer.elapsed>125)
 {
 players[i].falltimer.restart();
+players[i].send_position();
 if(players[i].z>0) players[i].z--;
 }
 //开始
@@ -1193,6 +1195,7 @@ if(players[i].invseconds<=0 and players[i].invinsibility_starting==true)
 players[i].invinsibility_starting=false;
 players[i].invseconds=5;
 players[i].invinsible=true;
+send_reliable(0,"set_player_value|"+players[i].name+"|invinsible|"+players[i].invinsible,0);
 send_reliable(players[i].peer_id,"stopmoving",0);
 send_reliable(players[i].peer_id,"Invinsibility started!",0);
 players[i].playsound("invstart");
@@ -1261,6 +1264,7 @@ intercept(players[i].x,players[i].y,players[i].z,players[i].map,i);
 if(players[i].invisibilitytimer.elapsed>=30000 and players[i].invisible==true)
 {
 players[i].invisible=false;
+send_reliable(0,"set_player_value|"+players[i].name+"|invisible|"+players[i].invisible,0);
 play("invisibility_stop",players[i].x,players[i].y,players[i].z,players[i].map);
 players[i].invisibilitytimer.restart();
 players[i].invisibilitytimer.pause();
@@ -1307,7 +1311,7 @@ if(players[i].bleedsound!="") destroy_moving_sound(players[i].bleedsound);
 players[i].bleeding=false;players[i].lowhealth=false;players[i].bleedsound="";
 players[i].lowhealth=false;
 send_reliable(players[i].peer_id,"goodhealth",0);
-//send_reliable(0,"play_s|kill.ogg",0);
+send_reliable(0,"play_s|kill.ogg",0);
 string km=killmsg(players[i].name,players[i].hitby,players[i].zone);
 players[i].mask=0;
 players[i].underwater=false;
@@ -1317,6 +1321,7 @@ send_reliable(0,"playerdeath|"+km,0);
 send_reliable(players[i].peer_id, "death", 0);
 players[i].shelter_building=false;
 players[i].is_dead=true;
+send_reliable(0,"set_player_value|"+players[i].name+"|is_dead|"+players[i].is_dead,0);
 players[i].deaths+=1;
 players[i].health=10000;
 players[i].oldhealth=10000;

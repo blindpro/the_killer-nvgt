@@ -307,6 +307,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
+players[index].send_position();
 send_unreliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
@@ -333,6 +334,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
+players[index].send_position();
 send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }

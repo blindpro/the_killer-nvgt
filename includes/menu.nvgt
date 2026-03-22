@@ -290,11 +290,11 @@ m.enable_up_and_down=true;
 m.enable_left_and_right=true;
 m.enable_home_and_end=true;
 m.set_callback(playermenu_callback,"");
-if(!tracking_player.is_empty())
-m.add_item_tts("stop tracking "+tracking_player,"stop tracking");
+if(@tracking_player!=null)
+m.add_item_tts("stop tracking "+tracking_player.name,"stop tracking");
 for(uint i = 0; i < users.length(); i++)
 {
-if(users[i]==tracking_player) continue;
+if(@tracking_player!=null&&users[i]==tracking_player.name) continue;
 m.add_item_tts(users[i],users[i]);
 }
 playerstuff.resize(0);
@@ -305,13 +305,21 @@ speak("canceled");
 }
 else if(m.get_item_name(r)=="stop tracking")
 {
-speak("stop tracking "+tracking_player);
-tracking_player="";
+speak("stop tracking "+tracking_player.name);
+@tracking_player=null;
 }
 else
 {
+int index = get_player_index_from(m.get_item_name(r));
+if(index>-1)
+{
 speak("tracking "+m.get_item_name(r));
-tracking_player = m.get_item_name(r);
+@tracking_player = players[index];
+}
+else
+{
+speak("This player is offline");
+}
 }
 }
 int playermenu_callback(dynamic_menu_pro@ m, string data)

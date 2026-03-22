@@ -455,6 +455,10 @@ if(mapname==map&&!tile.is_empty())
 mpool.play_3d(tile+"step"+random(1,5)+".ogg",me.x,me.y,me.z,x,y,z,calculate_theta(facing),false);
 }
 }
+else if(parsed[0]=="set_player_value"&&parsed.length()>=4)
+{
+set_player_value(parsed[1],parsed[2],parsed[3]);
+}
 else if(parsed[0]=="invstring")
 {
 inv=string_decompress(string_trim_left(s, 10));
@@ -546,6 +550,11 @@ vesound.pitch=stn(parsed[1]);
 else if(parsed[0]=="vestop")
 {
 vesound.stop();
+}
+else if(parsed[0]=="beacon_switch")
+{
+beacon=beacon==0?beacon=1:beacon=0;
+speak("beacon "+(beacon==0?"disabled":"enabled"));
 }
 else if(parsed[0]=="veunspawn")
 {
