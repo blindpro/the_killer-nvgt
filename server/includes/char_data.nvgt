@@ -1,3 +1,4 @@
+const string key = "jslkdjvoigvrvklsdfnkjfsklsdjlfkawejioejgiksrdfnhkjzskldjfklejgkivjkgjtjtestestejkij";
 void scd(int ie)
 {
 string charfolder="chars/"+players[ie].name;
@@ -51,8 +52,9 @@ players [ie].data["inv"]=players[ie].get_inv();
 }
 players [ie].data["registered"]=players[ie].registered;
 players [ie].data["shields"]=players[ie].shieldshots;
+string new = string_aes_encrypt(players[ie].data.stringify(),key);
 fl.open(charfolder+".json","wb");
-fl.write (players[ie].data.stringify());
+fl.write (new);
 fl.close ();
 }
 void load_char_data(int index, bool forced=false)
