@@ -214,7 +214,9 @@ string cf="chars/"+name+".json";
 string ret;
 file c;
 c.open(cf,"rb");
-json_object@ data = parse_json(c.read());
+string raw = c.read();
+string decrypted = string_aes_decrypt(raw, key);
+json_object@ data = parse_json(decrypted);
 c.close();
 if(data.exists(value))
 {
