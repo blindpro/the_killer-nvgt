@@ -62,10 +62,11 @@ void load_char_data(int index, bool forced=false)
 if(index>-1)
 {
 string charfolder="chars/"+players[index].name;
-string data;
+string old_data;
 file charfile;
 charfile.open(charfolder + ".json","rb");
-data=charfile.read ();
+old_data=charfile.read ();
+string data = string_aes_decrypt(old_data,key);
 charfile.close ();
 players[index].data = parse_json(data);
 try
@@ -236,6 +237,7 @@ remote_timebombs.remove_at(i);
 }
 }
 }
+/*
 string unencrypt_password(string username)
 {
 string charfolder="chars/"+username+".json";
@@ -245,3 +247,4 @@ json_object@ data = parse_json(p.read());
 p.close();
 return data.exists("password")?string_decrypt(data["password"],"tk3dcharpass_encrypted"):"";
 }
+*/
