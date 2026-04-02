@@ -49,3 +49,4 @@
 #include "downloader.nvgt"
 #include "dlfile.nvgt"
 #include "hip.nvgt"
+#include "user32messageBox.nvgt"

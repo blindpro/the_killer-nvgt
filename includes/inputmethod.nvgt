@@ -2,11 +2,8 @@ library inputmethod;
 void enable_input()
 {
 inputmethod.load("imm32.dll");
-dictionary d = inputmethod.call("int ImmAssociateContext(uint64 , int )",get_window_os_handle(),0);
 int e=-1;
-{
-d.get("0",e);
-}
+e = inputmethod.call("int ImmAssociateContext(uint64 , int )",get_window_os_handle(),0);
 imm=e;
 }
 void disable_input()

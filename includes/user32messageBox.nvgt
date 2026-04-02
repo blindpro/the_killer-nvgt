@@ -1,0 +1,88 @@
+// constants
+// buttons
+const uint MB_CANCELTRYCONTINUE = 0x00000006;
+const uint MB_OK = 0x00000000; // default
+const uint MB_OKCANCEL = 0x00000001;
+const uint MB_RETRYCANCEL = 0x00000005;
+const uint MB_YESNO = 0x00000004;
+const uint MB_YESNOCANCEL = 0x00000003;
+// icons
+const uint MB_ICONEXCLAMATION = 0x00000030;
+const uint MB_ICONWARNING = 0x00000030;
+const uint MB_ICONINFORMATION = 0x00000040;
+const uint MB_ICONASTERISK = 0x00000040;
+//const uint MB_ICONQUESTION = 0x00000020;
+const uint MB_ICONSTOP = 0x00000010;
+const uint MB_ICONERROR = 0x00000010;
+const uint MB_ICONHAND = 0x00000010;
+// default_button_positions
+const uint MB_DEFBUTTON1 = 0x00000000; // default
+const uint MB_DEFBUTTON2 = 0x00000100;
+const uint MB_DEFBUTTON3 = 0x00000200;
+const uint MB_DEFBUTTON4 = 0x00000300;
+// modal
+const uint MB_APPLMODAL = 0x00000000; // default
+const uint MB_SYSTEMMODAL = 0x00001000;
+const uint MB_TASKMODAL = 0x00002000;
+// other
+const uint MB_DEFAULT_DESKTOP_ONLY = 0x00020000;
+const uint MB_RIGHT = 0x00080000;
+const uint MB_RTLREADING = 0x00100000;
+const uint MB_SETFOREGROUND = 0x00010000;
+const uint MB_TOPMOST = 0x00040000;
+const uint MB_SERVICE_NOTIFICATION = 0x00200000;
+// return values
+const int IDABORT = 3;
+const int IDCANCEL = 2;
+const int IDCONTINUE = 11;
+const int IDIGNORE = 5;
+const int IDNO = 7;
+const int IDOK = 1;
+const int IDRETRY = 4;
+const int IDTRYAGAIN = 10;
+const int IDYES = 6;
+class user32messageBox
+{
+library user32;
+user32messageBox()
+{
+user32.load("user32.dll");
+if(user32.get_active())
+{
+@UmessageBox = user32.get("int MessageBoxExW(uint64,string,string,uint,int)");
+}
+}
+~user32messageBox()
+{
+if(user32.get_active()) user32.unload();
+}
+int alert(string title,string text, bool can_cancel = false, uint icon_flag=0x00000000)
+{
+int value = 0;
+uint button = can_cancel?MB_OKCANCEL:MB_OK;
+uint icon_button = icon_flag>>4>0?button|icon_flag:button;
+value = this.UmessageBox(get_window_os_handle(),string_recode(text,"UTF-8","UTF-16"),string_recode(title,"UTF-8","UTF-16"),icon_button,0);
+return value;
+}
+int question(string title,string text, bool can_cancel = false, uint icon_flag=0x00000000)
+{
+int value = 0;
+uint button = can_cancel?MB_YESNOCANCEL:MB_YESNO;
+uint icon_button = icon_flag>>4>0?button|icon_flag:button;
+value = this.UmessageBox(get_window_os_handle(),string_recode(text,"UTF-8","UTF-16"),string_recode(title,"UTF-8","UTF-16"),icon_button,0);
+if(value==IDYES)
+{
+value=1;
+}
+else if(value==IDNO)
+{
+value=2;
+}
+else if(value==IDCANCEL)
+{
+value=3;
+}
+return value;
+}
+private library_function@ UmessageBox = null;
+}

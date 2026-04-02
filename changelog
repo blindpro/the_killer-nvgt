@@ -1,3 +1,14 @@
+2026年4月2日
+1·更改inputmethod.nvgt兼容最新版nvgt。
+2·简单包装user32的有关MessageBox函数。
+1.9.6-2026年3月22日
+注意，要运行此版本必须将nvgt版本升级到NVGT (NonVisual Gaming Toolkit) version 0.90.0-dev, built on Tuesday, March 17, 2026 at 12:17:28 AM Coordinated Universal Time for Windows NT AMD64之后。
+1·现在玩家信标在本地播放。
+2·增加追踪信标功能按shift+w开启/关闭。
+3·玩家可以听到其他玩家的转向声音。
+4·优化上下线冗余代码。
+5·添加inventory.nvgt删除服务器下的无用副本文件。
+6·其他问题修复。
 2026年2月28日
 1·修复使用/rawdata命令更新地图石，如果有物品和自动售货机则会提示在庇护所内的错误。
 2·现在使用物品抓取器、核弹等物品时不能使用enter功能。

@@ -124,3 +124,5 @@ int dlg_waittime, dlg_mode; //mode: 0,none,1,void dlg(string message) 2,void dlg
 string form_text;
 player@ tracking_player=null;
 bool tracking_beacon;
+game_window@ tk_window = null;
+user32messageBox u32;

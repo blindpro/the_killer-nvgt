@@ -20,14 +20,14 @@ set_sound_storage("sounds.dat","tyuisfgbnmvhxzguyeavbnz");
 //set_sound_storage("sounds.dat");
 if(@sound_default_pack==null)
 {
-alert("error","Open sounds.pack an error has occurred");
+u32.alert("error","Open sounds.pack an error has occurred",false,MB_ICONERROR);
 exit();
 }
 data_read();
 if(is_hardbanned())
 {
 p.play_stationary("error.ogg",false);
-int q=question("error","you are currently banned from the game. Would you like to generate an ID to reverse this ban?");
+int q=u32.question("error","you are currently banned from the game. Would you like to generate an ID to reverse this ban?",false,MB_ICONERROR);
 if(q==1) clipboard_set_text(banid);
 exit();
 }
@@ -41,7 +41,7 @@ set_sound_input_device (currently_input_device);
 */
 if(get_sound_output_devices().find(currently_output_device_name)==-1)
 {
-alert("Error","The output sound device "+currently_output_device_name+" does not exist on this system anymore. Using the default.");
+u32.alert("Error","The output sound device "+currently_output_device_name+" does not exist on this system anymore. Using the default.",false,MB_ICONERROR);
 currently_output_device = 0;
 currently_output_device_name = get_sound_output_devices()[currently_output_device];
 sound_default_engine.set_device(currently_output_device);
@@ -55,7 +55,7 @@ create_buffer("chats");
 create_buffer("misc");
 create_buffer("kills");
 speak_length_start();
-show_window ("the killer version "+ver,WINDOW_FLAG_FULLSCREEN);
+@tk_window = show_window ("the killer version "+ver,WINDOW_FLAG_FULLSCREEN);
 weapons.reserve(15);
 set_garbage_collect_mode (3);
 set_garbage_collect_auto_frequency (5000);
