@@ -1,3 +1,9 @@
+2026年4月26日
+1·武器数据使用json格式存储感谢claude。
+2·基于武器数据修改武器相关代码，可直接调用存储的武器数据。
+3·更改amphibian的拼写现在可以正常刷新了。
+4·尝试实现virtualizer的utf-8支持——任然存在问题。
+5·修复隐身盾。
 2026年4月2日
 1·更改inputmethod.nvgt兼容最新版nvgt。
 2·简单包装user32的有关MessageBox函数。
