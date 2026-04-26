@@ -29,10 +29,18 @@ if (key_down(KEY_LCONTROL) or key_down(KEY_RCONTROL))
 if (key_pressed(KEY_V))
 {
 speak("text pasted");
-string cl=clipboard_read_text();
-for (uint i=0; i<cl.length(); i++)
+string cl=clipboard_get_text();
+int cl_cursor = 0;
+while(cl_cursor < cl.length())
 {
-ms.insert_at(cursor,cl[i]);
+int utf8s = utf8next(cl,cl_cursor);
+string text;
+if(utf8s>1)
+text=cl.substr(cl_cursor,utf8s);
+else
+text=cl[cl_cursor];
+ms.insert_at(cursor,text);
+cl_cursor+=utf8s;
 cursor+=1;
 }
 }
@@ -91,9 +99,18 @@ speak("*");
 else
 speak(spoken_feedback);
 }
-if(char!="")
-ms.insert_at(cursor,char);
+uint char_cursor = 0;
+while(char_cursor < char.length())
+{
+int utf8s = utf8next(char,char_cursor);
+ms.insert_at(cursor,char.substr(char_cursor,utf8s));
+char_cursor+=utf8s;
 cursor+=1;
+}
+}
+if(key_pressed(KEY_F5))
+{
+alert("info",join(ms,"\r\n"));
 }
 if(key_pressed(KEY_BACK) and ms.length() > 0 and cursor>=1)
 {

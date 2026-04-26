@@ -1,4 +1,4 @@
-name Amphibian
+name amphibian
 health 250000
 defence 10000
 speed 700

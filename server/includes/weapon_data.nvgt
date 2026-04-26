@@ -1,0 +1,132 @@
+weapon_data@[] wdata(0);
+class weapon_data
+{
+json_object@ data = null;
+string name;
+int speed_time;
+int range;
+int stun_time=0;
+int min_damage=0;
+int max_damage=0;
+int spread=0;
+int min_shield_hits=0,max_shield_hits=0;
+int shield_chance=0;
+int hit_sounds=0;
+bool stunning=false;
+bool bullet=false;
+bool requires_ammo=false;
+bool team_hittable=false;
+int max_ammo = 0;
+int reload_time = 0;
+int fire_time = 0;
+int walk_time = 100;
+int can_jump = 1;
+string fire_mode = "norm";
+bool equipable = false;
+weapon_data(string data)
+{
+@this.data = parse_json(data);
+}
+var@ get_data_value(string key)
+{
+if(data.exists(key))
+return data[key];
+return null;
+}
+}
+bool wdata_value_exists(string wname, string key)
+{
+int index = get_wdata_index(wname);
+if(index>-1)
+{
+if(wdata[index].data.exists(key)) return true;
+}
+return false;
+}
+var@ get_wdata_value(string wname, string key)
+{
+int index = get_wdata_index(wname);
+if(index>-1)
+{
+return wdata[index].get_data_value(key);
+}
+return null;
+}
+var@ get_wdata_value(uint index, string key)
+{
+if(index<0||index>wdata.length()-1) return null;
+return wdata[index].get_data_value(key);
+return null;
+}
+void wdata_check()
+{
+for(uint i = 0; i < wdata.length(); i++)
+{
+if(@wdata[i].data==null)
+wdata.remove_at(i);
+}
+}
+void init_weapon_system()
+{
+if(wdata.length()>0) wdata.resize(0);
+string[] files = find_files("weapons/*");
+for(uint i = 0; i < files.length(); i++)
+{
+json_object@ w = parse_json(file_get_contents("weapons/"+files[i]));
+if(@w==null) continue;
+if(!w.exists("name")) continue;
+weapon_data w1(w.stringify());
+w1.name = w["name"];
+if(w.exists("bullet")&&!w.is_null("bullet")) w1.bullet = w["bullet"];
+if(w.exists("equipable")&&!w.is_null("equipable")) w1.equipable = w["equipable"];
+if(w.exists("fire_mode")&&!w.is_null("fire_mode")) w1.fire_mode = w["fire_mode"];
+if(w.exists("fire_time")&&!w.is_null("fire_time")) w1.fire_time = w["fire_time"];
+if(w.exists("max_ammo")&&!w.is_null("max_ammo")) w1.max_ammo = w["max_ammo"];
+if(w.exists("min_damage")&&!w.is_null("min_damage")) w1.min_damage = w["min_damage"];
+if(w.exists("max_damage")&&!w.is_null("max_damage")) w1.max_damage = w["max_damage"];
+if(w.exists("range")&&!w.is_null("range")) w1.range = w["range"];
+if(w.exists("reload_time")&&!w.is_null("reload_time")) w1.reload_time = w["reload_time"];
+if(w.exists("requires_ammo")&&!w.is_null("requires_ammo")) w1.requires_ammo = w["requires_ammo"];
+if(w.exists("shield_chance")&&!w.is_null("shield_chance")) w1.shield_chance = w["shield_chance"];
+if(w.exists("speed_time")&&!w.is_null("speed_time")) w1.speed_time = w["speed_time"];
+if(w.exists("spread")&&!w.is_null("spread")) w1.spread = w["spread"];
+if(w.exists("walk_time")&&!w.is_null("walk_time")) w1.walk_time = w["walk_time"];
+if(w.exists("can_jump")&&!w.is_null("jump")) w1.can_jump = w["can_jump"];
+if(w.exists("hit_sounds")&&!w.is_null("hit_sounds")) w1.hit_sounds = w["hit_sounds"];
+if(w.exists("min_shield_hits")&&!w.is_null("min_shield_hits")) w1.min_shield_hits = w["min_shield_hits"];
+if(w.exists("max_shield_hits")&&!w.is_null("max_shield_hits")) w1.max_shield_hits = w["max_shield_hits"];
+if(w.exists("stunning")&&!w.is_null("stunning")) w1.stunning = w["stunning"];
+if(w.exists("stun_time")&&!w.is_null("stun_time")) w1.stun_time = w["stun_time"];
+if(w.exists("team_hittable")&&!w.is_null("team_hittable")) w1.team_hittable = w["team_hittable"];
+wdata.insert_last(w1);
+}
+wdata_check();
+}
+int get_wdata_index(string name)
+{
+for(uint i = 0; i < wdata.length(); i++)
+{
+if(wdata[i].name==name)
+return i;
+}
+return -1;
+}
+weapon_data@ return_wdata(string name)
+{
+int index = get_wdata_index(name);
+if(index>-1)
+{
+if(wdata[index].name==name) return wdata[index];
+}
+return null;
+}
+weapon_data@[] get_guns_data()
+{
+weapon_data@[] w = wdata;
+for(uint i = 0; i < w.length(); i++)
+{
+if(!w[i].requires_ammo)
+w.remove_at(i);
+}
+return w;
+}

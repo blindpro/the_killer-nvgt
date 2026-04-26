@@ -1,0 +1,1 @@
+{"bullet":true,"equipable":true,"fire_mode":"norm","fire_time":2000,"max_ammo":6,"max_damage":30000,"max_shield_hits":40,"min_damage":3000,"min_shield_hits":4,"name":"gauss","range":300,"reload_time":1908,"requires_ammo":true,"shield_chance":50,"speed_time":0,"spread":6}

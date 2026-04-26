@@ -399,23 +399,6 @@ else if(parsed[0]=="load_obj" and parsed.length()>=1)
 string data = string_replace(s,"load_obj|","",false);
 load_obj(data);
 }
-else if(parsed[0]=="walkmod" and parsed.length()>2)
-{
-walkmod=true;
-walktime=stn(parsed[1]);
-airtime=(stn(parsed[1])/2);
-canjump=stn(parsed[2]);
-movetime=walktime;
-walktimer.restart();
-}
-else if(parsed[0]=="resetwalktime")
-{
-walkmod=false;
-walktime=100;
-movetime=walktime;
-if(canjump==0) canjump=1;
-airtime=50;
-}
 else if(parsed[0]=="weaponlist" and parsed.length()>1)
 {
 weapons.resize(0);
@@ -425,10 +408,44 @@ for(uint i=1; i<parsed.length(); i++)
 weapons.insert_last(parsed[i]);
 }
 }
-else if(parsed[0]=="weapondata" and parsed.length()>2)
+else if(parsed[0]=="weapondata" and parsed.length()>=2)
 {
-firetime=stn(parsed[1]);
-weaponauto=(parsed[2]=="auto" ? true : false);
+string text = s.replace("weapondata|","");
+json_object@ j = parse_json(text);
+if(@j!=null)
+{
+string[] k = j.get_keys();
+for(uint i = 0; i < k.length(); i++)
+{
+if(k[i]=="fire_time")
+firetime=j["fire_time"];
+if(k[i]=="fire_mode")
+weaponauto=(j["fire_mode"]=="auto" ? true : false);
+if(k[i]=="walk_time")
+{
+walkmod=true;
+walktime=j["walk_time"];
+airtime=(j["walk_time"]/2);
+movetime=walktime;
+walktimer.restart();
+}
+if(!j.exists("walk_time"))
+{
+walkmod=false;
+walktime=100;
+movetime=walktime;
+airtime=50;
+}
+if(k[i]=="can_jump")
+{
+canjump=j["can_jump"];
+}
+if(!j.exists("can_jump"))
+{
+canjump=1;
+}
+}
+}
 }
 else if(parsed[0]=="followstart")
 {

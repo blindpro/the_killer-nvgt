@@ -561,107 +561,6 @@ succeeded=true;
 muted=newmuted;
 return succeeded;
 }
-void get_weapon_propperties(string wname)
-{
-int walktime=100;
-int canjump=1;
-if(wname=="cannon")
-{
-walktime=500;
-canjump=0;
-}
-if(wname=="hand_cannon")
-{
-walktime=350;
-}
-if(wname=="awp")
-{
-walktime=200;
-}
-if(wname=="zulfikar")
-{
-walktime=2000000000;
-canjump=0;
-}
-if(wname=="ags30")
-{
-firetime=200;
-walktime=350;
-}
-if(wname=="m134_minigun")
-{
-firetime=610;
-canjump=0;
-walktime=2000;
-}
-if(wname=="barrett_m82_sniper_rifle")
-{
-walktime=300;
-}
-if(wname=="browning_m2_heavy_50_cal_machinegun")
-{
-firetime=200;
-canjump=0;
-walktime=500;
-}
-if(wname=="m16_assault_rifle")
-{
-firetime=140;
-}
-if(wname=="browning_high_power_bda_handgun")
-{
-firetime=200;
-}
-if(wname=="ak47_assault_rifle")
-{
-firetime=300;
-}
-if(wname=="mp5_machine_pistol")
-{
-firetime=500;
-}
-if(wname=="stp_s84q_automatic_suppressed_pistol")
-{
-firetime=200;
-}
-if(wname=="blz83_portable_machine_gun")
-{
-firetime=490;
-}
-if(wname=="stp21_handgun")
-{
-firetime=200;
-}
-if(wname=="m4a1_assault_rifle")
-{
-firetime=350;
-}
-if(wname=="fnminimilight")
-{
-firetime=150;
-}
-if(wname=="beretta_m1951_machine_pistol")
-{
-firetime=150;
-}
-if(wname=="modern_sub_machine_gun_carbine")
-{
-firetime=100;
-}
-if(wname=="str_301_long_barreled_machine_pistol")
-{
-firetime=200;
-}
-if(wname=="crt43_automatic_shotgun")
-{
-firetime=500;
-}
-if(wname=="nak_nk1000_decimater")
-{
-walktime=350;
-}
-send_reliable(peer_id,"walkmod|"+walktime+"|"+canjump,0);
-}
 int get_ammo_count(string w)
 {
 return get_ammo_count_from(w);
@@ -748,12 +647,13 @@ int ind=get_player_index_from(players[i].following);
 if(ind>-1) players[ind].following="";
 }
 disconnections++;
-for(uint j=0; j<guns.length(); j++)
+for(uint j=0; j<wdata.length(); j++)
 {
-int64 a=players[i].get_ammo_count_from(guns[j]);
+if(wdata[j].requires_ammo==false) continue;
+int64 a=players[i].get_ammo_count_from(wdata[j].name);
 if(a>0)
 {
-players[i].give("ammo_"+guns[j],a);
+players[i].give("ammo_"+wdata[j].name,a);
 }
 }
 scd(i);
@@ -1265,7 +1165,7 @@ if(players[i].invisibilitytimer.elapsed>=30000 and players[i].invisible==true)
 {
 players[i].invisible=false;
 send_reliable(0,"set_player_value|"+players[i].name+"|invisible|"+players[i].invisible,0);
-play("invisibility_stop",players[i].x,players[i].y,players[i].z,players[i].map);
+players[i].playsound("invisibility_stop");
 players[i].invisibilitytimer.restart();
 players[i].invisibilitytimer.pause();
 }
@@ -1411,9 +1311,10 @@ if(lost>0)
 players[i].give(choice,-lost);
 send_reliable(players[i].peer_id,"you lost "+lost+" "+choice+"s!",2);
 }
-for(uint g=0; g<guns.length (); g++)
+for(uint g=0; g<wdata.length (); g++)
 {
-if(players[i].get_item_count("ammo_"+guns[g])<=0) players[i].give("ammo_"+guns[g],random(50,90));
+if(wdata[g].requires_ammo==false) continue;
+if(players[i].get_item_count("ammo_"+wdata[g].name)<=0) players[i].give("ammo_"+wdata[g].name,random(50,90));
 }
 }
 }

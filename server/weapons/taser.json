@@ -1,0 +1,1 @@
+{"bullet":false,"equipable":true,"fire_mode":"norm","fire_time":6000,"hit_sounds":4,"max_ammo":1,"max_damage":450,"max_shield_hits":3,"min_damage":100,"min_shield_hits":1,"name":"taser","range":5,"reload_time":917,"requires_ammo":true,"shield_chance":100,"speed_time":5,"spread":5,"stun_time":5000,"stunning":true}

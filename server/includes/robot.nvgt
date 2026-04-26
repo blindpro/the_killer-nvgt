@@ -258,7 +258,7 @@ void robotsloop ()
 						string loots=robots[r].loots[random(0,robots[r].loots.length()-1)];
 						if(loots=="ammo")
 						{
-							loots="ammo_"+guns[random(0,guns.length()-1)];
+							loots="ammo_"+get_guns_data()[random(0,get_guns_data().length()-1)].name;
 						}
 						uint ramount=random(1,robots[r].amount);
 						send_reliable(players[ind].peer_id,"you got "+ramount+" "+loots+"s.",2);
