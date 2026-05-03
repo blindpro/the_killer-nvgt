@@ -2039,8 +2039,11 @@ else if(wname=="weapon_ammo_box")
 int total = 0;
 for(uint i = 0; i < wdata.length(); i++)
 {
-if(wdata[i].equipable&&wdata[i].requires_ammo) players[index].give("ammo_"+wdata[i].name,random(10000, 50000),false);
+if(wdata[i].equipable&&wdata[i].requires_ammo) 
+{
+players[index].give("ammo_"+wdata[i].name,random(10000, 50000),false);
 total++;
+}
 }
 players[index].playsound("ammo_box");
 send_reliable(players[index].peer_id,"done. Ammunition for "+total+" weapons was obtained.",2);
@@ -3394,7 +3397,7 @@ spawnable=false;
 if(spawnable==true)
 {
 int hide=stn(get_char_val(parsed[5],"hidden"));
-spawn_player(string_to_number(parsed[1]), string_to_number(parsed[2]), string_to_number(parsed[3]), parsed[4], parsed[5], e.peer_id,parsed[6],string_replace(parsed[7],"[spce]"," ",true),n.get_peer_address(e.peer_id),string_replace(get_event_message(),parsed[0]+" "+parsed[1]+" "+parsed[2]+" "+parsed[3]+" "+parsed[4]+" "+parsed[5]+" "+parsed[6]+" "+parsed[7],"",false),hide);
+spawn_player(string_to_number(parsed[1]), string_to_number(parsed[2]), string_to_number(parsed[3]), parsed[4], parsed[5], e.peer_id,parsed[6],string_replace(parsed[7],"[spce]"," ",true),n.get_peer_address(e.peer_id),string_replace(s,parsed[0]+" "+parsed[1]+" "+parsed[2]+" "+parsed[3]+" "+parsed[4]+" "+parsed[5]+" "+parsed[6]+" "+parsed[7],"",false),hide);
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
@@ -3753,7 +3756,7 @@ else if(parsed[0]=="reginfo")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-players[index].data["reginfo"]=string_replace(get_event_message(),"reginfo ","",false);
+players[index].data["reginfo"]=string_replace(s,"reginfo|","",false);
 }
 }
 else if(parsed[0]=="regstatus")
@@ -4376,7 +4379,7 @@ string[] parsed = s.split(" ");
 int index=get_player_index(e.peer_id);
 if (index>-1)
 {
-string message=get_event_message();
+string message=s;
 if(filter(message))
 {
 send_reliable(e.peer_id,"The server has detected a crash code. The server will prevent these messages from going through.",2);
@@ -5441,12 +5444,12 @@ if(players[index].replyname!="")
 int index2=get_player_index_from(players[index].replyname);
 if(index2>-1)
 {
-send_reliable(e.peer_id, "silence|you reply to "+players[index2].nickname+": "+string_replace(get_event_message(),parsed[0]+" ", "", false), 1);
+send_reliable(e.peer_id, "silence|you reply to "+players[index2].nickname+": "+string_replace(s,parsed[0]+" ", "", false), 1);
 if(players[index2].is_muted(players[index].name)==false)
 {
 players[index2].replyname=players[index].name;
-send_reliable(players[index2].peer_id, "pm|reply from "+players[index].nickname+" ("+players[index].name+"): "+string_replace(get_event_message(), parsed[0]+" ", "", false), 1);
-log("eventstream",players[index].nickname+" replied to "+players[index2].nickname+": "+string_replace(get_event_message(),parsed[0]+" ", "", false));
+send_reliable(players[index2].peer_id, "pm|reply from "+players[index].nickname+" ("+players[index].name+"): "+string_replace(s, parsed[0]+" ", "", false), 1);
+log("eventstream",players[index].nickname+" replied to "+players[index2].nickname+": "+string_replace(s,parsed[0]+" ", "", false));
 }
 }
 else
@@ -6397,7 +6400,7 @@ send_reliable(players[index].peer_id,"your chats have been disabled",0);
 return;
 }
 players[index].chat(players[index].nickname+" "+string_trim_left(s,4));
-log("eventstream",players[index].nickname+" "+string_trim_left(get_event_message(),4));
+log("eventstream",players[index].nickname+" "+string_trim_left(s,4));
 }
 else if(parsed[0]=="/create_key" and parsed.length()>2)
 {
@@ -7155,7 +7158,7 @@ else if(parsed[0]=="/newmotd" and parsed.length()>1)
 {
 if(players[index].adminable())
 {
-log("MOTD",players[index].name+" updated the message of the day to "+string_replace(get_event_message(),"/newmotd ","",true),false,true);
+log("MOTD",players[index].name+" updated the message of the day to "+string_replace(s,"/newmotd ","",true),false,true);
 setmotd(s.replace("/newmotd","",true));
 }
 else
@@ -7409,7 +7412,7 @@ int t=is_in_team(players[index].name);
 if(t>-1)
 {
 teams[t].transmit(players[index].nickname+" team coms: "+string_trim_left(s,3),true);
-log("eventstream","in team "+teams[t].teamname+", "+players[index].nickname+" ("+players[index].name+") said "+string_trim_left(get_event_message(),3));
+log("eventstream","in team "+teams[t].teamname+", "+players[index].nickname+" ("+players[index].name+") said "+string_trim_left(s,3));
 }
 else
 {
@@ -7562,7 +7565,7 @@ else
 {
 if(teams[stuff].teamleader==players[index].name)
 {
-bool success=teams[stuff].remove_member(string_trim_left(get_event_message(),12));
+bool success=teams[stuff].remove_member(string_trim_left(s,12));
 if(!success)
 {
 send_reliable(players[index].peer_id, "error removing a team member.", 0);
@@ -7758,6 +7761,7 @@ save_tempbans();
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 uint64[]@ p = n.get_peer_list();
 for (uint i =0; i < p.length(); i++)
 {
@@ -7774,6 +7778,7 @@ n.send_unreliable(players[i].peer_id,mess,channel);
 void send_reliable_x(uint peer, string mess, uint channel, int tx, int ty, int tz,string tmap,int range=50)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > tx-range and players[i].x < tx+range and players[i].y > ty-range and players[i].y < ty+range and players[i].z > tz-range and players[i].z < tz+range and players[i].map==tmap)
@@ -7785,6 +7790,7 @@ n.send_reliable(players[i].peer_id,mess,channel);
 void send_reliable(uint peer, string mess, uint channel, int index=-1)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 if(index>-1)
 {
 int x=players[index].x;
@@ -7806,6 +7812,7 @@ n.send_reliable(peer,mess,channel);
 void send_unreliable(uint peer, string mess, uint channel, int index=-1)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 if(index>-1)
 {
 int x=players[index].x;
@@ -7840,10 +7847,10 @@ if(r=="")
 {
 return "";
 }
+r = string_inflate(r);
 r=string_decrypt(r, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
 return r;
 }
-
 void login(string u, string p, string yv, uint id, string compid)
 {
 bool can_login=true;
@@ -8032,15 +8039,6 @@ if(!evenhidden&&players[i].hidden>0) continue;
 }
 }
 return -1;
-}
-string get_event_message()
-{
-string r=e.message;
-if(r=="")
-{
-return "";
-}
-return r;
 }
 void sendmap(string packet,string map,int channel=0,bool reliable=true)
 {
@@ -8751,4 +8749,12 @@ mfile.open("prefs/motd.svr","wb");
 mfile.write(newmotd);
 mfile.close();
 if(public==true) send_reliable(0,"Message of the day was updated to "+newmotd,2);
+}
+void print_profile()
+{
+file f;
+f.open((beta == true ? "beta_profile.log" : "profile.log"),"w");
+f.write(generate_profile());
+stop_profiling();
+reset_profiler();
 }
