@@ -147,6 +147,6 @@ vector max = trackaabb.get_max();
 if(trackingtimer.elapsed>10*get_3d_distance(me.x,me.y,me.z,center.x,center.y,center.z))
 {
 trackingtimer.restart();
-trackpool.play_extended(3,sound_name,sound_default_pack,me.x, me.y,me.z,min.x, min.y, min.z, calculate_theta(facing), 0, max.x-min.x, 0, max.y-min.y,0, max.z-min.z, false, 0.0, 0, 0, 100);
+trackpool.play_extended(3,sound_name,sound_default_pack,me.x, me.y,me.z,min.x, min.y, min.z, calculate_theta(facing), 0, max.x-min.x, 0, max.y-min.y,0, max.z-min.z, false, 0.0, 0, -10, 100);
 }
 }
