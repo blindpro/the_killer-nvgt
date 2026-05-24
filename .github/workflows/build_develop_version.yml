@@ -21,15 +21,15 @@ jobs:
         mkdir -p nvgt
         curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
         echo "===== TAR CONTENTS ====="
-        tar -xzf nvgt.tar.gz
+        tar -xzf nvgt.tar.gz -C nvgt
         echo "===== EXTRACTED FILES ====="
         ls -a
         rm nvgt.tar.gz
-        chmod +x nvgt
+        chmod +x $GITHUB_WORKSPACE/nvgt/nvgt
 
-    - name: build windows client
-      run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
+#    - name: build windows client
+#      run: |
+#        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
 
     - name: build windows server
       run: |
@@ -49,7 +49,6 @@ jobs:
           ${{ github.event.head_commit.message }}
         prerelease: true
         files: |
-#          tk.zip
           tkserver.zip
           tkserver.tar.gz
       env:
