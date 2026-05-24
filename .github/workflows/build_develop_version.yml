@@ -25,20 +25,21 @@ jobs:
 
     - name: build windows client
       run: |
-        echo "nvgt tk.nvgt --compile-debug -p windows"
+        nvgt tk.nvgt --compile-debug -p windows
 
     - name: build windows server
       run: |
-        echo "nvgt server/tkserver.nvgt --compile-debug -p windows"
+        nvgt server/tkserver.nvgt --compile-debug -p windows
 
     - name: build linux server
       run: |
-        echo "nvgt server/tkserver.nvgt --compile-debug -p linux"
+        nvgt server/tkserver.nvgt --compile-debug -p linux
+
     - name: Update Latest Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: "latest-develop-version"
-        name: "Latest Automatical Build"
+        name: "latest develop version"
         body: |
           ${{ github.sha }}
           ${{ github.event.head_commit.message }}
