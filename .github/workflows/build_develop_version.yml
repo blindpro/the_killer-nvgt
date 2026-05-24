@@ -22,7 +22,7 @@ jobs:
         curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
         echo "===== TAR CONTENTS ====="
         tar -tzf nvgt.tar.gz | head -50
-        tar -xzf nvgt.tar.gz
+        tar -xzf nvgt.tar.gz -c nvgt
         echo "===== EXTRACTED FILES ====="
         ls -R nvgt
         rm nvgt.tar.gz
