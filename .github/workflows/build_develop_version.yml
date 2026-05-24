@@ -24,19 +24,19 @@ jobs:
         echo "===== EXTRACTED FILES ====="
         ls -a
         rm nvgt.tar.gz
-        chmod +x nvgt/nvgt
+        chmod +x nvgt
 
     - name: build windows client
       run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
+        $GITHUB_WORKSPACE/nvgt tk.nvgt --compile-debug -p windows
 
     - name: build windows server
       run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt server/tkserver.nvgt --compile-debug -p windows
+        $GITHUB_WORKSPACE/nvgt server/tkserver.nvgt --compile-debug -p windows
 
     - name: build linux server
       run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt server/tkserver.nvgt --compile-debug -p linux
+        $GITHUB_WORKSPACE/nvgt server/tkserver.nvgt --compile-debug -p linux
 
     - name: Update Latest Release
       uses: softprops/action-gh-release@v2
