@@ -27,9 +27,9 @@ jobs:
         rm nvgt.tar.gz
         chmod +x nvgt
 
-#    - name: build windows client
-#      run: |
-#        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
+    - name: build windows client
+      run: |
+        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
 
     - name: build windows server
       run: |
