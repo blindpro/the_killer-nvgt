@@ -22,11 +22,11 @@ jobs:
         curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
         echo "===== TAR CONTENTS ====="
         tar -tzf nvgt.tar.gz | head -50
-        tar -xzf nvgt.tar.gz -C nvgt
+        tar -xzf nvgt.tar.gz
         echo "===== EXTRACTED FILES ====="
         ls -R nvgt | head -100
         rm nvgt.tar.gz
-        chmod +x nvgt/nvgt_linux.bin
+        chmod +x nvgt/nvgt
 
     - name: build windows client
       run: |
