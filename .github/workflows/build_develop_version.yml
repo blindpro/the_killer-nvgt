@@ -1,0 +1,51 @@
+name: build_develop_version
+
+on:
+  push:
+    branches: [ "dev" ]
+
+permissions:
+  contents: write # 赋予修改 Release 的权限
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download and setup NVGT compiler
+      run: |
+        mkdir -p nvgt
+        curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
+        tar -xzf nvgt.tar.gz -C nvgt --strip-components=1
+        rm nvgt.tar.gz
+        echo "$GITHUB_WORKSPACE/nvgt" >> $GITHUB_PATH
+
+    - name: build windows client
+      run: |
+        echo "nvgt tk.nvgt --compile-debug -p windows"
+
+    - name: build windows server
+      run: |
+        echo "nvgt server/tkserver.nvgt --compile-debug -p windows"
+
+    - name: build linux server
+      run: |
+        echo "nvgt server/tkserver.nvgt --compile-debug -p linux"
+    - name: Update Latest Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: "latest-develop-version"
+        name: "Latest Automatical Build"
+        body: |
+          ${{ github.sha }}
+          ${{ github.event.head_commit.message }}
+        prerelease: true
+        files: |
+          tk.zip
+          tkserver.zip
+          tkserver.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
