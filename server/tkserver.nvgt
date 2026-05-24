@@ -1,4 +1,4 @@
-#include "includes\include.nvgt"
+#include "includes/include.nvgt"
 ip_locale l;
 timestamp object_stamp;
 network n;
