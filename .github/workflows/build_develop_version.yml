@@ -24,7 +24,7 @@ jobs:
         tar -tzf nvgt.tar.gz | head -50
         tar -xzf nvgt.tar.gz
         echo "===== EXTRACTED FILES ====="
-        ls -R nvgt | head -100
+        ls -R nvgt
         rm nvgt.tar.gz
         chmod +x nvgt/nvgt
 
