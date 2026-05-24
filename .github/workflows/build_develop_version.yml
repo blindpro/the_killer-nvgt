@@ -33,10 +33,12 @@ jobs:
 
     - name: build windows server
       run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt server/tkserver.nvgt --compile-debug -p windows
+        cd $GITHUB_WORKSPACE/server
+        $GITHUB_WORKSPACE/nvgt/nvgt tkserver.nvgt --compile-debug -p windows
 
     - name: build linux server
       run: |
+        cd $GITHUB_WORKSPACE/server
         $GITHUB_WORKSPACE/nvgt/nvgt server/tkserver.nvgt --compile-debug -p linux
 
     - name: Update Latest Release
