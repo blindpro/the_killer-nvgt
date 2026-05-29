@@ -34,7 +34,8 @@ jobs:
 
     - name: build windows server
       run: |
-        nvgt --compile-debug -p windows -i "$GITHUB_WORKSPACE/nvgt/include" "$GITHUB_WORKSPACE/server/tkserver".nvgt
+        export PATH="$GITHUB_WORKSPACE/server:$PATH"
+        nvgt --compile-debug -p windows -i "$GITHUB_WORKSPACE/nvgt/include" "tkserver.nvgt"
 
 
     - name: build linux server
