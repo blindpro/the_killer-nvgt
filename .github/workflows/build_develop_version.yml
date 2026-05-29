@@ -26,6 +26,8 @@ jobs:
         ls -a
         rm nvgt.tar.gz
         chmod +x $GITHUB_WORKSPACE/nvgt/nvgt
+        echo "${{ github.workspace }}/nvgt" >> $GITHUB_PATH
+        ldd $GITHUB_WORKSPACE/nvgt/nvgt
 
 #    - name: build windows client
 #      run: |
