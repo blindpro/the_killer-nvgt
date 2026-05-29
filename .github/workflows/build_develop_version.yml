@@ -34,12 +34,12 @@ jobs:
     - name: build windows server
       run: |
         cd $GITHUB_WORKSPACE/server
-        $GITHUB_WORKSPACE/nvgt/nvgt tkserver.nvgt --compile-debug -p windows
+        $GITHUB_WORKSPACE/nvgt/nvgt --compile-debug -p windows "$tkserver".nvgt
 
     - name: build linux server
       run: |
         cd $GITHUB_WORKSPACE/server
-        $GITHUB_WORKSPACE/nvgt/nvgt server/tkserver.nvgt --compile-debug -p linux
+                $GITHUB_WORKSPACE/nvgt/nvgt --compile-debug -p linux "$tkserver".nvgt
 
     - name: Update Latest Release
       uses: softprops/action-gh-release@v2
