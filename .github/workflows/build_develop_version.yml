@@ -27,7 +27,6 @@ jobs:
         rm nvgt.tar.gz
         chmod +x $GITHUB_WORKSPACE/nvgt/nvgt
         echo "${{ github.workspace }}/nvgt" >> $GITHUB_PATH
-        ldd $GITHUB_WORKSPACE/nvgt/nvgt
 
 #    - name: build windows client
 #      run: |
@@ -35,7 +34,8 @@ jobs:
 
     - name: build windows server
       run: |
-        $GITHUB_WORKSPACE/nvgt/nvgt --compile-debug -p windows "$GITHUB_WORKSPACE/server/tkserver".nvgt
+        nvgt --compile-debug -p windows -i "$GITHUB_WORKSPACE/nvgt/include" "$GITHUB_WORKSPACE/server/tkserver".nvgt
+
 
     - name: build linux server
       run: |
