@@ -20,27 +20,22 @@ jobs:
         set -e
         mkdir -p nvgt
         curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
-        echo "===== TAR CONTENTS ====="
         tar -xzf nvgt.tar.gz -C nvgt
-        echo "===== EXTRACTED FILES ====="
-        ls -a
         rm nvgt.tar.gz
         chmod +x $GITHUB_WORKSPACE/nvgt/nvgt
         echo "${{ github.workspace }}/nvgt" >> $GITHUB_PATH
 
 #    - name: build windows client
 #      run: |
-#        $GITHUB_WORKSPACE/nvgt/nvgt tk.nvgt --compile-debug -p windows
+#        nvgt tk.nvgt --compile-debug -pwindows
 
     - name: build windows server
       run: |
-        export PATH="$GITHUB_WORKSPACE/server:$PATH"
-        nvgt --compile-debug -p windows -i "$GITHUB_WORKSPACE/nvgt/include" "tkserver.nvgt"
-
+        nvgt --compile-debug -pwindows "$GITHUB_WORKSPACE/server/tkserver.nvgt"
 
     - name: build linux server
       run: |
-                $GITHUB_WORKSPACE/nvgt/nvgt --compile-debug -p linux "$GITHUB_WORKSPACE/server/tkserver".nvgt
+        nvgt --compile-debug -p linux "$GITHUB_WORKSPACE/server/tkserver.nvgt"
 
     - name: Update Latest Release
       uses: softprops/action-gh-release@v2
