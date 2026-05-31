@@ -9,33 +9,27 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Download and setup NVGT compiler
-      run: |
-        set -e
-        mkdir -p nvgt
-        curl -L https://github.com/samtupy/nvgt/releases/download/latest/nvgt_0.90.0_dev.tar.gz -o nvgt.tar.gz
-        tar -xzf nvgt.tar.gz -C nvgt
-        rm nvgt.tar.gz
-        chmod +x $GITHUB_WORKSPACE/nvgt/nvgt
-        echo "${{ github.workspace }}/nvgt" >> $GITHUB_PATH
-
-#    - name: build windows client
-#      run: |
-#        nvgt tk.nvgt --compile-debug -pwindows
+    - name: Call Setup NVGT Action
+      uses: ./.github/actions/setup-nvgt
+      with:
+        dev: 'true'
+        add-to-path: 'true'
 
     - name: build windows server
+      shell: bash
       run: |
-        nvgt --compile-debug -pwindows "$GITHUB_WORKSPACE/server/tkserver.nvgt"
+        nvgt --compile-debug -pwindows "${{ github.workspace }}/server/tkserver.nvgt"
 
     - name: build linux server
+      shell: bash
       run: |
-        nvgt --compile-debug -p linux "$GITHUB_WORKSPACE/server/tkserver.nvgt"
+        nvgt --compile-debug -p linux "${{ github.workspace }}/server/tkserver.nvgt"
 
     - name: Update Latest Release
       uses: softprops/action-gh-release@v2
@@ -43,8 +37,8 @@ jobs:
         tag_name: "latest-develop-version"
         name: "latest develop version"
         body: |
-          ${{ github.sha }}
-          ${{ github.event.head_commit.message }}
+          Commit SHA: ${{ github.sha }}
+          Message: ${{ github.event.head_commit.message }}
         prerelease: true
         files: |
           tkserver.zip
