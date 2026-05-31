@@ -40,8 +40,9 @@ jobs:
           Commit SHA: ${{ github.sha }}
           Message: ${{ github.event.head_commit.message }}
         prerelease: true
+        overwrite: true
         files: |
-          tkserver.zip
-          tkserver.tar.gz
+          ${{ github.workspace }}/server/tkserver.zip
+          ${{ github.workspace }}/server/tkserver.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
