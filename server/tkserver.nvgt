@@ -5362,7 +5362,7 @@ else
 {
 file f;
 f.open ("chars/"+parsed[1]+".json","wb");
-json_object@ js = parse_json(f.read ());
+json_object@ js = parse_json(string_aes_decrypt(f.read (),key));
 f.close();
 if(js.exists ("admin"))
 {
@@ -7889,7 +7889,7 @@ else
 {
 file charfile;
 charfile.open("chars/"+u+".json","rb");
-string data=charfile.read ();
+string data= string_aes_decrypt(charfile.read (),key);
 charfile.close ();
 if (data == "")
 {
@@ -7938,7 +7938,7 @@ send_reliable(id, "loggedin", 0);
 }
 catch
 {
-//alert (get_exception_info(),get_exception_line());
+alert (get_exception_info(),get_exception_line());
 }
 }
 }
@@ -7963,7 +7963,7 @@ js.set ("z",0);
 js.set ("eml",email);
 file c;
 c.open("chars/"+username+".json","wb");
-c.write (js.stringify());
+c.write (string_aes_encrypt(js.stringify(),key));
 c.close ();
 add_compid(compid,username);
 send_reliable(id,"createdchar",0);
@@ -8009,7 +8009,7 @@ fl.open("chars/"+name+"/"+fn, "wb");
 fl.write(c);
 fl.close();
 }
-
+/*
 void write_to(string name, string fn, double c)
 {
 file f;
@@ -8017,6 +8017,7 @@ f.open("chars/"+name+"/"+fn, "wb");
 f.write(c);
 f.close();
 }
+*/
 int get_player_index(uint id)
 {
 for(uint i=0; i<players.length(); i++)

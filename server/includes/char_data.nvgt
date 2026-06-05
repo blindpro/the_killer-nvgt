@@ -1,3 +1,4 @@
+const string key = "jslkdjvoigvrvklsdfnkjfsklsdjlfkawejioejgiksrdfnhkjzskldjfklejgkivjkgjtjtestestejkij";
 void scd(int ie)
 {
 string charfolder="chars/"+players[ie].name;
@@ -51,8 +52,9 @@ players [ie].data["inv"]=players[ie].get_inv();
 }
 players [ie].data["registered"]=players[ie].registered;
 players [ie].data["shields"]=players[ie].shieldshots;
+string new = string_aes_encrypt(players[ie].data.stringify(),key);
 fl.open(charfolder+".json","wb");
-fl.write (players[ie].data.stringify());
+fl.write (new);
 fl.close ();
 }
 void load_char_data(int index, bool forced=false)
@@ -60,10 +62,11 @@ void load_char_data(int index, bool forced=false)
 if(index>-1)
 {
 string charfolder="chars/"+players[index].name;
-string data;
+string old_data;
 file charfile;
 charfile.open(charfolder + ".json","rb");
-data=charfile.read ();
+old_data=charfile.read ();
+string data = string_aes_decrypt(old_data,key);
 charfile.close ();
 players[index].data = parse_json(data);
 try
@@ -211,7 +214,9 @@ string cf="chars/"+name+".json";
 string ret;
 file c;
 c.open(cf,"rb");
-json_object@ data = parse_json(c.read());
+string raw = c.read();
+string decrypted = string_aes_decrypt(raw, key);
+json_object@ data = parse_json(decrypted);
 c.close();
 if(data.exists(value))
 {
@@ -234,6 +239,7 @@ remote_timebombs.remove_at(i);
 }
 }
 }
+/*
 string unencrypt_password(string username)
 {
 string charfolder="chars/"+username+".json";
@@ -243,3 +249,4 @@ json_object@ data = parse_json(p.read());
 p.close();
 return data.exists("password")?string_decrypt(data["password"],"tk3dcharpass_encrypted"):"";
 }
+*/
