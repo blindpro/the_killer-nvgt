@@ -3,1406 +3,36 @@ weapon@[]weapons(0);
 class weapon {
 double x,y,z;
 int dir=0;
-string type;
-timer speedtimer;
-int speedtime;
-int range;
-int stuntime=0;
-int distance=0;
-int mindammage=50;
-int maxdammage=1000;
+timer speed_timer;
+int distance = 0;
+weapon_data@ type = null;
 string map;
 player@p;
-int spread=0;
-int shieldhits=1,shieldchance=0;
-int hitsounds=0;
-bool stunning=false;
-bool bullet=true;
-bool requires_ammo=true;
-bool teamhittable=false;
 vector maxcoords;
-weapon(double bx, double by, double bz, double bdir, string btype, string bmap,player@p2)
+weapon(double bx, double by, double bz, double bdir, weapon_data@ btype, string bmap,player@p2)
 {
 x=bx;
 y=by;
 z=bz;
 dir=bdir;
-type=btype;
+@type=btype;
 map=bmap;
 maxcoords=get_max_values(map);
 @p=p2;
-if(type=="crossbow")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=30;
-range=100;
-mindammage=500;
-maxdammage=1100;
-spread=5;
-shieldchance=10;
-shieldhits=random(1,3);
-hitsounds=3;
-}
-else if(type=="rpg7")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=5;
-range=600;
-mindammage=0;
-maxdammage=0;
-spread=5;
-shieldchance=100;
-}
-else if(type=="gp30")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=15;
-range=100;
-mindammage=0;
-maxdammage=0;
-spread=2;
-shieldchance=100;
-}
-else if(type=="stp429_mini_missile")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=500;
-mindammage=0;
-maxdammage=0;
-spread=3;
-shieldchance=100;
-}
-else if(type=="rocket_launcher")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=10;
-range=550;
-mindammage=0;
-maxdammage=0;
-spread=5;
-shieldchance=100;
-}
-else if(type=="stun_dart")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=20;
-range=10;
-mindammage=10;
-maxdammage=20;
-spread=2;
-shieldchance=100;
-}
-else if(type=="health_dart")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=20;
-range=10;
-mindammage=0;
-maxdammage=0;
-spread=2;
-shieldchance=100;
-teamhittable=true;
-}
-else if(type=="grenade")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=15;
-range=120;
-mindammage=0;
-maxdammage=0;
-spread=6;
-shieldchance=100;
-}
-else if(type=="m79_grenade_launcher")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=5;
-range=500;
-mindammage=0;
-maxdammage=0;
-spread=7;
-shieldchance=100;
-}
-else if(type=="cyanide_pistol")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=20;
-mindammage=0;
-maxdammage=0;
-spread=2;
-shieldchance=100;
-hitsounds=3;
-}
-else if(type=="bottle_bomb")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=10;
-range=80;
-mindammage=0;
-maxdammage=0;
-spread=3;
-shieldchance=100;
-}
-else if(type=="stone")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=50;
-mindammage=500;
-maxdammage=600;
-spread=3;
-shieldchance=60;
-shieldhits=random(1,100);
-}
-else if(type=="hand_grenade")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=3;
-range=30;
-mindammage=5000;
-maxdammage=60000;
-spread=5;
-shieldchance=2;
-shieldhits=random(1,300);
-hitsounds=4;
-}
-else if(type=="throwing_star")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=100;
-mindammage=10000;
-maxdammage=30000;
-spread=3;
-shieldchance=10;
-shieldhits=random(1,60);
-}
-else if(type=="poison_dart")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=20;
-mindammage=20000;
-maxdammage=30000;
-spread=2;
-shieldchance=100;
-}
-else if(type=="snowball")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=20;
-mindammage=100;
-maxdammage=600;
-spread=3;
-shieldchance=100;
-hitsounds=4;
-}
-else if(type=="pipe_bomb")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=15;
-range=50;
-mindammage=0;
-maxdammage=0;
-spread=3;
-shieldchance=100;
-}
-else if(type=="sticky_bomb")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=15;
-range=120;
-mindammage=0;
-maxdammage=0;
-spread=3;
-shieldchance=100;
-}
-else if(type=="knife")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=600;
-maxdammage=3000;
-spread=3;
-shieldhits=random(10,12);
-shieldchance=15;
-}
-else if(type=="taser")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=5;
-range=5;
-mindammage=100;
-maxdammage=450;
-spread=5;
-shieldhits=0;
-shieldchance=100;
-stunning=true;
-stuntime=5000;
-shieldhits=random(1,3);
-hitsounds=4;
-}
-else if(type=="pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=35;
-mindammage=500;
-maxdammage=3500;
-spread=2;
-shieldhits=random(3,7);
-shieldchance=50;
-}
-if(type=="ags30")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=10;
-range=50;
-mindammage=0;
-maxdammage=0;
-spread=2;
-shieldchance=100;
-}
-else if(type=="browning_high_power_bda_handgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=65;
-mindammage=3000;
-maxdammage=5000;
-spread=2;
-shieldchance=15;
-shieldhits=random(3,15);
-}
-else if(type=="ak47_assault_rifle")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=5000;
-maxdammage=8000;
-spread=3;
-shieldchance=10;
-shieldhits=random(3,70);
-hitsounds=3;
-}
-else if(type=="sky_28_laser")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=5000;
-mindammage=9000;
-maxdammage=9500;
-spread=2;
-shieldhits=random(3,47);
-shieldchance=5;
-hitsounds=3;
-}
-else if(type=="spear")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=10;
-mindammage=10000;
-maxdammage=11000;
-spread=3;
-shieldhits=random(3,7);
-shieldchance=70;
-hitsounds=2;
-}
-else if(type=="fists")
-{
-bullet=false;
-speedtime=0;
-range=2;
-mindammage=100;
-maxdammage=400;
-spread=3;
-shieldhits=0;
-shieldchance=100;
-hitsounds=5;
-}
-else if(type=="feet")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=4;
-mindammage=100;
-maxdammage=700;
-spread=3;
-shieldhits=0;
-shieldchance=100;
-hitsounds=3;
-}
-else if(type=="nunchaku")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=1000;
-maxdammage=1250;
-spread=1;
-hitsounds=3;
-shieldhits=random(3,70);
-shieldchance=10;
-}
-else if(type=="blz83_portable_machine_gun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=70;
-mindammage=2000;
-maxdammage=8000;
-spread=5;
-shieldchance=3;
-shieldhits=random(7,19);
-hitsounds=3;
-}
-else if(type=="crt17_combat_knife")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=2000;
-maxdammage=9900;
-spread=2;
-shieldhits=random(3,15);
-shieldchance=20;
-hitsounds=3;
-}
-else if(type=="sky_127_laser_handgun")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=6000;
-maxdammage=8000;
-spread=5;
-shieldchance=5;
-shieldhits=random(6,58);
-hitsounds=3;
-}
-else if(type=="dart_launcher")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=10;
-mindammage=100;
-maxdammage=300;
-spread=3;
-shieldhits=random(1,5);
-shieldchance=30;
-}
-else if(type=="machete")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=9;
-mindammage=300;
-maxdammage=6000;
-spread=2;
-shieldhits=random(3,20);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="garden_spade")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=6;
-mindammage=1000;
-maxdammage=6500;
-spread=3;
-shieldhits=random(3,55);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="studded_boots")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=800;
-maxdammage=2750;
-spread=3;
-shieldhits=random(3,15);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="browning_m2_heavy_50_cal_machinegun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=100;
-mindammage=3500;
-maxdammage=11000;
-spread=5;
-shieldchance=30;
-shieldhits=random(5,110);
-hitsounds=3;
-}
-else if(type=="mlk_203_combat_pistol")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=20;
-mindammage=10000;
-maxdammage=10000;
-spread=5;
-shieldhits=random(100,100);
-shieldchance=10;
- hitsounds=3;
-}
-else if(type=="saiga_12_5_round_shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=6500;
-maxdammage=8100;
-spread=5;
-shieldchance=5;
-shieldhits=random(8,61);
-hitsounds=3;
-}
-else if(type=="saiga_12_10_round_shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=6500;
-maxdammage=8100;
-spread=5;
-shieldchance=5;
-shieldhits=random(8,61);
-hitsounds=3;
-}
-else if(type=="saiga_12_20_round_shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=6500;
-maxdammage=8100;
-spread=5;
-shieldchance=5;
-shieldhits=random(8,61);
-hitsounds=3;
-}
-else if(type=="saiga_12_30_round_shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=6500;
-maxdammage=8100;
-spread=5;
-shieldchance=5;
-shieldhits=random(8,61);
-hitsounds=3;
-}
-else if(type=="spiked_bat")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=4;
-mindammage=1500;
-maxdammage=2300;
-spread=3;
-shieldhits=random(1,5);
-shieldchance=2;
-hitsounds=3;
-}
-else if(type=="m1208_shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=10;
-mindammage=3000;
-maxdammage=8000;
-spread=8;
-shieldchance=25;
-shieldhits=random(3,80);
-hitsounds=3;
-}
-else if(type=="small_hammer")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=100;
-maxdammage=15500;
-spread=1;
-shieldhits=random(3,5);
-shieldchance=6;
-hitsounds=3;
-}
-else if(type=="mp5_machine_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=15;
-mindammage=2000;
-maxdammage=5000;
-spread=5;
-shieldchance=5;
-shieldhits=random(2,50);
-hitsounds=3;
-}
-else if(type=="walther_p99_handgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=5500;
-maxdammage=6500;
-spread=5;
-shieldchance=5;
-shieldhits=random(5,60);
-hitsounds=3;
-}
-else if(type=="greatsword")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=6;
-mindammage=3000;
-maxdammage=5000;
-spread=1;
-shieldhits=random(3,5);
-shieldchance=6;
-hitsounds=3;
-}
-else if(type=="colt_python_revolver")
-{
-bullet=true;
-requires_ammo=true;
-speedtime= 0;
-range=20;
-mindammage=900;
-maxdammage=1300;
-spread=2;
-shieldchance=1;
-shieldhits=random(9,13);
-hitsounds=3;
-}
-else if(type=="beretta_m9_pistol")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-spread=3;
-mindammage=3000;
-maxdammage=3500;
-shieldhits=random(3,30);
-shieldchance=3;
-hitsounds=3;
-}
-else if(type=="steal_warhammer")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=10;
-mindammage=4000;
-maxdammage=7500;
-spread=3;
-shieldhits=random(3,80);
-shieldchance=56;
-hitsounds=3;
-}
-else if(type=="m134_minigun")
-{
-bullet=true;
-requires_ammo=true;
-mindammage=9000;
-maxdammage=13000;
-range=90;
-spread=6;
-shieldchance=13;
-shieldhits=random(10,100);
-}
-else if(type=="stp_s84q_automatic_suppressed_pistol")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=3500;
-maxdammage=6500;
-spread=5;
-shieldchance=3;
-shieldhits=random(3,60);
-hitsounds=3;
-}
-else if(type=="small_sabre")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=13;
-mindammage=200;
-maxdammage=6000;
-spread=2;
-shieldhits=random(3,55);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="small_iron_club")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=4;
-mindammage=900;
-maxdammage=9000;
-spread=2;
-shieldhits=random(3,5);
-shieldchance=6;
-hitsounds=3;
-}
-else if(type=="m4a1_assault_rifle")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=50;
-mindammage=3500;
-maxdammage=5500;
-spread=5;
-shieldchance=0;
-shieldhits=random(3,55);
-hitsounds=3;
-}
-else if(type=="small_dagger")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=8000;
-maxdammage=30000;
-spread=4;
-shieldhits=random(3,35);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="sky_372_laser_machinegun")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=50;
-mindammage=10000;
-maxdammage=25000;
-spread=3;
-shieldhits=random(3,60);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="sky_386_laser_assault_rifle")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=100;
-mindammage=9000;
-maxdammage=79000;
-spread=5;
-shieldhits=random(3,175);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="ruger_security_6_revolver")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=30;
-mindammage=1000;
-maxdammage=4000;
-spread=2;
-shieldchance=3;
-shieldhits=random(1,20);
-hitsounds=3;
-}
-else if(type=="m16_assault_rifle")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=1000;
-maxdammage=5000;
-spread=5;
-shieldhits=random(3,50);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="mlk_207_combat_rifle")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=120;
-mindammage=1000;
-maxdammage=90000;
-spread=7;
-shieldhits=random(3,70);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="flameburst_mini_flame_thrower")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=2;
-range=75;
-mindammage=1500;
-maxdammage=4000;
-spread=3;
-shieldchance=5;
-shieldhits=random(1,40);
-hitsounds=3;
-}
-else if(type=="sky_429_laser_shotgun")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=15;
-range=50;
-mindammage=60000;
-maxdammage=200000;
-spread=5;
-shieldhits=random(32,270);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="str_301_long_barreled_machine_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=150;
-mindammage=0;
-maxdammage=150000;
-spread=2;
-shieldhits=random(3,27);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="fnminimilight")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=150;
-mindammage=40000;
-maxdammage=90000;
-spread=2;
-shieldhits=random(32,37);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="shotgun")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=10;
-mindammage=3001;
-maxdammage=4555;
-spread=4;
-shieldhits=random(3,175);
-shieldchance=50;
-hitsounds=3;
-}
-else if(type=="str_32_pump_action_shotgun")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=35;
-mindammage=3000;
-maxdammage=99000;
-spread=3;
-shieldhits=random(3,25);
-shieldchance=30;
-hitsounds=3;
-}
-else if(type=="cop_357_derringer_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=10;
-range=20;
-mindammage=5000;
-maxdammage=65000;
-spread=4;
-shieldhits=random(3,300);
-shieldchance=3;
-hitsounds=3;
-}
-else if(type=="sig_p226_combat_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=50;
-mindammage=1000;
-maxdammage=50000;
-spread=6;
-shieldhits=random(3,200);
-shieldchance=3;
-hitsounds=3;
-}
-else if(type=="s&w_model66_revolver")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=20;
-mindammage=1000;
-maxdammage=6000;
-spread=3;
-shieldhits=random(1,36);
-shieldchance=4;
- hitsounds=3;
-}
-else if(type=="beretta_m1951_machine_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=1000;
-maxdammage=20000;
-spread=2;
-shieldhits=random(3,40);
-shieldchance=3;
-hitsounds=3;
-}
-else if(type=="glock_17_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=50;
-mindammage=100;
-maxdammage=15000;
-spread=4;
-shieldhits=random(3,50);
-shieldchance=30;
-hitsounds=3;
-}
-else if(type=="modern_sub_machine_gun_carbine")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=60;
-mindammage=1000;
-maxdammage=50000;
-spread=4;
-shieldhits=random(3,40);
-shieldchance=3;
-hitsounds=3;
-}
-else if(type=="sky_286_laser_pistol")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=10;
-range=35;
-mindammage=1000;
-maxdammage=10000;
-spread=2;
-shieldhits=random(3,30);
-shieldchance=40;
-hitsounds=3;
-}
-else if(type=="scissor_blade")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=4;
-mindammage=100;
-maxdammage=350;
-spread=1;
-shieldhits=random(3,5);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="rusty_scalpel")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=100;
-maxdammage=2950;
-spread=3;
-shieldhits=random(3,24);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="large_iron_club")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=200;
-maxdammage=1000;
-spread=5;
-shieldhits=random(3,10);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="crow_bar")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=7;
-mindammage=1000;
-maxdammage=2200;
-spread=3;
-shieldhits=random(3,15);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="rusty_axe")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=500;
-maxdammage=2500;
-spread=3;
-shieldhits=random(3,25);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="iron_shovel")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=0;
-maxdammage=1300;
-spread=3;
-shieldhits=random(3,35);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="long_sword")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=13;
-mindammage=1400;
-maxdammage=14000;
-spread=3;
-shieldhits=random(3,65);
-shieldchance=90;
-hitsounds=3;
-}
-else if(type=="broken_rifle")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=4;
-mindammage=50;
-maxdammage=1500;
-spread=3;
-shieldhits=random(3,15);
-shieldchance=20;
-hitsounds=3;
-}
-else if(type=="brass_knuckles")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=5;
-mindammage=3000;
-maxdammage=12000;
-spread=2;
-shieldhits=random(3,40);
-shieldchance=40;
-hitsounds=3;
-}
-else if(type=="golden_war_axe")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=2000;
-maxdammage=12000;
-spread=3;
-shieldhits=random(3,46);
-shieldchance=60;
-hitsounds=3;
-}
-else if(type=="spiked_chain_mace")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=8;
-mindammage=3500;
-maxdammage=5500;
-spread=2;
-shieldhits=random(3,256);
-shieldchance=20;
-hitsounds=3;
-}
-else if(type=="hammer")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=7;
-mindammage=200;
-maxdammage=1500;
-spread=1;
-shieldhits=random(2,25);
-shieldchance=25;
-hitsounds=3;
-}
-else if(type=="stp_m4_combat_knife")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=6;
-mindammage=190;
-maxdammage=320;
-spread=2;
-shieldhits=random(2,45);
-shieldchance=30;
-hitsounds=3;
-}
-else if(type=="stp106_long_barreled_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=80;
-mindammage=1000;
-maxdammage=15000;
-spread=6;
-shieldhits=random(2,23);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="colt_ar_15_assault_rifle")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=140;
-mindammage=1000;
-maxdammage=10000;
-spread=6;
-shieldhits=random(2,44);
-shieldchance=10;
-hitsounds=3;
-}
-else if(type=="crt43_automatic_shotgun")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=15;
-mindammage=5000;
-maxdammage=55000;
-spread=4;
-shieldhits=random(2,144);
-shieldchance=50;
-hitsounds=3;
-}
-else if(type=="stp21_handgun")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=35;
-mindammage=500;
-maxdammage=25000;
-spread=4;
-shieldhits=random(2,44);
-shieldchance=20;
-hitsounds=3;
-}
-else if(type=="beretta_nano_pocket_pistol")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=40;
-mindammage=1000;
-maxdammage=25000;
-spread=4;
-shieldhits=random(2,35);
-shieldchance=50;
-hitsounds=3;
-}
-else if(type=="barrett_m82_sniper_rifle")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=20;
-range=700;
-mindammage=10000;
-maxdammage=20000;
-spread=6;
-shieldhits=random(2,150);
-shieldchance=35;
-hitsounds=3;
-}
-else if(type=="nak_nk1000_decimater")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=200;
-mindammage=1000;
-maxdammage=10000;
-spread=10;
-shieldhits=random(2,30);
-shieldchance=35;
-hitsounds=3;
-}
-else if(type=="awp")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=2;
-range=350;
-mindammage=3000;
-maxdammage=130000;
-spread=4;
-shieldhits=random(3,167);
-shieldchance=45;
-}
-else if(type=="zulfikar")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=300;
-mindammage=100000;
-maxdammage=650000;
-spread=10;
-shieldchance=50;
-shieldhits=500;
-hitsounds=3;
-}
-else if(type=="throwing_knives")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=50;
-mindammage=1000;
-maxdammage=5000;
-spread=2;
-shieldhits=random(3,17);
-shieldchance=25;
-hitsounds=3;
-}
-else if(type=="cannon")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=5;
-range=100000;
-mindammage=200000;
-maxdammage=650000;
-spread=10;
-shieldchance=100;
-hitsounds=3;
-}
-else if(type=="sky_327_laser_cannon")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=5;
-range=300;
-mindammage=80000;
-maxdammage=120000;
-spread=10;
-shieldchance=100;
-hitsounds=3;
-}
-else if(type=="m24_sniper_rifle")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=27;
-range=5000;
-mindammage=30000;
-maxdammage=35000;
-spread=5;
-shieldchance=0;
-shieldhits=random(15,190);
-hitsounds=3;
-}
-else if(type=="hand_cannon")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=1000;
-mindammage=10000;
-maxdammage=700000;
-spread=5;
-shieldchance=100;
-hitsounds=3;
-}
-else if(type=="short_sword")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=0;
-range=6;
-mindammage=500;
-maxdammage=1900;
-spread=6;
-shieldhits=random(9,100);
-shieldchance=50;
-hitsounds=3;
-}
-else if(type=="gauss")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=300;
-mindammage=3000;
-maxdammage=30000;
-spread=6;
-shieldhits=random(4,40);
-shieldchance=50;
-}
-else if(type=="sniper")
-{
-bullet=true;
-requires_ammo=true;
-speedtime=0;
-range=100;
-mindammage=1000;
-maxdammage=10000;
-spread=6;
-shieldhits=random(15,20);
-shieldchance=15;
-}
-else if(type=="storm_sniper")
-{
-bullet=false;
-requires_ammo=true;
-speedtime=0;
-range=150;
-mindammage=100000;
-maxdammage=400000;
-spread=6;
-shieldchance=100;
-hitsounds=3;
-}
-
-else if(type=="admingun")
-{
-bullet=true;
-requires_ammo=false;
-speedtime=5;
-range=50;
-mindammage=25000;
-maxdammage=200014000;
-spread=10;
-shieldchance=0;
-shieldhits=random(40,80);
-}
-else if(type=="artillery")
-{
-bullet=false;
-requires_ammo=false;
-speedtime=5;
-range=250;
-mindammage=7500;
-maxdammage=11000;
-spread=10;
-shieldhits=random(15,30);
-shieldchance=60;
-}
 }
 }
 void weaponloop()
 {
 for(uint j=0; j<weapons.length(); j++)
 {
-if(weapons[j].speedtimer.elapsed>=weapons[j].speedtime)
+if(@weapons[j].type==null)
 {
-weapons[j].speedtimer.restart();
+weapons.remove_at(j);
+continue;
+}
+if(weapons[j].speed_timer.elapsed>=weapons[j].type.speed_time)
+{
+weapons[j].speed_timer.restart();
 vector wr;
 wr=move(weapons[j].x,weapons[j].y,weapons[j].dir);
 weapons[j].x=wr.x;
@@ -1410,94 +40,70 @@ weapons[j].y=wr.y;
 int rx=round(weapons[j].x, 0);
 int ry=round(weapons[j].y, 0);
 weapons[j].distance++;
-if(weapons[j].distance > weapons[j].range or string_left(get_tile_at(rx,ry,weapons[j].z,weapons[j].map),4)=="wall" or rx>weapons[j].maxcoords.x or ry>weapons[j].maxcoords.y or rx<0 or ry<0)
+if(weapons[j].distance > weapons[j].type.range or string_left(get_tile_at(rx,ry,weapons[j].z,weapons[j].map),4)=="wall" or rx>weapons[j].maxcoords.x or ry>weapons[j].maxcoords.y or rx<0 or ry<0)
 {
-if(weapons[j].bullet)
+if(weapons[j].type.bullet)
 {
 play("rico"+random(1, 5), rx, ry, weapons[j].z, weapons[j].map);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="stun_dart" or weapons[j].type=="health_dart" or weapons[j].type=="poison_dart")
+else if(weapons[j].type.name=="stun_dart" or weapons[j].type.name=="health_dart" or weapons[j].type.name=="poison_dart")
 {
 play("stun_dartdrop",weapons[j].x,weapons[j].y,weapons[j].z,weapons[j].map);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="sticky_bomb")
+else if(weapons[j].type.name=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,"");
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="grenade")
+else if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="m79_grenade_launcher")
+else if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="rocket_launcher")
+else if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="rpg7")
+else if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="gp30")
+else if(weapons[j].type.name=="gp30")
 {
 spawn_gp(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
 }
-else if(weapons[j].type=="ags30")
+else if(weapons[j].type.name=="ags30")
 {
 spawn_ags(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 @weapons[j]=null;
 weapons.remove_at(j);
 break;
-}
-
- if(weapons[j].type=="invisibility_shield")
-{
-if(@weapons[j].p!=null)
-{
-if(weapons[j].p.invisible==false)
-{
-weapons[j].p.invisible=true;
-weapons[j].p.invisibilitytimer.restart();
-play("invisibility_start",weapons[j].p.x,weapons[j].p.y,weapons[j].p.z,weapons[j].p.map);
-@weapons[j]=null;
-weapons.remove_at(j);
-break;
-}
-else
-{
-send_reliable(e.peer_id,"inv|invisibility_shield 1",0);
-send_reliable(weapons[j].p.peer_id,"You can't go invisible while you're using an invisibility shield",2);
-@weapons[j]=null;
-weapons.remove_at(j);
-break;
-}
-}
 }
 else
 {
@@ -1537,83 +143,83 @@ continue;
 for(uint x=0; x<players.length(); x++)
 {
 if(in_vehicle(players[x].name)>-1 or players[x].is_dead or players[x].invinsible or players[x].newb==1) continue;
-if(get_3d_distance(rx, ry, weapons[j].z, players[x].x, players[x].y, players[x].z)<=weapons[j].spread and weapons[j].p.name!=players[x].name and players[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, players[x].x, players[x].y, players[x].z)<=weapons[j].type.spread and weapons[j].p.name!=players[x].name and players[x].map==weapons[j].map)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|"+(are_teamed(weapons[j].p.name, players[x].name)?"weaponpingteam":"weaponping")+".ogg",0);
-if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+players[x].nickname,2);
+if(weapons[j].type.name=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+players[x].nickname,2);
 hit=true;
-if(weapons[j].type!="grenade" or weapons[j].type!="sticky_bomb" or weapons[j].type!="fists" or weapons[j].type!="feet")
+if(weapons[j].type.name!="grenade" or weapons[j].type.name!="sticky_bomb" or weapons[j].type.name!="fists" or weapons[j].type.name!="feet")
 {
-if(players[x].shielded and random(0,100)>weapons[j].shieldchance)
+if(players[x].shielded and random(0,100)>weapons[j].type.shield_chance)
 {
 players[x].playsound("shieldhit"+random(1,2));
-players[x].shieldshots-=weapons[j].shieldhits;
+players[x].shieldshots-=random(weapons[j].type.min_shield_hits,weapons[j].type.max_shield_hits);
 players[x].statchangetimer.restart();
 }
 else
 {
-if(weapons[j].bullet) play("body"+random(1,3),players[x].x,players[x].y,players[x].z,players[x].map);
+if(weapons[j].type.bullet) play("body"+random(1,3),players[x].x,players[x].y,players[x].z,players[x].map);
 else {
 string hitsound;
-if(weapons[j].hitsounds==0) hitsound=weapons[j].type+"hit";
+if(weapons[j].type.hit_sounds==0) hitsound=weapons[j].type.name+"hit";
 else
-hitsound=weapons[j].type+"hit"+random(1,weapons[j].hitsounds);
+hitsound=weapons[j].type.name+"hit"+random(1,weapons[j].type.hit_sounds);
 play(hitsound,players[x].x,players[x].y,players[x].z,players[x].map);
 }
-int inpact=random(weapons[j].mindammage,weapons[j].maxdammage);
-if(inpact>0) players[x].hit(weapons[j].mindammage,weapons[j].maxdammage);
-if(weapons[j].type!="artillery"&&weapons[j].type!="admingun") players[x].should_subtract=true;
+int inpact=random(weapons[j].type.min_damage,weapons[j].type.max_damage);
+if(inpact>0) players[x].hit(weapons[j].type.min_damage,weapons[j].type.max_damage);
+if(weapons[j].type.name!="artillery"&&weapons[j].type.name!="admingun") players[x].should_subtract=true;
 else players[x].should_subtract=false;
 }
-if(weapons[j].stunning)
+if(weapons[j].type.stunning)
 {
-players[x].stun(weapons[j].stuntime,false,false);
+players[x].stun(weapons[j].type.stun_time,false,false);
 }
-players[x].hitby=weapons[j].p.name+"'s "+weapons[j].type;
-if(weapons[j].type=="artillery") players[x].hitby=weapons[j].p.name+"'s tank";
+players[x].hitby=weapons[j].p.name+"'s "+weapons[j].type.name;
+if(weapons[j].type.name=="artillery") players[x].hitby=weapons[j].p.name+"'s tank";
 }
-if(weapons[j].type=="sticky_bomb")
+if(weapons[j].type.name=="sticky_bomb")
 {
 spawn_stickybomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.name,players[x].name);
 }
-if(weapons[j].type=="grenade")
+if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(players[x].x,players[x].y,players[x].z,players[x].facing,players[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="cyanide_pistol")
+if(weapons[j].type.name=="cyanide_pistol")
 {
 players[x].cyanide=true;
 players[x].cyanidelosses=0;
 players[x].cyanidetimer.restart();
 }
-if(weapons[j].type=="poison_dart")
+if(weapons[j].type.name=="poison_dart")
 {
 players[x].playsound("poisonstart");
 players[x].poisoned=true;
 players[x].poisonlosses=0;
 players[x].poisontimer.restart();
 }
-if(weapons[j].type=="health_dart")
+if(weapons[j].type.name=="health_dart")
 {
 players[x].playsound("stun_darthit");
 if(players[x].warping&&players[x].warpstage==0)
@@ -1626,7 +232,7 @@ int val=random(400,4000);
 weapons[j].p.health+=val;
 players[x].health-=val;
 }
-if(weapons[j].type=="stun_dart")
+if(weapons[j].type.name=="stun_dart")
 {
 players[x].hitby=weapons[j].p.name+"'s stun dart";
 players[x].stun(5000,true,true,5000);
@@ -1638,11 +244,11 @@ players[x].warping=false;
 }
 }
 }
-if(weapons[j].type!="artillery" and weapons[j].type!="grenade")
+if(weapons[j].type.name!="artillery" and weapons[j].type.name!="grenade")
 {
 for(uint x=0; x<objs.length(); x++)
 {
-if(get_3d_distance(rx, ry, weapons[j].z, objs[x].x, objs[x].y, objs[x].z)<=weapons[j].spread and objs[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, objs[x].x, objs[x].y, objs[x].z)<=weapons[j].type.spread and objs[x].map==weapons[j].map)
 {
 play("obj_break"+random(1,3),objs[x].x,objs[x].y,objs[x].z,objs[x].map);
 remove_obj(x);
@@ -1651,28 +257,28 @@ hit=true;
 }
 for(uint x=0; x<horbs.length(); x++)
 {
-if(get_3d_distance(rx, ry, weapons[j].z, horbs[x].x, horbs[x].y, horbs[x].z)<=weapons[j].spread and horbs[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, horbs[x].x, horbs[x].y, horbs[x].z)<=weapons[j].type.spread and horbs[x].map==weapons[j].map)
 horbs[x].shoot();
 }
 }
 for(uint x=0; x<helicopters.length(); x++)
 {
-if(get_3d_distance(rx, ry, weapons[j].z, helicopters[x].x, helicopters[x].y, helicopters[x].z)<=weapons[j].spread and helicopters[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, helicopters[x].x, helicopters[x].y, helicopters[x].z)<=weapons[j].type.spread and helicopters[x].map==weapons[j].map)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
-if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
-if(weapons[j].type=="artillery1") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
-helicopters[x].health-=random(weapons[j].mindammage, weapons[j].maxdammage);
+if(weapons[j].type.name=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
+if(weapons[j].type.name=="artillery1") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(helicopters[x].owner)+"'s helicopter "+helicopters[x].id,2);
+helicopters[x].health-=random(weapons[j].type.min_damage, weapons[j].type.max_damage);
 play("helicopterhit"+random(1, 9), rx, ry, weapons[j].z, weapons[j].map);
-helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery" ? "tank" : weapons[j].type);
-helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery1" ? "armored tank" : weapons[j].type);
+helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type.name=="artillery" ? "tank" : weapons[j].type.name);
+helicopters[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type.name=="artillery1" ? "armored tank" : weapons[j].type.name);
 hit=true;
-if(weapons[j].type=="grenade")
+if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1699,7 +305,7 @@ spawn_pipe_bomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.na
 break;
 }
 */
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1711,17 +317,17 @@ spawn_cannonball(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 break;
 }
 */
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(helicopters[x].x,helicopters[x].y,helicopters[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1731,17 +337,17 @@ break;
 for(uint x=0; x<robots.length(); x++)
 {
 if (robots[x].state>=ROBOT_KILL or robots[x].map!=weapons[j].map) {continue;}
-if (get_3d_distance(rx, ry, weapons[j].z, robots[x].x, robots[x].y, robots[x].z)<=weapons[j].spread)
+if (get_3d_distance(rx, ry, weapons[j].z, robots[x].x, robots[x].y, robots[x].z)<=weapons[j].type.spread)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
-robots[x].hit(random(weapons[j].mindammage,weapons[j].maxdammage),weapons[j].type,weapons[j].p.name);
+robots[x].hit(random(weapons[j].type.min_damage,weapons[j].type.max_damage),weapons[j].type.name,weapons[j].p.name);
 hit=true;
-if(weapons[j].type=="grenade")
+if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-if(weapons[j].type=="m79grenade_launcher")
+if(weapons[j].type.name=="m79grenade_launcher")
 {
 spawn_grenade(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1768,7 +374,7 @@ spawn_pipe_bomb(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.na
 break;
 }
 */
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1780,17 +386,17 @@ spawn_cannonball(rx,ry,weapons[j].z,weapons[j].dir,weapons[j].map,weapons[j].p.n
 break;
 }
 */
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-else if(weapons[j].type=="gp30")
+else if(weapons[j].type.name=="gp30")
 {
 spawn_gp(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(robots[x].x,robots[x].y,robots[x].z,weapons[j].dir,weapons[j].map,weapons[j].p.name);
 break;
@@ -1799,35 +405,35 @@ break;
 }
 for(uint x=0; x<remguns.length(); x++)
 {
-if(get_3d_distance(rx, ry, weapons[j].z, remguns[x].x, remguns[x].y, remguns[x].z)<=weapons[j].spread and remguns[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, remguns[x].x, remguns[x].y, remguns[x].z)<=weapons[j].type.spread and remguns[x].map==weapons[j].map)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
-if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(remguns[x].owner)+"'s remote gun "+remguns[x].id,2);
-remguns[x].health-=random(weapons[j].mindammage, weapons[j].maxdammage);
+if(weapons[j].type.name=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(remguns[x].owner)+"'s remote gun "+remguns[x].id,2);
+remguns[x].health-=random(weapons[j].type.min_damage, weapons[j].type.max_damage);
 play("remgunhit"+random(1, 3), rx, ry, weapons[j].z, weapons[j].map);
-remguns[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type=="artillery" ? "tank" : weapons[j].type);
+remguns[x].hitby=weapons[j].p.name+"'s "+(weapons[j].type.name=="artillery" ? "tank" : weapons[j].type.name);
 hit=true;
-if(weapons[j].type=="grenade")
+if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);spawn_grenade(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);spawn_grenade(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].map,weapons[j].p.name);
 }
@@ -1835,32 +441,32 @@ spawn_grenade(remguns[x].x,remguns[x].y,remguns[x].z,remguns[x].dir,remguns[x].m
 }
 for(uint x=0; x<impact_bombs.length(); x++)
 {
-if(get_3d_distance(rx, ry, weapons[j].z, impact_bombs[x].x, impact_bombs[x].y, impact_bombs[x].z)<=weapons[j].spread and impact_bombs[x].map==weapons[j].map)
+if(get_3d_distance(rx, ry, weapons[j].z, impact_bombs[x].x, impact_bombs[x].y, impact_bombs[x].z)<=weapons[j].type.spread and impact_bombs[x].map==weapons[j].map)
 {
-impact_bombs[x].health-=random(weapons[j].mindammage, weapons[j].maxdammage);
+impact_bombs[x].health-=random(weapons[j].type.min_damage, weapons[j].type.max_damage);
 play("ibombhit"+random(1, 3), rx, ry, weapons[j].z, weapons[j].map);
 hit=true;
-if(weapons[j].type=="grenade")
+if(weapons[j].type.name=="grenade")
 {
 spawn_grenade(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].dir,impact_bombs[x].map,weapons[j].p.name);
 }
@@ -1869,81 +475,81 @@ spawn_grenade(impact_bombs[x].x,impact_bombs[x].y,impact_bombs[x].z,weapons[j].d
 for(uint v=0; v<shelters.length (); v++)
 {
 if(are_teamed(weapons[j].p.name,shelters[v].owner)) continue;
-if(get_3d_distance(weapons[j].x,weapons[j].y,weapons[j].z,shelters[v].x,shelters[v].y,shelters[v].z)<=weapons[j].spread&&shelters[v].map==weapons[j].map and weapons[j].p.name!=shelters[v].owner)
+if(get_3d_distance(weapons[j].x,weapons[j].y,weapons[j].z,shelters[v].x,shelters[v].y,shelters[v].z)<=weapons[j].type.spread&&shelters[v].map==weapons[j].map and weapons[j].p.name!=shelters[v].owner)
 {
 string t="";
-if(!weapons[j].bullet) t=weapons[j].type;
-if(weapons[j].type=="grenade")
+if(!weapons[j].type.bullet) t=weapons[j].type.name;
+if(weapons[j].type.name=="grenade")
 {
 //t="";
 spawn_grenade(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(shelters[v].x,shelters[v].y,shelters[v].z,shelters[v].facing,shelters[v].map,weapons[j].p.name);
 }
-shelters[v].hit(random(weapons[j].mindammage,weapons[j].maxdammage),weapons[j].p.name+"'s "+weapons[j].type,t);
+shelters[v].hit(random(weapons[j].type.min_damage,weapons[j].type.max_damage),weapons[j].p.name+"'s "+weapons[j].type.name,t);
 if(@weapons[j].p!=null)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|weaponping.ogg",0);
-if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(shelters[v].owner)+"'s shelter",2);
+if(weapons[j].type.name=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(shelters[v].owner)+"'s shelter",2);
 }
 hit=true;
 }
 }
 for(uint v=0; v<vs.length (); v++)
 {
-if(get_2d_distance(weapons[j].x,weapons[j].y,vs[v].x,vs[v].y)<=weapons[j].spread&&vs[v].map==weapons[j].map&&vs[v].owner!=weapons[j].p.name and ((vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+8))&&weapons[j].type!="artillery")||(vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+10))&&weapons[j].type=="artillery")))
+if(get_2d_distance(weapons[j].x,weapons[j].y,vs[v].x,vs[v].y)<=weapons[j].type.spread&&vs[v].map==weapons[j].map&&vs[v].owner!=weapons[j].p.name and ((vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+8))&&weapons[j].type.name!="artillery")||(vs[v].z>=weapons[j].z&&(vs[v].z<=(weapons[j].z+10))&&weapons[j].type.name=="artillery")))
 {
 string t="";
-if(!weapons[j].bullet) t=weapons[j].type;
-if(weapons[j].type=="grenade")
+if(!weapons[j].type.bullet) t=weapons[j].type.name;
+if(weapons[j].type.name=="grenade")
 {
 t="";
 spawn_grenade(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rocket_launcher")
+if(weapons[j].type.name=="rocket_launcher")
 {
 spawn_rocket(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="rpg7")
+if(weapons[j].type.name=="rpg7")
 {
 spawn_rpg(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="gp30")
+if(weapons[j].type.name=="gp30")
 {
 spawn_gp(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="ags30")
+if(weapons[j].type.name=="ags30")
 {
 spawn_ags(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-if(weapons[j].type=="m79_grenade_launcher")
+if(weapons[j].type.name=="m79_grenade_launcher")
 {
 spawn_grenade(vs[v].x,vs[v].y,vs[v].z,vs[v].facing,vs[v].map,weapons[j].p.name);
 }
-vs[v].hit(random(weapons[j].mindammage,weapons[j].maxdammage),weapons[j].p.name+"'s "+string_replace(weapons[j].type,"artillery","tank",false),t);
+vs[v].hit(random(weapons[j].type.min_damage,weapons[j].type.max_damage),weapons[j].p.name+"'s "+string_replace(weapons[j].type.name,"artillery","tank",false),t);
 
 if(@weapons[j].p!=null)
 {
 send_reliable(weapons[j].p.peer_id,"play_s|"+(are_teamed(weapons[j].p.name, vs[v].owner)?"weaponpingteam":"weaponping")+".ogg",0);
-if(weapons[j].type=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(vs[v].owner,true),2);
+if(weapons[j].type.name=="artillery") send_reliable(weapons[j].p.peer_id,"hit "+cn2n(vs[v].owner,true),2);
 }
 hit=true;
 }
@@ -1959,6 +565,8 @@ if(hit) { @weapons[j]=null;
 void spawn_weapon(double x, double y, double z, double dir, string type, string map,player@p1)
 {
 if(@p1==null) return;
-weapon w1(x, y, z, dir, type, map, p1);
+weapon_data@ wd = return_wdata(type);
+if(@wd==null) return;
+weapon w1(x, y, z, dir, wd, map, p1);
 weapons.insert_last(w1);
 }

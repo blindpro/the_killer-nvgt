@@ -1,5 +1,5 @@
-string version="1.9.5";
-string lastupdate="2/20/2026, 12:35 PM central standard time";
+string version="1.9.6";
+string lastupdate="3/22/2026, 12:09 PM central standard time";
 string changes;
 bool load_changes()
 {

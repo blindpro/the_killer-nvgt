@@ -118,6 +118,11 @@ t_net_loop_mutex.lock(1000);
 }
 if(shift_is_down() and alt_is_down()==false)
 {
+if(key_pressed(KEY_W))
+{
+tracking_beacon=tracking_beacon==false?true:false;
+speak("player tracking beacon "+(tracking_beacon?"activated":"deactivated"));
+}
 if(key_pressed(KEY_RETURN))
 {
 if (focuseditem!="" and can_move==true)
@@ -223,18 +228,28 @@ send_reliable(0,"whoonline",0);
 }
 else if(key_pressed(KEY_W))
 {
-if(tracking=="")
+if(@tracking_player==null)
 speak("Not tracking anyone");
 else
-send_reliable(0,"track|"+tracking,0);
+{
+if(tracking_player.is_dead||tracking_player.invisible||tracking_player.invinsible||tracking_player.hidden>0||tracking_player.map!=mapname)
+{
+speak("this player can not be tracked.");
+}
+else
+{
+string sound_name;
+if(are_teamed(tracking_player.name,name))
+sound_name="teambeacon";
+else
+sound_name="track";
+tell_where(aabb(vector(tracking_player.x,tracking_player.y,tracking_player.z),vector(tracking_player.x,tracking_player.y,tracking_player.z)),sound_name);
+}
+}
 }
 else if(key_pressed(KEY_Z))
 {
 speak ("Current location: "+last_zone+" of "+mapname);
-}
-else if(key_pressed(KEY_V))
-{
-send_reliable(0,"formtest",0);
 }
 else if(key_pressed(KEY_Q) and can_move and !inve)
 {
@@ -273,11 +288,11 @@ else if(key_pressed(KEY_BACKSLASH))
 interrupt_buffer();
 else if(key_pressed(KEY_N))
 {
-if(trackx==-1 or tracky==-1 or trackz==-1 or tracking=="")
+if(tracking=="")
 {
 speak ("Nothing to track");
 }
-else tell_where(trackx,tracky,trackz,"loctrack");
+else tell_where(trackaabb,"loctrack");
 }
 else if(key_pressed(KEY_F))
 {
@@ -632,18 +647,21 @@ playerloop();
 msoundcheckloop();
 sirencheckloop();
 objloop();
-if(trackx!=-1&&tracky!=-1&&trackz!=-1&&tracking!="")
+if(@tracking_player!=null&&tracking_beacon)
 {
-if(trackingtimer.elapsed>700)
+if(!tracking_player.is_dead&&!tracking_player.invisible&&!tracking_player.invinsible&&tracking_player.hidden==0&&tracking_player.map==mapname)
+play_track_snd(aabb(vector(tracking_player.x,tracking_player.y,tracking_player.z),vector(tracking_player.x,tracking_player.y,tracking_player.z)));
+}
+if(tracking!="")
 {
-trackingtimer.restart();
-p.play_3d("loctrack.ogg",mr.x,mr.y,me.z,trackx,tracky,trackz,calculate_theta(facing),false);
+play_track_snd(trackaabb);
 }
 if(last_zone==tracking)
 {
 p.play_stationary("loctracked.ogg",false);
-trackx=-1; tracky=-1; trackz=-1; tracking="";
-}
+trackaabb.set_min(vector(0,0,0));
+trackaabb.set_max(vector(0,0,0));
+tracking="";
 }
 if(jumping==true)
 {
@@ -655,6 +673,7 @@ movetime = walktime;
 }
 if(in_map&&!following&&!frozen&&playing&&!inve&&!dmoving)
 {
+update_player(me.x,me.y,me.z,mapname,name);
 fallloop();
 fallcheck();
 fallingloop();

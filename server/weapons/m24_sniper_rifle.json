@@ -1,0 +1,1 @@
+{"bullet":true,"equipable":true,"fire_mode":"norm","fire_time":2000,"hit_sounds":3,"max_ammo":1,"max_damage":35000,"max_shield_hits":190,"min_damage":30000,"min_shield_hits":15,"name":"m24_sniper_rifle","range":5000,"reload_time":1500,"requires_ammo":true,"shield_chance":0,"speed_time":27,"spread":5}

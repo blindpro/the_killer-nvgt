@@ -85,6 +85,7 @@ return 1;
 else
 return 2;
 }
+aabb trackaabb;
 void checkarroundmenu()
 {
 setupmenu();
@@ -101,7 +102,9 @@ int mres=m.run("Find what?",true);
 if(m.get_item_name(mres)=="" or m.get_item_name(mres)=="stoptrack" or mres==0)
 {
 speak ("Stopped tracking");
-trackx=-1; tracky=-1; trackz=-1; tracking="";
+trackaabb.set_min(vector(0,0,0));
+trackaabb.set_max(vector(0,0,0));
+tracking = "";
 return;
 }
 else
@@ -110,11 +113,10 @@ int z=get_zone_index(m.get_item_name(mres));
 if(z>-1)
 {
 string[] ps=string_split(zones[z],":",true);
-trackx=stn(ps[0]);
-tracky=stn(ps[2]);
-trackz=stn(ps[4]);
-tracking=ps[6];
-tell_where(trackx,tracky,trackz,"loctrack");
+trackaabb.set_min(vector(parse_double(ps[0]),parse_double(ps[2]),parse_double(ps[4])));
+trackaabb.set_max(vector(parse_double(ps[1]),parse_double(ps[3]),parse_double(ps[5])));
+tracking = ps[6];
+tell_where(trackaabb,"loctrack");
 }
 else
 {
@@ -288,8 +290,11 @@ m.enable_up_and_down=true;
 m.enable_left_and_right=true;
 m.enable_home_and_end=true;
 m.set_callback(playermenu_callback,"");
+if(@tracking_player!=null)
+m.add_item_tts("stop tracking "+tracking_player.name,"stop tracking");
 for(uint i = 0; i < users.length(); i++)
 {
+if(@tracking_player!=null&&users[i]==tracking_player.name) continue;
 m.add_item_tts(users[i],users[i]);
 }
 playerstuff.resize(0);
@@ -298,10 +303,23 @@ if(m.get_item_name(r)==""||r==0)
 {
 speak("canceled");
 }
+else if(m.get_item_name(r)=="stop tracking")
+{
+speak("stop tracking "+tracking_player.name);
+@tracking_player=null;
+}
 else
 {
+int index = get_player_index_from(m.get_item_name(r));
+if(index>-1)
+{
 speak("tracking "+m.get_item_name(r));
-tracking=m.get_item_name(r);
+@tracking_player = players[index];
+}
+else
+{
+speak("This player is offline");
+}
 }
 }
 int playermenu_callback(dynamic_menu_pro@ m, string data)
@@ -317,7 +335,7 @@ clipboard_set_text(m.get_item_name(m.get_position()));
 if(key_pressed(KEY_F2))
 {
 disable_input();
-string pm_text = virtual_input_box("private message","enter the message that you want to send to "+m.get_item_name(m.get_position()));
+string pm_text = input_box("enter the message that you want to send to "+m.get_item_name(m.get_position()));
 if(!pm_text.is_empty())
 send_reliable(0,"/pm "+m.get_item_name(m.get_position())+" "+pm_text,1);
 enable_input();

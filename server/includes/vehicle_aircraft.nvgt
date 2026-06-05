@@ -186,14 +186,20 @@ this.pitch=pitch;
 sendint("vestart|"+type+"_engine_int.ogg|"+pitch,owner);
 sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
-if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
+if(index>-1) {
+players[index].x=x;players[index].y=y;players[index].z=z;
+players[index].send_position();
+}
 }
 if(doing=="stop")
 {
 z-=10;
 sendint("move|"+x+"|"+y+"|"+z,owner);
 int index=get_player_index_from(owner);
-if(index>-1) {players[index].x=x;players[index].y=y;players[index].z=z;}
+if(index>-1) {
+players[index].x=x;players[index].y=y;players[index].z=z;
+players[index].send_position();
+}
 }
 if(doing=="prefire")
 {
@@ -301,6 +307,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
+players[index].send_position();
 send_unreliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }
@@ -327,6 +334,7 @@ if(index>-1)
 players[index].x=x;
 players[index].y=y;
 players[index].z=z;
+players[index].send_position();
 send_reliable(players[index].peer_id,"move|"+x+"|"+y+"|"+z,0);
 }
 }

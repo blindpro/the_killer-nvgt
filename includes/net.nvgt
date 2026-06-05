@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 string netaddress = "localhost";
 //string netaddress="blindprohosting.duckdns.org";
+=======
+//string netaddress="127.0.0.1";
+string netaddress="LOCALHOST";
+>>>>>>> server_control
 uint64 netport = 10000;
 
 void testc ()
@@ -72,54 +77,50 @@ speak ("logging in...");
 send_reliable(0, "login|"+name+"|"+pass+"|"+netver+"|"+compid, 0);
 connected=true;
 }
-else if(e.type==event_receive and get_event_message(e.message)=="loggedin")
+else if(e.type==event_receive)
 {
-p.update_listener_3d(me.x, me.y, me.z);
-sourcecheckloop();
-mr.x=round(me.x,0);mr.y=round(me.y,0);
-game();
-}
-else if(e.type==event_receive and get_event_message(e.message)=="admin")
+string s = get_event_message(e.message);
+if(s=="admin")
 {
 speak ("You are an admin");
 admin=true;
 }
-else if(e.type==event_receive and get_event_message(e.message)=="nochar")
+if(s=="nochar")
 {
 p.play_stationary("progress.ogg",false);
 dlg("error: This account does not exist!");
 reset_network();
 mainmenu();
 }
-else if(e.type==event_receive and get_event_message(e.message)=="wrongpass")
+if(s=="wrongpass")
 {
 p.play_stationary("progress.ogg",false);
 dlg("Your password doesn't match the one that is on the server.");
 reset_network();
 mainmenu();
 }
-else if(e.type==event_receive and get_event_message(e.message)=="alreadyplaying")
+if(s=="alreadyplaying")
 {
 p.play_stationary("progress.ogg",false);
 dlg("sorry: this account is already logged in");
 reset_network();
 mainmenu();
 }
-else if(string_contains(get_event_message(e.message),"error",1)>-1)
+if(string_contains(s,"error",1)>-1)
 {
 p.play_stationary("progress.ogg",false);
 dlg(get_event_message(e.message));
 reset_network();
 mainmenu();
 }
-else if(e.type==event_receive and get_event_message(e.message)=="error" or(timeouttimer.elapsed>=timeouttime))
+if(s=="error" or(timeouttimer.elapsed>=timeouttime))
 {
 p.play_stationary("progress.ogg",false);
 dlg("Server is offline");
 reset_network();
 mainmenu();
 }
-else if(e.type==event_receive and get_event_message(e.message)=="banned")
+if(s=="banned")
 {
 if(SCRIPT_COMPILED)
 {
@@ -133,13 +134,6 @@ else
 dlg("You would be banned, but you're a dev!");
 }
 }
-else if(e.type==event_receive)
-{
-sound g;
-g.load("progress.ogg");
-g.play();
-g.close();
-string s = get_event_message(e.message);
 string[] parsed=s.split(" ");
 if(parsed.length()>1)
 {
@@ -171,7 +165,7 @@ me.z=string_to_number(parsed[1]);
 }
 else if(parsed[0]=="mapname")
 {
-mapname=string_replace(get_event_message(e.message),"mapname ","",false);
+mapname=string_replace(s,"mapname ","",false);
 }
 else if(parsed[0]=="mdata")
 {
@@ -179,19 +173,7 @@ else if(parsed[0]=="mdata")
 }
 else if(parsed[0]=="motd")
 {
-motd=string_trim_left(get_event_message(e.message),6);
-}
-else if(parsed[0]=="spawn_player")
-{
-int x=stn(parsed[1]);
-int y=stn(parsed[2]);
-int z=stn(parsed[3]);
-string n=parsed[4];
-string mp=parsed[5];
-if(n!=name)
-{
-spawn_player(x,y,z,mp,n);
-}
+motd=string_trim_left(s,6);
 }
 else if(parsed[0]=="m_data")
 {
@@ -201,6 +183,13 @@ else if(parsed[0]=="facing")
 {
 facing=string_to_number(parsed[1]);
 }
+}
+else if(s=="loggedin")
+{
+p.update_listener_3d(me.x, me.y, me.z);
+sourcecheckloop();
+mr.x=round(me.x,0);mr.y=round(me.y,0);
+game();
 }
 }
 }
@@ -230,6 +219,7 @@ void send_reliable(uint peer, string mess, uint channel)
 {
 if(net_debug) packetlog+=">"+mess+"\r\n";
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 n.send_reliable(peer, mess, channel);
 sent_packets+=1;
 }
@@ -237,6 +227,7 @@ void send_unreliable(uint peer, string mess, uint channel)
 {
 if(net_debug) packetlog+=">"+mess+"\r\n";
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 n.send_unreliable(peer, mess, channel);
 sent_packets+=1;
 }
@@ -246,6 +237,7 @@ if(r=="")
 {
 return "";
 }
+r = string_inflate(r);
 r=string_decrypt(r, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
 received_packets+=1;
 if(net_debug) packetlog+="<"+r+"\r\n";
@@ -297,7 +289,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(parsed[1]!=name and map==mapname and inve==false)
 {
-tp.play_3d("jump.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d("jump.ogg", me.x, me.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="fall")
@@ -308,7 +300,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
  if(parsed[1]!=name and map==mapname and inve==false)
 {
-tp.play_3d("fall.ogg",mr.x,mr.y,me.z,x,y,z,calculate_theta(facing),false);
+tp.play_3d("fall.ogg",me.x,me.y,me.z,x,y,z,calculate_theta(facing),false);
 }
 }
 else if(parsed[0]=="trackplayer")
@@ -321,7 +313,7 @@ if(mapname!=mp)
 speak("This player is on a different map. Sorry");
 else
 {
-tell_where(x,y,z,parsed[6],true);
+tell_where(aabb(vector(x,y,z),vector(x,y,z)),parsed[6],true);
 }
 }
 else if(parsed[0]=="facing"&&parsed.length () >1) facing=stn(parsed[1]);
@@ -333,7 +325,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(parsed[1]!=name and map==mapname and inve==false)
 {
-tp.play_3d(get_tile_at(x, y, z)+"land.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d(get_tile_at(x, y, z)+"land.ogg", me.x, me.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="draw" and parsed.length()>1)
@@ -363,6 +355,21 @@ else if(parsed[0]=="remcontrol")
 speak("You pull out a remote controler. Its  small with a button in the center with the letter F. You see a small flashing light indicating a remote gun is sending a signal");
 controling_remgun=true;
 }
+else if(parsed[0]=="update_player_teamname"&&parsed.length()>=3)
+{
+int index = get_player_index_from(parsed[1]);
+if(index>-1)
+{
+if(parsed[2]=="[empty]")
+{
+players[index].teamname="";
+}
+else
+{
+players[index].teamname=parsed[2];
+}
+}
+}
 else if(parsed[0]=="launch_form"&&parsed.length()>=1)
 {
 string ftext = s;
@@ -387,31 +394,18 @@ int index = get_obj_index(parsed[1]);
 if (index>-1)
 remove_obj(parse_int(index));
 }
+else if(parsed[0]=="spawn_players")
+{
+if(parsed.length()>=2) load_players(s);
+}
 else if(parsed[0]=="spawn_obj")
 {
-spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], stn(parsed[7]), stn(parsed[6]));
+spawn_obj(stn(parsed[1]), stn(parsed[2]), stn(parsed[3]), parsed[4], parsed[5], parsed[7], stn(parsed[6]));
 }
 else if(parsed[0]=="load_obj" and parsed.length()>=1)
 {
 string data = string_replace(s,"load_obj|","",false);
 load_obj(data);
-}
-else if(parsed[0]=="walkmod" and parsed.length()>2)
-{
-walkmod=true;
-walktime=stn(parsed[1]);
-airtime=(stn(parsed[1])/2);
-canjump=stn(parsed[2]);
-movetime=walktime;
-walktimer.restart();
-}
-else if(parsed[0]=="resetwalktime")
-{
-walkmod=false;
-walktime=100;
-movetime=walktime;
-if(canjump==0) canjump=1;
-airtime=50;
 }
 else if(parsed[0]=="weaponlist" and parsed.length()>1)
 {
@@ -422,10 +416,44 @@ for(uint i=1; i<parsed.length(); i++)
 weapons.insert_last(parsed[i]);
 }
 }
-else if(parsed[0]=="weapondata" and parsed.length()>2)
+else if(parsed[0]=="weapondata" and parsed.length()>=2)
 {
-firetime=stn(parsed[1]);
-weaponauto=(parsed[2]=="auto" ? true : false);
+string text = s.replace("weapondata|","");
+json_object@ j = parse_json(text);
+if(@j!=null)
+{
+string[] k = j.get_keys();
+for(uint i = 0; i < k.length(); i++)
+{
+if(k[i]=="fire_time")
+firetime=j["fire_time"];
+if(k[i]=="fire_mode")
+weaponauto=(j["fire_mode"]=="auto" ? true : false);
+if(k[i]=="walk_time")
+{
+walkmod=true;
+walktime=j["walk_time"];
+airtime=(j["walk_time"]/2);
+movetime=walktime;
+walktimer.restart();
+}
+if(!j.exists("walk_time"))
+{
+walkmod=false;
+walktime=100;
+movetime=walktime;
+airtime=50;
+}
+if(k[i]=="can_jump")
+{
+canjump=j["can_jump"];
+}
+if(!j.exists("can_jump"))
+{
+canjump=1;
+}
+}
+}
 }
 else if(parsed[0]=="followstart")
 {
@@ -436,6 +464,25 @@ else if(parsed[0]=="followstop")
 {
 can_move=true;
 following=false;
+}
+else if(parsed[0]=="play_step"&&parsed.length()>=7)
+{
+int x = parse_double(parsed[2]);
+int y = parse_double(parsed[3]);
+int z = parse_double(parsed[4]);
+string map = parsed[5];
+string tile = parsed[1];
+string pname = parsed[6];
+if(tile=="[empty]") tile="";
+update_player(x,y,z,map,pname);
+if(mapname==map&&!tile.is_empty())
+{
+mpool.play_3d(tile+"step"+random(1,5)+".ogg",me.x,me.y,me.z,x,y,z,calculate_theta(facing),false);
+}
+}
+else if(parsed[0]=="set_player_value"&&parsed.length()>=4)
+{
+set_player_value(parsed[1],parsed[2],parsed[3]);
 }
 else if(parsed[0]=="invstring")
 {
@@ -460,20 +507,16 @@ int y=stn(parsed[2]);
 int z=stn(parsed[3]);
 string n=parsed[4];
 string m=parsed[5];
-remove_player(n);
-if(speakonlinemsgs==1)
+int index = get_player_index_from(n);
+if(parsed[4]!=name&&index>-1)
 {
-tp.play_stationary("offline.ogg",false);
-add_buffer_item("misc",parsed[4]+" went offline");
-}
-else if(parsed[4]!=name)
-{
-if(speakonlinemsgs==1)
+if(speakonlinemsgs==1&&players[index].hidden==0)
 {
 tp.play_stationary("offline.ogg", false);
 add_buffer_item("misc",parsed[4]+" just went offline");
 }
 }
+remove_player(n);
 }
 else if(parsed[0]=="admintell")
 {
@@ -533,6 +576,11 @@ else if(parsed[0]=="vestop")
 {
 vesound.stop();
 }
+else if(parsed[0]=="beacon_switch")
+{
+beacon=beacon==0?beacon=1:beacon=0;
+speak("beacon "+(beacon==0?"disabled":"enabled"));
+}
 else if(parsed[0]=="veunspawn")
 {
 if(vetype!="") vetype="";
@@ -559,6 +607,19 @@ else if(parsed[0]=="play_s")
 {
 tp.play_stationary(parsed[1],false);
 }
+else if(parsed[0]=="update_objs"&&parsed.length()>=2)
+{
+string text = s;
+s = s.replace("update_objs|","",false);
+string[] olines = text.split("\r\n");
+if(olines.length()==0) continue;
+for(uint i = 0; i < olines.length(); i++)
+{
+if(olines[i].is_empty()) continue;
+string[] oparsed = olines[i].split("|");
+update_obj(oparsed[0],parse_double(oparsed[1]),parse_double(oparsed[2]),parse_double(oparsed[3]),oparsed[4]);
+}
+}
 else if(parsed[0]=="pong" and pinging==true)
 {
 pingpongtimer.pause();
@@ -573,6 +634,10 @@ else
 spk+=ms+" ms, "+ms_to_readable_time(ms);
 speak (spk);
 }
+else if(parsed[0]=="update_position"&&parsed.length()>=6)
+{
+update_player(parse_double(parsed[1]),parse_double(parsed[2]),parse_double(parsed[3]),parsed[4],parsed[5]);
+}
 else if(parsed[0]=="hardland")
 {
 int x=stn(parsed[2]);
@@ -581,7 +646,7 @@ int z=stn(parsed[4]);
 string map=parsed[5];
 if(map==mapname and inve==false)
 {
-tp.play_3d(get_tile_at(x, y, z)+"hardland.ogg", mr.x, mr.y, me.z, x, y, z, calculate_theta(facing), false);
+tp.play_3d(get_tile_at(x, y, z)+"hardland.ogg", me.x, me.y, me.z, x, y, z, calculate_theta(facing), false);
 }
 }
 else if(parsed[0]=="sitstart")
@@ -599,19 +664,14 @@ int y=stn(parsed[2]);
 int z=stn(parsed[3]);
 string n=parsed[4];
 string mp=parsed[5];
-if(speakonlinemsgs==1 and name!=n)
+spawn_player(x,y,z,mp,n,parse_double(parsed[6]));
+int hid = parse_double(parsed[7]);
+int index = get_player_index_from(n);
+if(index>-1) players[index].hidden=hid;
+if(speakonlinemsgs==1 and name!=n and players[index].hidden==0)
 {
 tp.play_stationary("online.ogg",false);
-spawn_player(x,y,z,mp,n);
 add_buffer_item("misc",parsed[4]+" came online");
-}
-else if(parsed[4]!=name)
-{
-if(speakonlinemsgs==1)
-{
-tp.play_stationary("online.ogg", false);
-add_buffer_item("misc",parsed[4]+" is online");
-}
 }
 }
 else if(parsed[0]=="mapname")
@@ -804,7 +864,11 @@ tp.play_3d(parsed[0]+".ogg", me.x, me.y, me.z, stn(parsed[1]), stn(parsed[2]), s
 else if(e.channel==4)
 {
 s = get_event_message(e.message);
-if (s=="") continue;
+if (s=="") 
+{
+t_net_loop_mutex.unlock();
+continue;
+}
 string[] parsed=s.split("|");
 if(parsed[0]=="createmsound"&&parsed.length()>=8) createmsound(parsed[1],parsed[2],stn(parsed[3]),stn(parsed[4]),stn(parsed[5]),parsed[6],stn(parsed[7]));
 else if(parsed[0]=="updatemsound"&&parsed.length()>=6) updatemsound(parsed[1],stn(parsed[2]),stn(parsed[3]),stn(parsed[4]),stn(parsed[5]));

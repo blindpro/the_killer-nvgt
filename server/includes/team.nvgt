@@ -84,6 +84,7 @@ if(r==false) buffermembers.insert_last(name);
 if(r==true)
 {
 players[index].data["team"]="";
+send_reliable(0,"update_player_teamname|"+players[index].name+"|[empty]",0);
 for(uint x=0; x<security_bombs.length(); x++)
 {
 if(security_bombs[x].owner==name)
@@ -121,6 +122,7 @@ if(teammembers[t]==name)
 teammembers.remove_at(t);
 transmit(name+" left the team!");
 transmit("play_s|teamleave.ogg",false,0);
+send_reliable(0,"update_player_teamname|"+players[index].name+"|[empty]",0);
 players[index].teamname="";
 players[index].data["team"]=players[index].teamname;
 for(uint x=0; x<security_bombs.length(); x++)
@@ -172,6 +174,7 @@ int index=get_player_index_from(name);
 if(index>-1)
 {
 players[index].teamname=teamname;
+send_reliable(0,"update_player_teamname|"+players[index].name+"|"+teamname,0);
 if(message)
 {
 transmit("play_s|teamadd.ogg",false,0);
@@ -265,6 +268,11 @@ void create_team(string t, string tl)
 {
 team t1(t, tl);
 teams.insert_last(t1);
+int index = get_player_index_from(tl);
+if(index>-1)
+{
+send_reliable(0,"update_player_teamname|"+tl+"|"+t,0);
+}
 }
 int get_team_index(string name)
 {

@@ -1,11 +1,12 @@
-#include "includes\include.nvgt"
+#include "includes/include.nvgt"
 ip_locale l;
+timestamp object_stamp;
 network n;
 network_event e;
 mutex t_net_loop_mutex;
 uint64 port = 10000;
 bool netsetup;
-dictionary sellitems,wdata;
+dictionary sellitems;
 int storex=0,storey=100,storez=0,fstorex=0,fstorey=100,fstorez=0;
 string sellsend;
 bool storemoving=false,fstorecoords=false;
@@ -20,9 +21,12 @@ int writeprefs=1;
 int chatting=1;
 int objgrabs=0, objspawns=0;
 string adminlog;
+<<<<<<< HEAD
 string[] guns={"crossbow","sky_28_laser","ags30","glock_17_pistol","beretta_m1951_machine_pistol","sig_p226_combat_pistol","modern_sub_machine_gun_carbine","cop_357_derringer_pistol","m79_grenade_launcher","stp21_handgun","str_301_long_barreled_machine_pistol","fnminimilight","beretta_nano_pocket_pistol","mlk_207_combat_rifle","colt_ar_15_assault_rifle","stp106_long_barreled_pistol","nak_nk1000_decimater","barrett_m82_sniper_rifle","cyanide_pistol","m16_assault_rifle","str_32_pump_action_shotgun","crt43_automatic_shotgun","pistol","shotgun","gp30","throwing_knives","hand_cannon","sky_327_laser_cannon","taser","rpg7","rocket_launcher","gauss","cannon","awp","sniper","zulfikar","storm_sniper","m24_sniper_rifle","ak47_assault_rifle","blz83_portable_machine_gun","browning_high_power_bda_handgun","browning_m2_heavy_50_cal_machinegun","colt_python_revolver","flameburst_mini_flame_thrower","m4a1_assault_rifle","m134_minigun","m1208_shotgun","mlk_203_combat_pistol","mp5_machine_pistol","ruger_security_6_revolver","s&w_model66_revolver","saiga_12_5_round_shotgun","saiga_12_10_round_shotgun","saiga_12_20_round_shotgun","saiga_12_30_round_shotgun","sky_127_laser_handgun","stp_s84q_automatic_suppressed_pistol","dart_launcher","walther_p99_handgun","beretta_m9_pistol"};
 string[] cold_weapons={"knife","spiked_chain_mace","studded_boots","spiked_bat","steal_warhammer","small_iron_club","small_sabre","crt17_combat_knife","small_hammer","small_dagger","machete","sky_429_laser_shotgun","sky_372_laser_machinegun","sky_386_laser_assault_rifle","sky_286_laser_pistol","rusty_scalpel","large_iron_club","nunchaku","crow_bar","rusty_axe","long_sword","iron_shovel","scissor_blade","garden_spade","hammer","golden_war_axe","brass_knuckles","broken_rifle","feet","fists","short_sword","spear","stp_m4_combat_knife"};
 string[] devs = {"blindpro"};
+=======
+>>>>>>> server_control
 int maxobjs=500;
 string[] newbitems={"antibiotic","antibiotic_pack","mini_antibiotic_pack","antibiotic_pack","tk_ultra_health_potion"};
 string[] killmsgs;
@@ -44,7 +48,7 @@ timer updatingtimer, auctiontimer;
 bool updatingsvr=false,updatevstopped=false,updatevkilled=false,updatenotified=false,updatergkilled=false;
 double voteyes=0,voteno=0;
 http httpn;
-string minverstring="1.95.0";
+string minverstring="1.96.0";
 int activations = 0;
 int peak = 0;
 string peakreached;
@@ -83,6 +87,7 @@ else
 netsetup=n.setup_server(port, 200, 500);
 setupserver();
 init_mapsystem();
+init_weapon_system();
 data_read();
 load_compids();
 load_all_teams();
@@ -171,7 +176,19 @@ server_quit ();
 }
 if(key_pressed(KEY_S))
 {
-speak(join(drinkitems,"\r\n"));
+speak(players[0].w.get_properties().stringify());
+}
+if(key_pressed(KEY_P))
+{
+speak("There are currently "+players.length()+" players on the server");
+}
+if(key_pressed(KEY_U))
+{
+speak("Server uptime: "+ms_to_readable_time(uptimer.elapsed));
+}
+if(key_pressed(KEY_I))
+{
+speak("There are currently"+objs.length()+" items on the server");
 }
 if(key_pressed(KEY_A))
 {
@@ -1023,7 +1040,7 @@ return;
 }
 if(remgun_index(stn(parsed[1]))<0)
 {
-players[index].sendpacket("speak could not connect to this remgun. It may have been destroyed.",0);
+players[index].sendpacket("speak|could not connect to this remgun. It may have been destroyed.",0);
 return;
 }
 players[index].remgunid=stn(parsed[1]);
@@ -1773,9 +1790,9 @@ if(players[index].map=="jail" or players[index].is_dead)
 return;
 players[index].stun(404,false,false);
 players[index].playsound(parsed[1]+"draw");
-send_reliable(players[index].peer_id,"weapondata|"+dget_string(wdata,parsed[1]),0);
 players[index].weapon=parsed[1];
-players[index].get_weapon_propperties(players[index].weapon);
+send_reliable(players[index].peer_id,"weapondata|"+players[index].w.get_properties().stringify(),0);
+//players[index].get_weapon_propperties(players[index].weapon);
 players[index].firing=false;
 }
 }
@@ -1857,10 +1874,14 @@ if(can_spawn_item_at(players[index].x,players[index].y,players[index].z,players[
 send_reliable(players[index].peer_id,"Can not use this item at this location!",0);
 return;
 }
-if(guns.find(wname)>-1 || cold_weapons.find(wname)>-1)
+int weaponindex = get_wdata_index(wname);
+if(weaponindex>-1)
+{
+if(wdata[weaponindex].equipable)
 {
 if( players[index].weapon==wname||players[index].sitting==1||in_vehicle(players[index].name)>-1||players[index].reloading ||wname=="feet" || wname=="fists") return;
 send_reliable(players[index].peer_id,"draw|"+wname,0);
+}
 }
 if(wname=="mine")
 {
@@ -1957,7 +1978,7 @@ takeobj=true;
 }
 }
 }
-else if(wname=="nuclear_bomb")
+else if(wname=="nuclear_bomb"&&in_vehicle(players[index].name)<0)
 {
 if(!players[index].usenuclear_bomb)
 {
@@ -1967,6 +1988,34 @@ players[index].playsound("nuclearbombplace");
 send_reliable(players[index].peer_id,"stopmoving",0);
 takeobj=true;
 }
+}
+else if(wname=="item_grabber"&&in_vehicle(players[index].name)<0)
+{
+if(players[index].itemgrabbing==true)
+{
+send_reliable(players[index].peer_id,"Because you honestly think you can use a item grabber while using an item grabber...",0);
+return;
+}
+players[index].itemgrabbingtimer.restart();
+send_reliable(players[index].peer_id, "stopmoving",0);
+players[index].itemgrabbing=true;
+players[index].give("item_grabber",-1);
+play("itemgrabberstart", players[index].x, players[index].y, players[index].z, players[index].map, index, false);
+send_reliable(0, players[index].name+" just started using an item grabber! ", 2);
+}
+else if(wname=="enemy_grabber"&&in_vehicle(players[index].name)<0)
+{
+if(players[index].enemygrabbing==true)
+{
+send_reliable(players[index].peer_id,"Because you honestly think you can use a enemy grabber while using an enemy grabber...",0);
+return;
+}
+players[index].enemygrabbingtimer.restart();
+send_reliable(players[index].peer_id, "stopmoving",0);
+players[index].enemygrabbing=true;
+players[index].give("enemy_grabber",-1);
+play("itemgrabberstart", players[index].x, players[index].y, players[index].z, players[index].map, index, false);
+send_reliable(0, players[index].name+" just started using an enemy grabber! ", 2);
 }
 else if(wname=="health_dart")
 {
@@ -1981,17 +2030,15 @@ takeobj = true;
 else if(wname=="weapon_pack")
 {
 uint total = 0;
-for(uint i = 0; i < guns.length(); i++)
+for(uint i = 0; i < wdata.length(); i++)
 {
-if(players[index].inventory.exists(guns[i])) continue;
-players[index].give(guns[i],1,false);
+if(players[index].inventory.exists(wdata[i].name)) continue;
+if(wdata[i].name=="fists"||wdata[i].name=="feet") continue;
+if(wdata[i].equipable)
+{
+players[index].give(wdata[i].name,1,false);
 total++;
 }
-for(uint j = 0; j < cold_weapons.length(); j++)
-{
-if(players[index].inventory.exists(cold_weapons[j]) || cold_weapons[j]=="feet" || cold_weapons[j]=="fists") continue;
-players[index].give(cold_weapons[j],1,false);
-total++;
 }
 if(total>0)
 {
@@ -2007,12 +2054,17 @@ send_reliable(players[index].peer_id,"No weapons available",0);
 }
 else if(wname=="weapon_ammo_box")
 {
-for(uint i = 0; i < guns.length(); i++)
+int total = 0;
+for(uint i = 0; i < wdata.length(); i++)
 {
-players[index].give("ammo_"+guns[i],random(10000, 50000),false);
+if(wdata[i].equipable&&wdata[i].requires_ammo) 
+{
+players[index].give("ammo_"+wdata[i].name,random(10000, 50000),false);
+total++;
+}
 }
 players[index].playsound("ammo_box");
-send_reliable(players[index].peer_id,"done. Ammunition for "+guns.length()+" weapons was obtained.",2);
+send_reliable(players[index].peer_id,"done. Ammunition for "+total+" weapons was obtained.",2);
 takeobj=true;
 }
 else if(wname=="invisibility_shield")
@@ -2024,9 +2076,17 @@ return;
 }
 if(players[index].invusetimer.elapsed>=60000)
 {
-spawn_weapon(players[index].x, players[index].y, players[index].z, players[index].facing, wname, players[index].map, players[index]);
+if(players[index].invisible==false)
+{
+players[index].invisible=true;
+send_reliable(0,"set_player_value|"+players[index].name+"|invisible|"+players[index].invisible,0);
+players[index].invisibilitytimer.restart();
+players[index].playsound("invisibility_start");
 players[index].invusetimer.restart();
 takeobj = true;
+}
+else
+send_reliable(players[index].peer_id,"You can't go invisible while you're using an invisibility shield",2);
 }
 else
 {
@@ -2911,14 +2971,14 @@ if(index>-1)
 {
 if(players[index].stunned==false and players[index].firing==false and players[index].reloading==false)
 {
-if(cold_weapons.find(players[index].weapon)>-1)
-{
-send_reliable(players[index].peer_id,"This weapon does not take ammo",0);
-return;
-}
-else if(players[index].weapon=="")
+if(players[index].weapon=="")
 {
 send_reliable(players[index].peer_id, "you have no weapon equipped", 0);
+return;
+}
+if(!get_wdata_value(players[index].weapon,"requires_ammo")||!wdata_value_exists(players[index].weapon,"requires_ammo"))
+{
+send_reliable(players[index].peer_id,"This weapon does not take ammo",0);
 return;
 }
 if(players[index].get_ammo_count_from(players[index].weapon)>0)
@@ -3356,7 +3416,7 @@ spawnable=false;
 if(spawnable==true)
 {
 int hide=stn(get_char_val(parsed[5],"hidden"));
-spawn_player(string_to_number(parsed[1]), string_to_number(parsed[2]), string_to_number(parsed[3]), parsed[4], parsed[5], e.peer_id,parsed[6],string_replace(parsed[7],"[spce]"," ",true),n.get_peer_address(e.peer_id),string_replace(get_event_message(),parsed[0]+" "+parsed[1]+" "+parsed[2]+" "+parsed[3]+" "+parsed[4]+" "+parsed[5]+" "+parsed[6]+" "+parsed[7],"",false),hide);
+spawn_player(string_to_number(parsed[1]), string_to_number(parsed[2]), string_to_number(parsed[3]), parsed[4], parsed[5], e.peer_id,parsed[6],string_replace(parsed[7],"[spce]"," ",true),n.get_peer_address(e.peer_id),string_replace(s,parsed[0]+" "+parsed[1]+" "+parsed[2]+" "+parsed[3]+" "+parsed[4]+" "+parsed[5]+" "+parsed[6]+" "+parsed[7],"",false),hide);
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
@@ -3379,6 +3439,28 @@ if(sirens.length()>0)
 for(uint i=0; i<sirens.length (); i++)
 {
 send_reliable(players[index].peer_id,"createsiren|"+sirens[i].id+"|"+sirens[i].soundloop+"|"+sirens[i].x+"|"+sirens[i].y+"|"+sirens[i].z+"|"+sirens[i].map,4);
+}
+if(players.length()>0)
+{
+json_array sendtext;
+for(uint i = 0; i < players.length(); i++)
+{
+if(players[i].name==players[index].name) continue;
+json_object js;
+js.set("x",players[i].x);
+js.set("y",players[i].y);
+js.set("z",players[i].z);
+js.set("map",players[i].map);
+js.set("name",players[i].name);
+js.set("hidden",players[i].hidden);
+js.set("teamname",players[i].teamname);
+js.set("peer_id",players[i].peer_id);
+js.set("is_dead",players[i].is_dead);
+js.set("invisible",players[i].invisible);
+js.set("invinsible",players[i].invinsible);
+sendtext.add(js);
+}
+send_reliable(players[index].peer_id,"spawn_players|"+sendtext.stringify(),0);
 }
 string text = wnames.replace(" ","|");
 send_reliable(players[index].peer_id,"weaponlist|"+text,0);
@@ -3557,6 +3639,7 @@ else if(parsed[0]=="turn" and parsed.length()>1)
 int i=get_player_index(e.peer_id);
 if(i>-1)
 players[i].facing=string_to_number(parsed[1]);
+players[i].playsound("turn",false);
 }
 else if(parsed[0]=="giveitem" and parsed.length()>1)
 {
@@ -3692,7 +3775,7 @@ else if(parsed[0]=="reginfo")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-players[index].data["reginfo"]=string_replace(get_event_message(),"reginfo ","",false);
+players[index].data["reginfo"]=string_replace(s,"reginfo|","",false);
 }
 }
 else if(parsed[0]=="regstatus")
@@ -3721,14 +3804,12 @@ players[index].z=string_to_number(parsed[3]);
 players[index].activitytimer.restart();
 if(players[index].active==false) players[index].active=true;
 if(players[index].bleedsound!=""||players[index].lowhealth||players[index].bleeding) update_moving_sound(players[index].bleedsound,players[index].x,players[index].y,players[index].z);
-/*
 int v=in_vehicle(players[index].name);
 if(v>-1)
 {
 vs.remove_at(v);
 send_reliable(players[index].peer_id,"veunspawn",0);
 }
-*/
 string gpt=get_tile_at(players[index].x,players[index].y,players[index].z,players[index].map);
 int a=string_contains(gpt,"glass",1);
 int isair=string_contains(gpt,"underwater",1);
@@ -3748,7 +3829,7 @@ players[index].hitby="shards of glass";
 }
 //if(gpt!="" and players[index].dmoving==false and in_vehicle(players[index].name)<0)
 //players[index].playobjs();
-if(players[index].dmoving==false and players[index].hidden==0 and gpt!="")
+if(players[index].dmoving==false and players[index].hidden==0)
 {
 /*
 int sh=in_shelter(players[index].name);
@@ -3756,7 +3837,7 @@ if(sh>-1)
 play("shelterstep"+random(1,5),players[index].x,players[index].y,players[index].z,players[index].map,index,true,false);
 else
 */
-play(gpt+"step"+random(1,5),players[index].x,players[index].y,players[index].z,players[index].map,index,true,false);
+send_plus(players[index].peer_id,"play_step|"+(gpt.is_empty()?"[empty]":gpt)+"|"+players[index].x+"|"+players[index].y+"|"+players[index].z+"|"+players[index].map+"|"+players[index].name,0);
 }
 }
 }
@@ -3797,7 +3878,7 @@ else if(parsed[0]=="enter")
 int index=get_player_index(e.peer_id);
 if(index>-1)
 {
-if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing)
+if(((players[index].is_dead==true||players[index].invinsible==true)&&players[index].hidden==0)||players[index].stunned==true||players[index].sbombplacing||players[index].remconnecting||players[index].ultrabombplacing||players[index].itemgrabbing||players[index].enemygrabbing||players[index].usenuclear_bomb)
 return;
 if(round(players[index].x,0)==0 and round(players[index].y,0)==4 and players[index].z==0 and in_shelter(players[index].name)>-1)
 {
@@ -4317,7 +4398,7 @@ string[] parsed = s.split(" ");
 int index=get_player_index(e.peer_id);
 if (index>-1)
 {
-string message=get_event_message();
+string message=s;
 if(filter(message))
 {
 send_reliable(e.peer_id,"The server has detected a crash code. The server will prevent these messages from going through.",2);
@@ -5042,7 +5123,7 @@ send_menu(e.peer_id,"General commands. Spaces should be used to separate paramet
 else if(parsed[0]=="/rules")
 {
 send_reliable(e.peer_id,"clip|"+file_get_contents("rules.txt"),0);
-send_reliable(e.peer_id,"speak rules copied to clipboard",0);
+send_reliable(e.peer_id,"speak|rules copied to clipboard",0);
 }
 else if(parsed[0]=="/rulesupdate" and players[index].dev)
 {
@@ -5142,7 +5223,7 @@ send_reliable(players[index].peer_id,msg,2);
 else if(parsed[0]=="/rawmap")
 {
 int s=in_shelter(players[index].name);
-if(players[index].adminable()||players[index].is_builder||beta/*||s>-1 and shelters[s].is_allowed(players[index].name)*/)
+if(players[index].adminable()||players[index].is_builder||beta/*||s>-1 and shelters[s1].is_allowed(players[index].name)*/)
 {
 string mapname=players[index].map;
 send_reliable(e.peer_id,"clip|"+get_map_text(mapname),0);
@@ -5179,12 +5260,12 @@ else if(ld[0]=="mapname"&&ld[1]!=mapname)
 send_reliable(e.peer_id,"update error: map names do not match",2);
 return;
 }
-else if(s>-1&&ld[0]=="ispawn"&&ld.length()>8)
+else if(s1>-1&&ld[0]=="ispawn"&&ld.length()>8)
 {
 send_reliable(e.peer_id,"update error: item spawning is not permitted in shelters",2);
 return;
 }
-else if(s>-1&&ld[0]=="vending_machine"&&ld.length()>3)
+else if(s1>-1&&ld[0]=="vending_machine"&&ld.length()>3)
 {
 send_reliable(e.peer_id,"update error: vending machines are not permitted in shelters",2);
 return;
@@ -5382,12 +5463,12 @@ if(players[index].replyname!="")
 int index2=get_player_index_from(players[index].replyname);
 if(index2>-1)
 {
-send_reliable(e.peer_id, "silence|you reply to "+players[index2].nickname+": "+string_replace(get_event_message(),parsed[0]+" ", "", false), 1);
+send_reliable(e.peer_id, "silence|you reply to "+players[index2].nickname+": "+string_replace(s,parsed[0]+" ", "", false), 1);
 if(players[index2].is_muted(players[index].name)==false)
 {
 players[index2].replyname=players[index].name;
-send_reliable(players[index2].peer_id, "pm|reply from "+players[index].nickname+" ("+players[index].name+"): "+string_replace(get_event_message(), parsed[0]+" ", "", false), 1);
-log("eventstream",players[index].nickname+" replied to "+players[index2].nickname+": "+string_replace(get_event_message(),parsed[0]+" ", "", false));
+send_reliable(players[index2].peer_id, "pm|reply from "+players[index].nickname+" ("+players[index].name+"): "+string_replace(s, parsed[0]+" ", "", false), 1);
+log("eventstream",players[index].nickname+" replied to "+players[index2].nickname+": "+string_replace(s,parsed[0]+" ", "", false));
 }
 }
 else
@@ -5508,16 +5589,7 @@ players[index].sendpacket(killed_items+" items owned!",2);
 }
 else if(parsed[0]=="/beacon")
 {
-if(players[index].beacon==0)
-{
-players[index].beacon=1;
-send_reliable(players[index].peer_id,"speak beacons|enabled",0);
-}
-else
-{
-players[index].beacon=0;
-send_reliable(players[index].peer_id,"speak|beacons disabled",0);
-}
+send_reliable(e.peer_id,"beacon_switch",0);
 }
 else if(parsed[0]=="/remguns" and players[index].adminable())
 {
@@ -6347,7 +6419,7 @@ send_reliable(players[index].peer_id,"your chats have been disabled",0);
 return;
 }
 players[index].chat(players[index].nickname+" "+string_trim_left(s,4));
-log("eventstream",players[index].nickname+" "+string_trim_left(get_event_message(),4));
+log("eventstream",players[index].nickname+" "+string_trim_left(s,4));
 }
 else if(parsed[0]=="/create_key" and parsed.length()>2)
 {
@@ -6564,6 +6636,7 @@ send_reliable(players[i].peer_id,"invinsibility disabled!",2);
 players[i].invseconds=6;
 send_reliable(players[i].peer_id,"startmoving",0);
 send_reliable(players[index].peer_id,"Disabled",0);
+send_reliable(0,"set_player_value|"+players[i].name+"|invinsible|"+players[i].invinsible,0);
 }
 else if(players[i].invinsible==false)
 {
@@ -7104,7 +7177,7 @@ else if(parsed[0]=="/newmotd" and parsed.length()>1)
 {
 if(players[index].adminable())
 {
-log("MOTD",players[index].name+" updated the message of the day to "+string_replace(get_event_message(),"/newmotd ","",true),false,true);
+log("MOTD",players[index].name+" updated the message of the day to "+string_replace(s,"/newmotd ","",true),false,true);
 setmotd(s.replace("/newmotd","",true));
 }
 else
@@ -7144,6 +7217,7 @@ send_reliable(e.peer_id,"Your char has been reset to normal",2);
 players[i].invseconds=5;
 players[index].playsound("invstop");
 send_reliable(players[i].peer_id,"startmoving",0);
+send_reliable(0,"set_player_value|"+players[i].name+"|invinsible|"+players[i].invinsible,0);
 }
 else if(players[i].invinsible==false)
 {
@@ -7357,7 +7431,7 @@ int t=is_in_team(players[index].name);
 if(t>-1)
 {
 teams[t].transmit(players[index].nickname+" team coms: "+string_trim_left(s,3),true);
-log("eventstream","in team "+teams[t].teamname+", "+players[index].nickname+" ("+players[index].name+") said "+string_trim_left(get_event_message(),3));
+log("eventstream","in team "+teams[t].teamname+", "+players[index].nickname+" ("+players[index].name+") said "+string_trim_left(s,3));
 }
 else
 {
@@ -7510,7 +7584,7 @@ else
 {
 if(teams[stuff].teamleader==players[index].name)
 {
-bool success=teams[stuff].remove_member(string_trim_left(get_event_message(),12));
+bool success=teams[stuff].remove_member(string_trim_left(s,12));
 if(!success)
 {
 send_reliable(players[index].peer_id, "error removing a team member.", 0);
@@ -7706,6 +7780,7 @@ save_tempbans();
 void send_unreliable_x(uint peer, string mess, uint channel, int tx=0, int ty=0, int tz=0, string tmap="")
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 uint64[]@ p = n.get_peer_list();
 for (uint i =0; i < p.length(); i++)
 {
@@ -7722,6 +7797,7 @@ n.send_unreliable(players[i].peer_id,mess,channel);
 void send_reliable_x(uint peer, string mess, uint channel, int tx, int ty, int tz,string tmap,int range=50)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 for(uint i=0; i<players.length(); i++)
 {
 if(players[i].x > tx-range and players[i].x < tx+range and players[i].y > ty-range and players[i].y < ty+range and players[i].z > tz-range and players[i].z < tz+range and players[i].map==tmap)
@@ -7733,6 +7809,7 @@ n.send_reliable(players[i].peer_id,mess,channel);
 void send_reliable(uint peer, string mess, uint channel, int index=-1)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 if(index>-1)
 {
 int x=players[index].x;
@@ -7754,6 +7831,7 @@ n.send_reliable(peer,mess,channel);
 void send_unreliable(uint peer, string mess, uint channel, int index=-1)
 {
 mess=string_encrypt(mess, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
+mess = string_deflate(mess,9);
 if(index>-1)
 {
 int x=players[index].x;
@@ -7788,10 +7866,10 @@ if(r=="")
 {
 return "";
 }
+r = string_inflate(r);
 r=string_decrypt(r, "ivanlovesplayigtkdoesn'theheheheheheheheheheheheheheheheheheheheh42");
 return r;
 }
-
 void login(string u, string p, string yv, uint id, string compid)
 {
 bool can_login=true;
@@ -7981,15 +8059,6 @@ if(!evenhidden&&players[i].hidden>0) continue;
 }
 }
 return -1;
-}
-string get_event_message()
-{
-string r=e.message;
-if(r=="")
-{
-return "";
-}
-return r;
 }
 void sendmap(string packet,string map,int channel=0,bool reliable=true)
 {
@@ -8202,6 +8271,7 @@ if(sources[i].map==map)
 ite+="src:"+sources[i].lx+":"+sources[i].rx+":"+sources[i].miny+":"+sources[i].maxy+":"+sources[i].minz+":"+sources[i].maxz+":"+sources[i].soundfile+":"+sources[i].id+"\r\n";
 }
 */
+p.send_position();
 send_reliable(p.peer_id,"mapname|"+map,0);
 if(sindex>-1)
 send_reliable(p.peer_id, "m_data|"+shelters[sindex].generate_map()+ite, 0);
@@ -8336,22 +8406,18 @@ return -1;
 }
 bool automatic(string w)
 {
-/*
-string[] aut={"FRNTAssaultRifle","ML7TinyMG","machinegun"};
-if(aut.find(w)>-1)
-*/
-for(uint i = 0; i < guns.length(); i++)
-{
-string text = dget_string(wdata,guns[i]);
-string[] parsed = text.split("|");
-if(w==guns[i]&&parsed[1]=="auto") return true;
-}
+var@ mode = get_wdata_value(w,"fire_mode");
+if(@mode==null) return false;
+if(mode=="auto") return true;
 return false;
 }
 bool hasammo(string w)
 {
-if(guns.find(w)>-1)
-return true;
+int index = get_wdata_index(w);
+if(index>-1)
+{
+if(wdata[index].requires_ammo) return true;
+}
 return false;
 }
 bool has_remgun(string name)
@@ -8455,6 +8521,7 @@ void respawn(int index)
 {
 move_player(players[index],players[index].map,players[index].x,players[index].y,players[index].z);
 players[index].is_dead=false;
+send_reliable(0,"set_player_value|"+players[index].name+"|is_dead|"+players[index].is_dead,0);
 players[index].storetimer.restart();
 players[index].storestage=1;
 players[index].oldhealth=players[index].health;
@@ -8477,100 +8544,6 @@ for(uint i=0; i<wpn.length(); i++)
 export_weapon(wpn[i]);
 }
 */
-wdata.set("sky_327_laser_cannon","3000|norm");
-wdata.set("fists","100|norm");
-wdata.set("hand_cannon","5000|norm");
-wdata.set("nak_nk1000_decimater","35|norm");
-wdata.set("s&w_model66_revolver","400|norm");
-wdata.set("mp5_machine_pistol","500|auto");
-wdata.set("walther_p99_handgun","500|norm");
-wdata.set("ruger_security_6_revolver","300|norm");
-wdata.set("colt_python_revolver","500|norm");
-wdata.set("mlk_203_combat_pistol","1500|norm");
-wdata.set("m134_minigun","610|auto");
-wdata.set("m1208_shotgun","1000|norm");
-wdata.set("flameburst_mini_flame_thrower","260|norm");
-wdata.set("small_iron_club","350|norm");
-wdata.set("saiga_12_5_round_shotgun","1000|norm");
-wdata.set("saiga_12_10_round_shotgun","1000|norm");
-wdata.set("saiga_12_20_round_shotgun","1000|norm");
-wdata.set("saiga_12_30_round_shotgun","1000|norm");
-wdata.set("browning_m2_heavy_50_cal_machinegun","200|auto");
-wdata.set("m4a1_assault_rifle","350|auto");
-wdata.set("browning_high_power_bda_handgun","200|auto");
-wdata.set("feet","400|norm");
-wdata.set("small_sabre","600|norm");
-wdata.set("small_dagger","600|norm");
-wdata.set("large_iron_club","350|norm");
-wdata.set("studded_boots","450|norm");
-wdata.set("knife","250|norm");
-wdata.set("garden_spade","1000|norm");
-wdata.set("spiked_bat","300|norm");
-wdata.set("m24_sniper_rifle","2000|norm");
-wdata.set("spiked_chain_mace","600|norm");
-wdata.set("beretta_nano_pocket_pistol","250|norm");
-wdata.set("beretta_m9_pistol","400|norm");
-wdata.set("dart_launcher","1000|norm");
-wdata.set("sky_28_laser","10|norm");
-wdata.set("steal_warhammer","600|norm");
-wdata.set("barrett_m82_sniper_rifle","5500|norm");
-wdata.set("stp_s84q_automatic_suppressed_pistol","200|auto");
-wdata.set("modern_sub_machine_gun_carbine","100|auto");
-wdata.set("fnminimilight","150|auto");
-wdata.set("glock_17_pistol","350|norm");
-wdata.set("beretta_m1951_machine_pistol","150|auto");
-wdata.set("sky_429_laser_shotgun","1000|norm");
-wdata.set("cop_357_derringer_pistol","550|norm");
-wdata.set("sky_127_laser_handgun","500|norm");
-wdata.set("sig_p226_combat_pistol","400|norm");
-wdata.set("m79_grenade_launcher","1000|norm");
-wdata.set("crt43_automatic_shotgun","500|auto");
-wdata.set("stp21_handgun","200|auto");
-wdata.set("mlk_207_combat_rifle","300|norm");
-wdata.set("str_301_long_barreled_machine_pistol","200|auto");
-wdata.set("stp106_long_barreled_pistol","400|norm");
-wdata.set("colt_ar_15_assault_rifle","100|norm");
-wdata.set("blz83_portable_machine_gun","200|auto");
-wdata.set("cyanide_pistol","800|norm");
-wdata.set("shotgun","1500|norm");
-wdata.set("ak47_assault_rifle","300|auto");
-wdata.set("str_32_pump_action_shotgun","800|norm");
-wdata.set("pistol","300|norm");
-wdata.set("sky_386_laser_assault_rifle","1000|norm");
-wdata.set("small_hammer","500|norm");
-wdata.set("crow_bar","500|norm");
-wdata.set("sky_372_laser_machinegun","200|norm");
-wdata.set("scissor_blade","200|norm");
-wdata.set("machete","300|norm");
-wdata.set("golden_war_axe","1000|norm");
-wdata.set("sky_286_laser_pistol","2000|norm");
-wdata.set("iron_shovel","750|norm");
-wdata.set("rusty_axe","700|norm");
-wdata.set("nunchaku","100|norm");
-wdata.set("rusty_scalpel","500|norm");
-wdata.set("long_sword","900|norm");
-wdata.set("hammer","700|norm");
-wdata.set("crt17_combat_knife","400|norm");
-wdata.set("broken_rifle","600|norm");
-wdata.set("stp_m4_combat_knife","350|norm");
-wdata.set("brass_knuckles","500|norm");
-wdata.set("admingun","10|norm");
-wdata.set("rpg7","2000|norm");
-wdata.set("gp30","2000|norm");
-wdata.set("rocket_launcher","5000|norm");
-wdata.set("ags30","200|auto");
-wdata.set("gauss","2000|norm");
-wdata.set("throwing_knives","500|norm");
-wdata.set("awp","3000|norm");
-wdata.set("spear","1000|norm");
-wdata.set("crossbow","500|norm");
-wdata.set("m16_assault_rifle","40|auto");
-wdata.set("taser","6000|norm");
-wdata.set("short_sword","600|norm");
-wdata.set("cannon","7000|norm");
-wdata.set("sniper","1500|norm");
-wdata.set("zulfikar","5000|norm");
-wdata.set("storm_sniper","4000|norm");
 /*
 animaltypes.insert_last("hog");
 animaltypes.insert_last("monster");
@@ -8719,6 +8692,7 @@ send_reliable(players[i].peer_id,"admintell|"+msg,1);
 string keycheck(string activation_key)
 {
 string ret="";
+return ret;
 string keys=url_ret("http://jennios.com/tk/activation_payments.plist");
 if(keys=="")
 {
@@ -8795,4 +8769,12 @@ mfile.open("prefs/motd.svr","wb");
 mfile.write(newmotd);
 mfile.close();
 if(public==true) send_reliable(0,"Message of the day was updated to "+newmotd,2);
+}
+void print_profile()
+{
+file f;
+f.open((beta == true ? "beta_profile.log" : "profile.log"),"w");
+f.write(generate_profile());
+stop_profiling();
+reset_profiler();
 }

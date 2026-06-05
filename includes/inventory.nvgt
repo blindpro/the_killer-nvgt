@@ -1,0 +1,47 @@
+//bagpack
+void InventoryAdd (string item , int64 amount)
+{
+int64 a;
+if (!inventory.exists(item))
+{
+inventory.set(item,amount);
+}
+else
+{
+inventory.get(item,a);
+if (a+amount<=0)
+{
+inventory.delete(item);
+}
+else
+{
+int64 b=(a+amount);
+inventory.set(item,b);
+}
+}
+}
+
+void InventoryLoad ()
+{
+string[] pt = string_split (inv,"\r\n");
+for (uint i=0; i<=pt.length (); i++)
+{
+string[] pts = string_split (pt[i],"=");
+if (pts.length () <2) continue;
+inventory.set(pts[1],pts[2]);
+}
+}
+
+string inventory_to_string ()
+{
+string result;
+string[] k=inventory.get_keys();
+for (uint i =0; i<=k.length (); i++)
+{
+uint64 v;
+inventory.get(k[i],v);
+result +=k[i]+"="+v;
+result+=(i<k.length()?"\r\n" : "");
+}
+return result;
+}

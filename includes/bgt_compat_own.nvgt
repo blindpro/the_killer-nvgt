@@ -86,8 +86,13 @@ string get_last_error_text() {
 shared double string_to_number(const string& in num) {
 	return parse_double(num.trim_whitespace_left());
 }
+<<<<<<< HEAD
 bool show_game_window(const string& in title) {
 return true;
+=======
+game_window show_game_window(const string& in title) {
+	return show_window(title);
+>>>>>>> server_control
 }
 
 bool hide_game_window() {

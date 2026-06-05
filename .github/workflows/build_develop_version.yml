@@ -1,0 +1,48 @@
+name: build_develop_version
+
+on:
+  push:
+    branches: [ "dev" ]
+
+permissions:
+  contents: write # 赋予修改 Release 的权限
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Call Setup NVGT Action
+      uses: ./.github/actions/setup-nvgt
+      with:
+        dev: 'true'
+        add-to-path: 'true'
+
+    - name: build windows server
+      shell: bash
+      run: |
+        nvgt --compile-debug -pwindows "${{ github.workspace }}/server/tkserver.nvgt"
+
+    - name: build linux server
+      shell: bash
+      run: |
+        nvgt --compile-debug -p linux "${{ github.workspace }}/server/tkserver.nvgt"
+
+    - name: Update Latest Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: "latest-develop-version"
+        name: "latest develop version"
+        body: |
+          Commit SHA: ${{ github.sha }}
+          Message: ${{ github.event.head_commit.message }}
+        prerelease: true
+        overwrite: true
+        files: |
+          ${{ github.workspace }}/server/tkserver.zip
+          ${{ github.workspace }}/server/tkserver.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

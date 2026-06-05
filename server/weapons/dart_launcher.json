@@ -1,0 +1,1 @@
+{"bullet":false,"equipable":true,"fire_mode":"norm","fire_time":1000,"max_ammo":1,"max_damage":300,"max_shield_hits":5,"min_damage":100,"min_shield_hits":1,"name":"dart_launcher","range":10,"reload_time":550,"requires_ammo":true,"shield_chance":30,"speed_time":0,"spread":3,"stun_time":1000,"stunning":true}
