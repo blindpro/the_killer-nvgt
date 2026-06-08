@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 string netaddress = "localhost";
 //string netaddress="blindprohosting.duckdns.org";
-=======
-//string netaddress="127.0.0.1";
-string netaddress="LOCALHOST";
->>>>>>> server_control
 uint64 netport = 10000;
-
 void testc ()
 {
 reset_network();
