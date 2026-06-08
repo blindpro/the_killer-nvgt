@@ -1,4 +1,4 @@
-string netaddress = "localhost";
+string netaddress = "blindprogaming.com";
 //string netaddress="blindprohosting.duckdns.org";
 uint64 netport = 10000;
 void testc ()
